@@ -400,7 +400,7 @@ export async function workflowRunCommand(
       );
     }
 
-    console.log(`Workflow run 재개: ${resumable.id}`);
+    console.log(`workflow run 재개: ${resumable.id}`);
     console.log(`작업 경로: ${workingCwd}`);
     console.log('');
   }
@@ -839,11 +839,11 @@ export async function workflowResumeCommand(runId: string): Promise<void> {
   const run = await resumeWorkflowOp(runId);
   if (!run.working_path) {
     throw new Error(
-      `Workflow run '${runId}'에 기록된 작업 경로가 없습니다.\n` +
+      `workflow run '${runId}'에 기록된 작업 경로가 없습니다.\n` +
         '어디서 재개해야 할지 알 수 없습니다. run이 너무 오래되었을 수 있습니다.'
     );
   }
-  console.log(`Workflow 재개: ${run.workflow_name}`);
+  console.log(`워크플로 재개: ${run.workflow_name}`);
   console.log(`경로: ${run.working_path}`);
   console.log('');
 
@@ -870,8 +870,8 @@ export async function workflowResumeCommand(runId: string): Promise<void> {
  */
 export async function workflowAbandonCommand(runId: string): Promise<void> {
   const run = await abandonWorkflow(runId);
-  console.log(`Workflow run 중단: ${runId}`);
-  console.log(`Workflow: ${run.workflow_name}`);
+  console.log(`workflow run 중단: ${runId}`);
+  console.log(`워크플로: ${run.workflow_name}`);
 }
 
 /**
@@ -884,14 +884,14 @@ export async function workflowApproveCommand(runId: string, comment?: string): P
   // CLI auto-resumes after approval (unlike chat, which defers to next user message)
   if (!result.workingPath) {
     throw new Error(
-      `Workflow run '${runId}'에 기록된 작업 경로가 없습니다.\n` +
+      `workflow run '${runId}'에 기록된 작업 경로가 없습니다.\n` +
         '어디서 재개해야 할지 알 수 없습니다.'
     );
   }
-  console.log(`Workflow 승인: ${result.workflowName}`);
+  console.log(`워크플로 승인: ${result.workflowName}`);
   console.log(`경로: ${result.workingPath}`);
   console.log('');
-  console.log('Workflow 재개 중...');
+  console.log('워크플로 재개 중...');
 
   // Look up the original platform conversation ID to keep all messages in one thread
   let platformConversationId: string | undefined;
@@ -946,7 +946,7 @@ export async function workflowRejectCommand(runId: string, reason?: string): Pro
   // Not cancelled = has onRejectPrompt, CLI auto-resumes with rejection feedback
   if (!result.workingPath) {
     throw new Error(
-      `Workflow run '${runId}'에 기록된 작업 경로가 없습니다.\n` +
+      `workflow run '${runId}'에 기록된 작업 경로가 없습니다.\n` +
         '어디서 재개해야 할지 알 수 없습니다.'
     );
   }

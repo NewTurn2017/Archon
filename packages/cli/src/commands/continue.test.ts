@@ -84,8 +84,8 @@ describe('continueCommand', () => {
     await continueCommand('feature/test', '다음 작업', { workflow: 'archon-assist' });
 
     expect(consoleLogSpy).toHaveBeenCalledWith('branch에서 계속 진행: feature/test');
-    expect(consoleLogSpy).toHaveBeenCalledWith('Workflow: archon-assist');
-    expect(consoleLogSpy).toHaveBeenCalledWith('Path: /repo/worktree');
+    expect(consoleLogSpy).toHaveBeenCalledWith('워크플로: archon-assist');
+    expect(consoleLogSpy).toHaveBeenCalledWith('경로: /repo/worktree');
     expect(consoleLogSpy).toHaveBeenCalledWith('이전 run: run-1 (archon-assist, completed)');
     expect(mockWorkflowRunCommand).toHaveBeenCalledWith(
       '/repo/worktree',
