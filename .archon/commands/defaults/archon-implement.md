@@ -180,7 +180,7 @@ Common patterns:
 
 Log each task as you complete it:
 
-```
+```text
 Task 1: CREATE src/features/x/models.ts ✅
 Task 2: CREATE src/features/x/service.ts ✅
 Task 3: UPDATE src/routes/index.ts ✅

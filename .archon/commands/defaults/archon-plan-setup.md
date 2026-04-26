@@ -164,6 +164,7 @@ If no commits yet (fresh branch), skip push - it will happen after implementatio
 ### 3.1 artifact directory 생성
 
 ```bash
+mkdir -p "$ARTIFACTS_DIR"
 ```
 
 ### 3.2 context artifact 작성

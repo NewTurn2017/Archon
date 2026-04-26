@@ -40,7 +40,7 @@ HarneesLab에서 사용할 수 있는 slash command 전체 목록입니다. Web 
 | `/workflow run <name> [args]` | workflow를 직접 실행 |
 | `/workflow cleanup [days]` | CLI 전용 -- 오래된 run record 삭제(기본값: 7일) |
 
-> **참고:** Workflow는 `.archon/workflows/`의 YAML file입니다. `.archon` 경로는 upstream Archon compatibility를 위해 유지됩니다.
+> **참고:** Workflow는 `.archon/workflows/`의 YAML file입니다. `.archon`은 HarneesLab/Archon configuration과 resource의 표준 경로이며, workflow와 script는 각각 `.archon/workflows/`, `.archon/scripts/` 아래에 둡니다.
 
 ## Session 관리
 

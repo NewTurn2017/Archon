@@ -202,7 +202,7 @@ Report the result:
 
 ### Push할 commit 없음
 
-```
+```text
 No commits between origin/$BASE_BRANCH and HEAD.
 Nothing to create a PR for.
 ```
