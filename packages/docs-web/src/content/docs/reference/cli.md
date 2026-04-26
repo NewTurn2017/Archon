@@ -9,11 +9,12 @@ sidebar:
   order: 3
 ---
 
-터미널에서 AI 기반 workflow를 실행하고 관리합니다.
+HarneesLab CLI는 터미널에서 AI 기반 workflow를 실행하고, 격리 worktree를 관리하며, validation과 Web UI server 같은 운영 명령을 처리하는 진입점입니다. 이 문서는 각 명령의 용도, 주요 flag, 실행 위치 규칙, 환경 변수 처리 방식을 한곳에 정리합니다.
 
 ## 사전 준비
 
-1. Repository를 clone하고 dependency를 설치합니다.
+1. Repository를 clone한 뒤 dependency를 설치합니다.
+
    ```bash
    git clone https://github.com/NewTurn2017/HarneesLab
    cd HarneesLab
@@ -21,18 +22,21 @@ sidebar:
    ```
 
 2. CLI를 전역에서 사용할 수 있게 만듭니다(권장).
+
    ```bash
    cd packages/cli
    bun link
    ```
-   이렇게 하면 어디서든 `hlab` 명령을 사용할 수 있습니다.
+
+   이후 어디서든 `hlab` 명령을 사용할 수 있습니다.
 
 3. Claude에 인증합니다.
+
    ```bash
    claude /login
    ```
 
-**참고:** 아래 예시는 `bun link` 이후의 `hlab`을 사용합니다. 2단계를 건너뛰었다면 repo directory에서 `bun run cli`를 사용하세요.
+**참고:** 아래 예시는 `bun link` 이후의 `hlab`을 기준으로 합니다. 2단계를 건너뛰었다면 repository directory에서 `bun run cli`를 사용하세요.
 
 ## 빠른 시작
 
@@ -50,7 +54,7 @@ hlab workflow run plan --cwd /path/to/repo --branch feature-auth "OAuth support�
 hlab workflow run assist --cwd /path/to/repo --no-worktree "간단한 질문"
 ```
 
-**참고:** Workflow와 isolation 명령은 git repository 안에서 실행해야 합니다. Subdirectory에서 실행하면 repo root를 자동으로 찾습니다. `version`, `help`, `chat`, `setup`, `serve` 명령은 어디서든 동작합니다.
+**참고:** Workflow와 isolation 명령은 git repository 안에서 실행해야 합니다. Subdirectory에서 실행하면 repository root를 자동으로 찾습니다. `version`, `help`, `chat`, `setup`, `serve` 명령은 어디서든 동작합니다.
 
 ## 명령
 
@@ -64,7 +68,7 @@ hlab chat "orchestrator가 어떤 일을 하는지 설명해줘"
 
 ### `setup`
 
-Credential과 configuration을 설정하는 interactive setup wizard입니다.
+인증 정보와 configuration을 설정하는 interactive setup wizard를 실행합니다.
 
 ```bash
 hlab setup
@@ -79,7 +83,7 @@ hlab setup --spawn  # 새 terminal window에서 열기
 
 ### `workflow list`
 
-Target directory에서 사용할 수 있는 workflow를 나열합니다.
+대상 directory에서 사용할 수 있는 workflow를 나열합니다.
 
 ```bash
 hlab workflow list --cwd /path/to/repo
@@ -88,14 +92,14 @@ hlab workflow list --cwd /path/to/repo
 hlab workflow list --cwd /path/to/repo --json
 ```
 
-`.archon/workflows/`(recursive), `~/.archon/.archon/workflows/`(global), bundled default에서 workflow를 찾습니다. 자세한 전역 workflow 동작은 [Global Workflows](/guides/global-workflows/)를 참고하세요.
+CLI는 `.archon/workflows/`(recursive), `~/.archon/.archon/workflows/`(global), bundled default 순서로 workflow를 찾습니다. 자세한 전역 workflow 동작은 [Global Workflows](/guides/global-workflows/)를 참고하세요.
 
 **옵션**
 
 | Flag | 효과 |
 | --- | --- |
-| `--cwd <path>` | Target directory(대부분의 사용 사례에서 필요) |
-| `--json` | formatted text 대신 machine-readable JSON 출력 |
+| `--cwd <path>` | 대상 directory(대부분의 사용 사례에서 필요) |
+| `--json` | formatted text 대신 기계가 읽기 쉬운 JSON 출력 |
 
 `--json`을 사용하면 `{ "workflows": [...], "errors": [...] }`를 출력합니다. Workflow에 설정되지 않은 optional field(`provider`, `model`, `modelReasoningEffort`, `webSearchMode`)는 생략됩니다.
 
@@ -117,7 +121,7 @@ hlab workflow run plan --cwd /path/to/repo --branch feature-x "caching을 추가
 
 | Flag | 효과 |
 | --- | --- |
-| `--cwd <path>` | Target directory(대부분의 사용 사례에서 필요) |
+| `--cwd <path>` | 대상 directory(대부분의 사용 사례에서 필요) |
 | `--branch <name>` | worktree에 사용할 명시적 branch name |
 | `--from <branch>`, `--from-branch <branch>` | base branch override(worktree start-point) |
 | `--no-worktree` | isolation을 사용하지 않고 live checkout에서 직접 실행 |
@@ -126,26 +130,31 @@ hlab workflow run plan --cwd /path/to/repo --branch feature-x "caching을 추가
 | `--verbose`, `-v` | tool-level event(tool name과 duration)도 표시 |
 
 **기본값(no flags):**
+
 - auto-generated branch(`archon/task-<workflow>-<timestamp>`)로 worktree 생성
-- git repo 안이면 codebase auto-register
+- git repository 안이면 codebase auto-register
 
 **`--branch` 사용 시:**
+
 - `~/.archon/workspaces/<owner>/<repo>/worktrees/<branch>/`에 worktree 생성/재사용
 - 정상 상태의 기존 worktree가 있으면 재사용
 
 **`--no-worktree` 사용 시:**
+
 - target directory에서 직접 실행(isolation 없음)
 - `--branch`, `--from`과 함께 사용할 수 없음
 
-**Name matching:**
+**Workflow 이름 매칭:**
 
-Workflow name은 4단계 fallback hierarchy로 해석됩니다. CLI와 모든 chat platform(Slack, Telegram, Web, GitHub, Discord)에 동일하게 적용됩니다.
+Workflow name은 4단계 fallback hierarchy로 해석됩니다. 이 규칙은 CLI와 모든 chat platform(Slack, Telegram, Web, GitHub, Discord)에 동일하게 적용됩니다.
+
 1. **Exact match** - `archon-assist`가 `archon-assist`와 일치
 2. **Case-insensitive** - `ARCHON-ASSIST`가 `archon-assist`와 일치
 3. **Suffix match** - `assist`가 `archon-assist`와 일치(`-assist` suffix 검색)
 4. **Substring match** - `smart`가 `archon-smart-pr-review`와 일치
 
 같은 단계에서 여러 workflow가 match되면 후보를 나열하는 오류가 발생합니다.
+
 ```
 Ambiguous workflow 'review'. Did you mean:
   - archon-review
@@ -154,7 +163,7 @@ Ambiguous workflow 'review'. Did you mean:
 
 ### `workflow status`
 
-모든 worktree의 running workflow run을 표시합니다.
+모든 worktree에서 실행 중인 workflow run을 표시합니다.
 
 ```bash
 hlab workflow status
@@ -163,7 +172,7 @@ hlab workflow status --json
 
 ### `workflow resume`
 
-실패한 workflow run을 resume합니다. Workflow를 다시 실행하며 이전 run에서 완료된 node는 자동으로 skip합니다.
+실패한 workflow run을 resume합니다. Workflow를 다시 실행하되 이전 run에서 완료된 node는 자동으로 skip합니다.
 
 ```bash
 hlab workflow resume <run-id>
@@ -171,7 +180,7 @@ hlab workflow resume <run-id>
 
 ### `workflow abandon`
 
-Workflow run을 폐기합니다(`cancelled`로 표시). Resume하지 않을 worktree를 unblock할 때 사용합니다. Path lock이 즉시 해제되어 새 workflow를 시작할 수 있습니다.
+Workflow run을 폐기하고 `cancelled`로 표시합니다. Resume하지 않을 worktree를 unblock할 때 사용합니다. Path lock은 즉시 해제되어 새 workflow를 시작할 수 있습니다.
 
 ```bash
 hlab workflow abandon <run-id>
@@ -221,7 +230,7 @@ hlab workflow event emit --run-id <uuid> --type <event-type> [--data <json>]
 | `--type` | 예 | Event type(예: `ralph_story_started`, `node_completed`) |
 | `--data` | 아니요 | event에 첨부할 JSON string. 잘못된 JSON은 warning을 출력하고 무시됩니다. |
 
-Exit code: 성공 시 0, `--run-id` 또는 `--type`이 없거나 `--type`이 유효하지 않은 event type이면 1입니다. Event persistence는 best-effort(non-throwing)입니다. Event가 보이지 않으면 server log를 확인하세요.
+종료 코드: 성공 시 0, `--run-id` 또는 `--type`이 없거나 `--type`이 유효하지 않은 event type이면 1입니다. Event persistence는 best-effort(non-throwing)입니다. Event가 보이지 않으면 server log를 확인하세요.
 
 ### `isolation list`
 
@@ -231,7 +240,7 @@ Exit code: 성공 시 0, `--run-id` 또는 `--type`이 없거나 `--type`이 유
 hlab isolation list
 ```
 
-Codebase별로 grouping해 branch, workflow type, platform, last activity 이후 경과일을 보여줍니다.
+Codebase별로 묶어 branch, workflow type, platform, last activity 이후 경과일을 보여줍니다.
 
 ### `isolation cleanup [days]`
 
@@ -265,9 +274,9 @@ hlab validate workflows my-workflow          # 단일 workflow 검증
 hlab validate workflows my-workflow --json   # machine-readable JSON output
 ```
 
-검사 항목: YAML syntax, DAG structure(cycle, dependency ref), command file 존재 여부, MCP config file, skill directory, provider compatibility입니다. Typo에는 "did you mean?" suggestion이 포함된 actionable error message를 반환합니다.
+검사 항목은 YAML syntax, DAG structure(cycle, dependency ref), command file 존재 여부, MCP config file, skill directory, provider compatibility입니다. Typo에는 "did you mean?" suggestion이 포함된 actionable error message를 반환합니다.
 
-Exit code: 0 = 모두 valid, 1 = error 발견.
+종료 코드: 0 = 모두 valid, 1 = error 발견.
 
 ### `validate commands [name]`
 
@@ -278,9 +287,9 @@ hlab validate commands                  # 모든 command 검증
 hlab validate commands my-command       # 단일 command 검증
 ```
 
-검사 항목: file 존재, non-empty, valid name입니다.
+검사 항목은 file 존재, non-empty, valid name입니다.
 
-Exit code: 0 = 모두 valid, 1 = error 발견.
+종료 코드: 0 = 모두 valid, 1 = error 발견.
 
 ### `complete <branch> [branch2 ...]`
 
@@ -323,7 +332,7 @@ hlab serve --download-only
 | `--port <port>` | server port override(default: 3090, range: 1-65535) |
 | `--download-only` | Web UI를 download/cache한 뒤 server 시작 없이 종료 |
 
-Cached Web UI는 `~/.archon/web-dist/<version>/`에 저장됩니다. Version별로 독립적으로 cache되므로 binary upgrade 시 matching Web UI가 자동으로 download됩니다.
+Cache된 Web UI는 `~/.archon/web-dist/<version>/`에 저장됩니다. Version별로 독립적으로 cache되므로 binary upgrade 시 matching Web UI가 자동으로 download됩니다.
 
 ### `version`
 
@@ -340,12 +349,12 @@ hlab version
 | `--cwd <path>` | working directory override(default: current directory) |
 | `--quiet`, `-q` | log verbosity를 warning/error로 줄임 |
 | `--verbose`, `-v` | debug-level output 표시 |
-| `--json` | machine-readable JSON 출력(workflow list, workflow status) |
+| `--json` | 기계가 읽기 쉬운 JSON 출력(`workflow list`, `workflow status`) |
 | `--help`, `-h` | help message 표시 |
 
 ## 작업 디렉터리
 
-CLI는 다음 기준으로 실행 위치를 결정합니다.
+CLI는 다음 우선순위로 실행 위치를 결정합니다.
 
 1. `--cwd` flag(제공된 경우)
 2. 현재 directory(default)
@@ -361,6 +370,7 @@ Subdirectory(예: `/repo/packages/cli`)에서 실행하면 git repository root(�
 시작 시 CLI는 Bun이 자동 로드한 CWD `.env` key와 nested Claude Code session marker를 `process.env`에서 제거한 뒤 global `.env`를 로드합니다. global `.env` 위치는 `HARNEESLAB_HOME`, `ARCHON_HOME`, `~/.archon` 순서로 결정됩니다. 해당 `.env`에 설정한 모든 key는 AI subprocess로 전달됩니다. allowlist filtering은 없습니다.
 
 시작 시 CLI는 다음을 수행합니다.
+
 1. CWD `.env` key + `CLAUDECODE` marker를 `process.env`에서 제거(`stripCwdEnv`)
 2. `$HARNEESLAB_HOME/.env`, `$ARCHON_HOME/.env`, `~/.archon/.env` 순서로 global `.env` 로드(모든 key trusted)
 3. 명시적 token이 없으면 global Claude auth 자동 활성화
