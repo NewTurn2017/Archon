@@ -14,18 +14,21 @@ description: HarneesLab에서 먼저 손댈 문서 묶음과 이유를 정리한
 - 이유: GitHub 첫 화면에서 프로젝트 성격을 바로 설명해야 함
 - 범위: 소개, 왜 Archon인가, Getting Started, Web UI, 주요 워크플로 요약
 - 목표: 포크 방문자가 한국어 프로젝트 방향을 3분 안에 이해할 수 있게 만들기
+- 현재 상태: 완료. README는 HarneesLab 소개, 시작하기, Web UI, 기본 workflow, 설치 흐름을 한국어 중심으로 정리했습니다.
 
 ### Getting Started
 
 - 이유: 실제 사용자가 가장 먼저 막히는 구간
 - 범위: `installation`, `overview`, `quick-start`
 - 목표: 설치부터 첫 실행까지 한국어 기준으로 연결
+- 현재 상태: 완료. `overview`, `installation`, `quick-start`가 한국어 onboarding 흐름으로 정리되었고, 관련 개념/설정/AI assistant 문서도 한국어 우선 설명을 갖췄습니다.
 
 ### CLI 핵심 레퍼런스
 
 - 이유: 학습보다 실전 적용에서 자주 다시 찾게 되는 문서
 - 범위: `reference/cli.md`에서 기본 명령과 대표 예시 우선
 - 목표: 자주 쓰는 명령을 한국어 설명으로 빠르게 검색 가능하게 만들기
+- 현재 상태: 진행 중. 이번 PR에서 `packages/docs-web/src/content/docs/reference/cli.md`를 한국어 우선 CLI reference로 정리합니다.
 
 ## 2차 우선순위
 
@@ -48,10 +51,16 @@ description: HarneesLab에서 먼저 손댈 문서 묶음과 이유를 정리한
 
 ## 권장 착수 순서
 
-1. `README.md`
-2. `packages/docs-web/src/content/docs/getting-started/installation.md`
-3. `packages/docs-web/src/content/docs/getting-started/overview.md`
-4. `packages/docs-web/src/content/docs/reference/cli.md`
+1. `README.md` — 완료
+2. `packages/docs-web/src/content/docs/getting-started/installation.md` — 완료
+3. `packages/docs-web/src/content/docs/getting-started/overview.md` — 완료
+4. `packages/docs-web/src/content/docs/reference/cli.md` — 이번 PR에서 진행
+
+## 현재 PR 기준 추적
+
+- 완료로 간주: `README.md`, Getting Started 핵심 페이지(`overview`, `installation`, `quick-start`)
+- 이번 PR 범위: `packages/docs-web/src/content/docs/reference/cli.md` 한국어 우선 정리와 이 백로그 상태 업데이트
+- 다음 후보: workflow 작성 가이드와 핵심 개념 문서의 예시/용어 정합성 점검
 
 ## 선택 기준
 
