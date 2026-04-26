@@ -364,7 +364,7 @@ hlab complete <branch> --force              # uncommitted-changes check 건너�
 
 이 bundled workflow들은 대부분의 프로젝트에서 바로 사용할 수 있습니다. 커스터마이즈하려면 `.archon/workflows/defaults/`에서 하나를 `.archon/workflows/`로 복사해 수정하세요. 같은 이름의 파일은 기본값을 override합니다.
 
-> **Auto-selection:** workflow 이름을 외울 필요가 없습니다. 원하는 일을 설명하기만 하면 router가 모든 workflow description을 읽고 가장 적합한 것을 선택합니다. 예를 들어 "fix issue #42"는 `archon-fix-github-issue`로 route되고, "review this PR"은 `archon-smart-pr-review`로 route됩니다. 명확히 맞는 것이 없으면 `archon-assist`로 fallback합니다.
+> **자동 선택:** workflow 이름을 외울 필요가 없습니다. 원하는 일을 설명하기만 하면 router가 모든 workflow description을 읽고 가장 적합한 것을 선택합니다. 예를 들어 "fix issue #42"는 `archon-fix-github-issue`로 route되고, "review this PR"은 `archon-smart-pr-review`로 route됩니다. 명확히 맞는 것이 없으면 `archon-assist`로 fallback합니다.
 
 ---
 
@@ -380,7 +380,7 @@ your-repo/
     └── workflows/           # custom multi-step workflow(.yaml files)
 ```
 
-**Example `.archon/config.yaml`:**
+**예시 `.archon/config.yaml`:**
 
 ```yaml
 assistant: claude
@@ -394,30 +394,30 @@ worktree:
 
 `.archon/` config가 없어도 platform은 합리적인 기본값(bundled commands와 workflows)을 사용합니다.
 
-### custom command
+### custom command 만들기
 
 repo의 `.archon/commands/`에 `.md` 파일을 두세요.
 
 ```markdown
 ---
-description: Run the full test suite
+description: 전체 test suite 실행
 argument-hint: <module>
 ---
 
 # Test Runner
 
-Run tests for: $ARGUMENTS
+다음 대상을 테스트하세요: $ARGUMENTS
 ```
 
 사용 가능한 변수: `$1`, `$2`, `$3`(positional), `$ARGUMENTS`(전체 args), `$ARTIFACTS_DIR`(workflow artifacts directory), `$WORKFLOW_ID`(run ID), `$BASE_BRANCH`(base branch), `$nodeId.output`(DAG node output).
 
-### custom workflow
+### custom workflow 만들기
 
 repo의 `.archon/workflows/`에 `.yaml` 파일을 두세요.
 
 ```yaml
 name: my-workflow
-description: Plan then implement a feature
+description: feature를 계획한 뒤 구현
 model: sonnet
 
 nodes:
@@ -574,7 +574,7 @@ bun install
 
 휴대폰에서 HarneesLab에 message를 보내고 싶다면 다음 중 하나를 선택하세요.
 
-| Platform | 난이도 | Guide |
+| 플랫폼 | 난이도 | 가이드 |
 | ------------------- | --------------- | --------------------------------------------------------------------- |
 | **Telegram** | 쉬움(5분) | [adapter 설정](/adapters/telegram/) |
 | **Discord** | 쉬움(5분) | [adapter 설정](/adapters/community/discord/) |

@@ -64,8 +64,8 @@ export async function continueCommand(
 
   // 5. Console output
   console.log(`branch에서 계속 진행: ${branch}`);
-  console.log(`Workflow: ${workflowName}`);
-  console.log(`Path: ${env.working_path}`);
+  console.log(`워크플로: ${workflowName}`);
+  console.log(`경로: ${env.working_path}`);
   if (priorRun) {
     console.log(`이전 run: ${priorRun.id} (${priorRun.workflow_name}, ${priorRun.status})`);
   }

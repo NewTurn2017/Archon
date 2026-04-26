@@ -41,7 +41,7 @@ cd HarneesLab
 bun install
 ```
 
-### 사전 요구사항(Source Install)
+### 사전 요구사항(소스 설치)
 
 - [Bun](https://bun.sh) >= 1.0.0
 - [GitHub CLI](https://cli.github.com/) (`gh`)
@@ -52,20 +52,20 @@ bun install
 HarneesLab은 Claude Code를 orchestration하지만, Claude Code를 함께 포함하지는 않습니다. Claude Code는 별도로 설치해야 합니다.
 
 ```bash
-# macOS / Linux / WSL (Anthropic's recommended installer)
+# macOS / Linux / WSL (Anthropic 권장 installer)
 curl -fsSL https://claude.ai/install.sh | bash
 
 # Windows (PowerShell)
 irm https://claude.ai/install.ps1 | iex
 ```
 
-source install(`bun run`)은 `node_modules`를 통해 실행 파일을 자동으로 찾습니다. compiled HarneesLab binary(quick install, Homebrew)는 Claude Code 실행 파일 위치를 직접 지정해야 합니다.
+소스 설치(`bun run`)는 `node_modules`를 통해 실행 파일을 자동으로 찾습니다. compiled HarneesLab binary(빠른 설치, Homebrew)는 Claude Code 실행 파일 위치를 직접 지정해야 합니다.
 
 ```bash
-# After the native installer:
+# native installer를 사용한 경우:
 export CLAUDE_BIN_PATH="$HOME/.local/bin/claude"
 
-# After `npm install -g @anthropic-ai/claude-code`:
+# `npm install -g @anthropic-ai/claude-code`를 사용한 경우:
 export CLAUDE_BIN_PATH="$(npm root -g)/@anthropic-ai/claude-code/cli.js"
 ```
 
@@ -80,7 +80,7 @@ assistants:
 Docker image(`ghcr.io/newturn2017/harneeslab`)에는 Claude Code가 미리 설치되어 있고
 `CLAUDE_BIN_PATH`도 미리 설정되어 있으므로 별도 설정이 필요 없습니다.
 
-자세한 내용과 install layout별 경로는 [AI Assistants → Claude Code](/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only)를 참고하세요.
+자세한 내용과 설치 방식별 경로는 [AI Assistants → Claude Code](/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only)를 참고하세요.
 
 ## 설치 확인
 

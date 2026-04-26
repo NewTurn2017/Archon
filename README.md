@@ -74,17 +74,17 @@ nodes:
 작업 repo에서 agent에게 요청하면 HarneesLab이 workflow 선택, branch 생성, worktree 격리, 검증, PR 생성을 처리합니다.
 
 ```text
-You: Use hlab to add dark mode to the settings page
+사용자: hlab로 설정 페이지에 다크 모드를 추가해줘
 
-Agent: I'll run the archon-idea-to-pr workflow for this.
-       -> Creating isolated worktree on branch hlab/task-dark-mode...
-       -> Planning...
-       -> Implementing (task 1/4)...
-       -> Implementing (task 2/4)...
-       -> Tests failing - iterating...
-       -> Tests passing after 2 iterations
-       -> Code review complete - 0 issues
-       -> PR ready: https://github.com/you/project/pull/47
+에이전트: 이 작업에는 archon-idea-to-pr workflow를 실행하겠습니다.
+       -> hlab/task-dark-mode branch에 격리 worktree 생성...
+       -> 계획 수립...
+       -> 구현 중(task 1/4)...
+       -> 구현 중(task 2/4)...
+       -> test 실패 - 반복 수정...
+       -> 2번 반복 후 test 통과
+       -> code review 완료 - issue 0개
+       -> PR 준비 완료: https://github.com/you/project/pull/47
 ```
 
 ## 호환성 정책
@@ -108,11 +108,11 @@ Python 기반의 기존 Archon(task management + RAG)을 찾고 있다면 [`arch
 
 ## 시작하기
 
-처음 사용하는 경우에는 **Full Setup**을 권장합니다. credential, platform integration, HarneesLab skill 설치, Web dashboard까지 한 번에 설정합니다.
+처음 사용하는 경우에는 **전체 설정**을 권장합니다. credential, platform integration, HarneesLab skill 설치, Web dashboard까지 한 번에 설정합니다.
 
-Claude Code가 이미 준비되어 있고 CLI만 빠르게 쓰려면 **Quick Install**로 바로 시작할 수 있습니다.
+Claude Code가 이미 준비되어 있고 CLI만 빠르게 쓰려면 **빠른 설치**로 바로 시작할 수 있습니다.
 
-### Full Setup (5분)
+### 전체 설정 (5분)
 
 repo를 clone한 뒤 guided setup wizard를 실행합니다. 이 과정은 CLI 설치, 인증, platform 선택, target project에 HarneesLab skill 복사를 처리합니다.
 
@@ -175,7 +175,7 @@ HarneesLab 설정을 진행해줘
 
 setup wizard가 CLI 설치, 인증, platform 설정, target repo로 HarneesLab skill 복사를 안내합니다.
 
-### Quick Install (30초)
+### 빠른 설치 (30초)
 
 Claude Code가 이미 준비되어 있다면 standalone CLI binary를 설치하고 wizard를 건너뛸 수 있습니다.
 
@@ -221,11 +221,11 @@ claude
 ```
 
 ```text
-Use hlab to fix issue #42
+hlab로 issue #42를 고쳐줘
 ```
 
 ```text
-What hlab workflows do I have? When would I use each one?
+사용 가능한 hlab workflow와 각각의 사용 시점을 알려줘
 ```
 
 coding agent가 workflow 선택, branch naming, worktree isolation을 처리합니다. project는 처음 사용할 때 자동 등록됩니다.
@@ -284,18 +284,18 @@ default workflow 목록은 `hlab workflow list`로 확인할 수 있습니다. �
 
 자세한 내용은 [Authoring Workflows](https://harneeslab.codewithgenie.com/guides/authoring-workflows/)와 [Authoring Commands](https://harneeslab.codewithgenie.com/guides/authoring-commands/)를 참고하세요.
 
-## Platform 추가
+## 플랫폼 추가
 
 Web UI와 CLI는 바로 사용할 수 있습니다. 원격 접근이 필요하면 chat 또는 forge platform을 연결할 수 있습니다.
 
-| Platform | 예상 설정 시간 | Guide |
+| 플랫폼 | 예상 설정 시간 | 가이드 |
 | --- | --- | --- |
-| **Telegram** | 5분 | [Telegram Guide](https://harneeslab.codewithgenie.com/adapters/telegram/) |
-| **Slack** | 15분 | [Slack Guide](https://harneeslab.codewithgenie.com/adapters/slack/) |
-| **GitHub Webhooks** | 15분 | [GitHub Guide](https://harneeslab.codewithgenie.com/adapters/github/) |
-| **Discord** | 5분 | [Discord Guide](https://harneeslab.codewithgenie.com/adapters/community/discord/) |
+| **Telegram** | 5분 | [Telegram 가이드](https://harneeslab.codewithgenie.com/adapters/telegram/) |
+| **Slack** | 15분 | [Slack 가이드](https://harneeslab.codewithgenie.com/adapters/slack/) |
+| **GitHub Webhooks** | 15분 | [GitHub 가이드](https://harneeslab.codewithgenie.com/adapters/github/) |
+| **Discord** | 5분 | [Discord 가이드](https://harneeslab.codewithgenie.com/adapters/community/discord/) |
 
-## Architecture
+## 아키텍처
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -340,11 +340,11 @@ Web UI와 CLI는 바로 사용할 수 있습니다. 원격 접근이 필요하�
 | [CLI Reference](https://harneeslab.codewithgenie.com/reference/cli/) | 전체 CLI reference |
 | [Authoring Workflows](https://harneeslab.codewithgenie.com/guides/authoring-workflows/) | custom YAML workflow 작성 |
 | [Authoring Commands](https://harneeslab.codewithgenie.com/guides/authoring-commands/) | reusable AI command 작성 |
-| [Configuration](https://harneeslab.codewithgenie.com/reference/configuration/) | config option, env var, YAML setting |
+| [설정](https://harneeslab.codewithgenie.com/reference/configuration/) | config option, env var, YAML setting |
 | [AI Assistants](https://harneeslab.codewithgenie.com/getting-started/ai-assistants/) | Claude와 Codex 설정 |
-| [Deployment](https://harneeslab.codewithgenie.com/deployment/) | Docker, VPS, production setup |
-| [Architecture](https://harneeslab.codewithgenie.com/reference/architecture/) | system design과 internals |
-| [Troubleshooting](https://harneeslab.codewithgenie.com/reference/troubleshooting/) | common issue와 해결 방법 |
+| [배포](https://harneeslab.codewithgenie.com/deployment/) | Docker, VPS, production setup |
+| [아키텍처](https://harneeslab.codewithgenie.com/reference/architecture/) | system design과 internals |
+| [문제 해결](https://harneeslab.codewithgenie.com/reference/troubleshooting/) | common issue와 해결 방법 |
 
 ## Telemetry
 

@@ -1518,7 +1518,7 @@ describe('workflowResumeCommand', () => {
     }
 
     // Printed resume message before delegating to workflowRunCommand
-    expect(consoleSpy).toHaveBeenCalledWith('Workflow 재개: implement');
+    expect(consoleSpy).toHaveBeenCalledWith('워크플로 재개: implement');
     expect(consoleSpy).toHaveBeenCalledWith('경로: /tmp/test-worktree');
   });
 
@@ -1775,7 +1775,7 @@ describe('workflowAbandonCommand', () => {
     await workflowAbandonCommand('run-1');
 
     expect(workflowDb.cancelWorkflowRun).toHaveBeenCalledWith('run-1');
-    expect(consoleSpy).toHaveBeenCalledWith('Workflow run 중단: run-1');
+    expect(consoleSpy).toHaveBeenCalledWith('workflow run 중단: run-1');
   });
 });
 
