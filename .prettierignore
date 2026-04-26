@@ -18,6 +18,9 @@ coverage/
 sessions/
 api_sessions/
 workspace/
+.omx/
+.codex/
+.archon-data/
 
 # Lock files (auto-generated)
 package-lock.json
@@ -38,6 +41,7 @@ packages/docs-web/
 
 # Project documentation (don't auto-format)
 docs/
+AGENTS.md
 CLAUDE.md
 README.md
 CHANGELOG.md
