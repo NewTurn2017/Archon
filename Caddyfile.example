@@ -1,5 +1,5 @@
-# Caddy reverse proxy for Archon.
-# Set DOMAIN=archon.example.com in .env — Caddy handles TLS via Let's Encrypt.
+# Caddy reverse proxy for HarneesLab.
+# Set DOMAIN=harneeslab.example.com in .env — Caddy handles TLS via Let's Encrypt.
 # For local testing, replace {$DOMAIN} with :80 or localhost.
 #
 # Authentication: choose one method (or none):

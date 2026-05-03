@@ -188,7 +188,7 @@ PR_NUMBER=$(cat $ARTIFACTS_DIR/.pr-number | tr -d '\n')
 
 # Create a concise PR comment
 gh pr comment "$PR_NUMBER" --body "$(cat <<'COMMENT'
-## Archon PR Validation Report
+## HarneesLab PR Validation Report
 
 **Verdict**: {APPROVE / REQUEST_CHANGES}
 

@@ -26,7 +26,7 @@ import { resolvePiSession } from './session-resolver';
  * Map Pi provider id → env var name used by pi-ai's getEnvApiKey().
  * Kept small and explicit: v1 supports the most common API-key providers.
  * OAuth flows (Anthropic subscription, Google Gemini CLI, etc.) are out of
- * scope — Archon is a server-side platform and doesn't drive interactive
+ * scope — HarneesLab is a server-side platform and doesn't drive interactive
  * login. Extend only when a provider is actually exercised.
  *
  * Cross-reference (authoritative mapping maintained upstream in Pi):
@@ -147,14 +147,14 @@ export class PiProvider implements IAgentProvider {
     if (!resolvedKey) {
       const envHint = envVarName
         ? `Set ${envVarName} in the environment or codebase env vars (.archon/config.yaml env: section).`
-        : `Provider '${parsed.provider}' is not in the Archon adapter's env-var table — file an issue if you want a shortcut env var for it.`;
+        : `Provider '${parsed.provider}' is not in the HarneesLab adapter's env-var table — file an issue if you want a shortcut env var for it.`;
       const loginHint = `Or run \`pi\` and type \`/login\` locally to authenticate '${parsed.provider}' via OAuth; credentials land in ~/.pi/agent/auth.json and are picked up automatically.`;
       throw new Error(
         `Pi auth: no credentials for provider '${parsed.provider}'. ${envHint} ${loginHint}`
       );
     }
 
-    // 4. Translate Archon nodeConfig to Pi SDK options. All three translations
+    // 4. Translate HarneesLab nodeConfig to Pi SDK options. All three translations
     //    below correspond to capability flags declared `true` in
     //    PI_CAPABILITIES; nodeConfig fields that don't map cleanly still
     //    trigger a dag-executor warning upstream.
@@ -188,7 +188,7 @@ export class PiProvider implements IAgentProvider {
     //        node-level; either overrides Pi's default.
     const systemPrompt = requestOptions?.systemPrompt ?? nodeConfig?.systemPrompt;
 
-    //    4d. skills: Archon uses name references (e.g. `skills: [agent-browser]`).
+    //    4d. skills: HarneesLab uses name references (e.g. `skills: [agent-browser]`).
     //        Resolve each name against .agents/skills and .claude/skills (project
     //        + user-global). Resolved paths go through Pi's additionalSkillPaths;
     //        Pi's buildSystemPrompt appends their agentskills.io XML block to

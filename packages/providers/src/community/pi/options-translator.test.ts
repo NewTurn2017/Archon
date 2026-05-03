@@ -37,7 +37,7 @@ describe('resolvePiThinkingLevel', () => {
     expect(resolvePiThinkingLevel({ effort: 'off' })).toEqual({ level: undefined });
   });
 
-  test("'max' (Archon EffortLevel enum) translates to Pi 'xhigh'", () => {
+  test("'max' (HarneesLab EffortLevel enum) translates to Pi 'xhigh'", () => {
     expect(resolvePiThinkingLevel({ effort: 'max' })).toEqual({ level: 'xhigh' });
     expect(resolvePiThinkingLevel({ thinking: 'max' })).toEqual({ level: 'xhigh' });
   });

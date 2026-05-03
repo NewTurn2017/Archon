@@ -14,7 +14,7 @@ export interface ClaudeProviderDefaults {
    */
   settingSources?: ('project' | 'user')[];
   /** Absolute path to the Claude Code SDK's `cli.js`. Required in compiled
-   *  Archon builds when `CLAUDE_BIN_PATH` is not set; optional in dev mode
+   *  HarneesLab builds when `CLAUDE_BIN_PATH` is not set; optional in dev mode
    *  (SDK resolves from node_modules). */
   claudeBinaryPath?: string;
 }
@@ -27,7 +27,7 @@ export interface CodexProviderDefaults {
   /** Structurally matches @harneeslab/workflows WebSearchMode */
   webSearchMode?: 'disabled' | 'cached' | 'live';
   additionalDirectories?: string[];
-  /** Path to the Codex CLI binary. Overrides auto-detection in compiled Archon builds. */
+  /** Path to the Codex CLI binary. Overrides auto-detection in compiled HarneesLab builds. */
   codexBinaryPath?: string;
 }
 

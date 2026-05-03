@@ -296,7 +296,7 @@ No conflicts encountered during rebase.
 
 ## Metadata
 
-- **Synced by**: Archon
+- **Synced by**: HarneesLab
 - **Timestamp**: {ISO timestamp}
 ```
 

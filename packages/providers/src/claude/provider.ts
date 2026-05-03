@@ -699,7 +699,7 @@ function buildToolCaptureHooks(toolResultQueue: ToolResultEntry[]): Options['hoo
 // ─── Stream Normalizer ───────────────────────────────────────────────────
 
 /**
- * Normalize raw Claude SDK events into Archon MessageChunks.
+ * Normalize raw Claude SDK events into HarneesLab MessageChunks.
  * Drains the tool result queue between events (populated by SDK hooks).
  */
 async function* streamClaudeMessages(

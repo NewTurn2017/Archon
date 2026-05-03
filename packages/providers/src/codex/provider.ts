@@ -184,7 +184,7 @@ interface CodexStreamState {
 }
 
 /**
- * Normalize raw Codex SDK events into Archon MessageChunks.
+ * Normalize raw Codex SDK events into HarneesLab MessageChunks.
  * Handles structured output normalization (Codex returns JSON inline in text).
  */
 async function* streamCodexEvents(

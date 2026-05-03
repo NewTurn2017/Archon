@@ -1,11 +1,11 @@
 ---
-description: feature branch에서 Archon을 시작하고 agent-browser로 수정 동작 검증
+description: feature branch에서 HarneesLab을 시작하고 agent-browser로 수정 동작 검증
 argument-hint: (none - reads from artifacts)
 ---
 
 # E2E 테스트: Feature Branch(수정 검증)
 
-Start Archon from the **feature branch** (this worktree) and use browser automation to verify that the bug is fixed and the UI/UX is correct. Take screenshots as evidence.
+Start HarneesLab from the **feature branch** (this worktree) and use browser automation to verify that the bug is fixed and the UI/UX is correct. Take screenshots as evidence.
 
 **CRITICAL**: You MUST use the `agent-browser` CLI for ALL browser interactions. Load the `/agent-browser` skill for the full command reference.
 
@@ -17,7 +17,7 @@ Example: `agent-browser --session $WORKFLOW_ID open "http://..."`, `agent-browse
 
 **ABSOLUTELY FORBIDDEN — NEVER DO ANY OF THESE**:
 - `taskkill //F //IM chrome.exe` or ANY variant that kills chrome by image name — this kills the USER's browser
-- `taskkill //F //IM node.exe` or `taskkill //F //IM bun.exe` — this kills Claude Code, the Archon server, and all other workflows
+- `taskkill //F //IM node.exe` or `taskkill //F //IM bun.exe` — this kills Claude Code, the HarneesLab server, and all other workflows
 - `pkill chrome`, `pkill node`, `pkill bun`, or any broad process-name kill
 - `agent-browser close` without `--session $WORKFLOW_ID` — this kills OTHER workflows' browser sessions
 - Any "kill everything" or "kill all" escalation pattern — if agent-browser isn't working, SKIP E2E testing and note it in your report
@@ -91,7 +91,7 @@ cat $ARTIFACTS_DIR/code-review-feature.md 2>/dev/null || echo ""
 
 ---
 
-## Phase 2: 시작 Archon on Feature Branch
+## Phase 2: 시작 HarneesLab on Feature Branch
 
 ### 2.1 필요 시 dependencies 설치
 
@@ -188,7 +188,7 @@ fi
 ### 3.2 core browser workflow
 
 ```bash
-# 1. Open the Archon UI (ALWAYS use --session)
+# 1. Open the HarneesLab UI (ALWAYS use --session)
 FRONTEND_PORT=$(cat $ARTIFACTS_DIR/.frontend-port | tr -d '\n')
 agent-browser --session $WORKFLOW_ID open "http://localhost:$FRONTEND_PORT"
 
@@ -251,7 +251,7 @@ curl -s "http://localhost:$BACKEND_PORT/api/conversations" | head -c 500
 agent-browser --session $WORKFLOW_ID close 2>/dev/null || true
 ```
 
-### 4.2 feature branch Archon 종료(cross-platform)
+### 4.2 feature branch HarneesLab 종료(cross-platform)
 
 Kill processes by PID (recorded in Phase 2) AND by port (fallback). This works on both Windows and Unix.
 
@@ -340,10 +340,10 @@ Write to `$ARTIFACTS_DIR/e2e-feature.md`:
 
 ## 성공 기준
 
-- **ARCHON_STARTED**: Backend and frontend running on feature branch code
+- **HARNEESLAB_STARTED**: Backend and frontend running on feature branch code
 - **ALL_TESTS_RERUN**: Every test case from main branch E2E re-executed
 - **FIX_VERIFIED**: Each bug confirmed fixed (or documented as still present)
 - **UX_VALIDATED**: Visual quality, responsiveness, edge cases checked
 - **NO_REGRESSIONS**: No new issues introduced
-- **ARCHON_STOPPED**: Processes killed, ports freed — **VERIFY ports are free before finishing**
+- **HARNEESLAB_STOPPED**: Processes killed, ports freed — **VERIFY ports are free before finishing**
 - **ARTIFACT_WRITTEN**: `$ARTIFACTS_DIR/e2e-feature.md` created

@@ -55,7 +55,7 @@ nodes:
 
       Analyze the user's request and the existing codebase to determine:
       1. A kebab-case workflow name (e.g., "lint-and-test", "deploy-staging")
-      2. A Korean description following the Archon routing pattern:
+      2. A Korean description following the HarneesLab routing pattern:
          `사용할 때` / `트리거 예시` / `하는 일` / `사용하지 않을 때`
       3. Trigger phrases the router should match
       4. A list of proposed nodes with their types and purposes
@@ -85,7 +85,7 @@ nodes:
 
   - id: generate-yaml
     prompt: |
-      You are an Archon workflow author. Generate a complete, valid workflow YAML file
+      You are a HarneesLab workflow author. Generate a complete, valid workflow YAML file
       based on the structured intent provided.
 
       ## Intent
@@ -98,7 +98,7 @@ nodes:
       ## Original User Request
       $ARGUMENTS
 
-      ## Archon Workflow YAML Schema Reference
+      ## HarneesLab Workflow YAML Schema Reference
 
       A workflow YAML file has this structure:
 

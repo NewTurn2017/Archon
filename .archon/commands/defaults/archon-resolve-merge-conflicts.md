@@ -360,7 +360,7 @@ Resolved {N} conflicts in {M} files.
 
 ## Metadata
 
-- **Resolved by**: Archon
+- **Resolved by**: HarneesLab
 - **Timestamp**: {ISO timestamp}
 ```
 
@@ -387,7 +387,7 @@ gh pr comment {number} --body "$(cat <<'EOF'
 See `$ARTIFACTS_DIR/../reviews/pr-{number}/conflict-resolution.md` for full resolution details.
 
 ---
-*Resolved by Archon resolve-conflicts workflow*
+*Resolved by HarneesLab resolve-conflicts workflow*
 EOF
 )"
 ```

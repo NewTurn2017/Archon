@@ -307,7 +307,7 @@ gh pr comment $PR_NUMBER --body "$(cat <<'EOF'
 
 ---
 
-*Auto-fix by Archon · fixes pushed to `{HEAD_BRANCH}`*
+*Auto-fix by HarneesLab · fixes pushed to `{HEAD_BRANCH}`*
 EOF
 )"
 ```

@@ -366,7 +366,7 @@ gh pr comment {number} --body "$(cat <<'EOF'
 
 ---
 
-*Reviewed by Archon comprehensive-pr-review workflow*
+*Reviewed by HarneesLab comprehensive-pr-review workflow*
 *Artifacts: `$ARTIFACTS_DIR/review/`*
 EOF
 )"

@@ -369,7 +369,7 @@ git checkout -b ralph/{feature-slug}
 echo "# Ralph Progress Log\nStarted: $(date)\n---" > .archon/ralph/{feature-slug}/progress.txt
 
 # Run Ralph - specify the feature directory
-@Archon run ralph .archon/ralph/{feature-slug}
+@HarneesLab run ralph .archon/ralph/{feature-slug}
 ```
 ```
 

@@ -18,7 +18,7 @@ nodes:
 
   - id: classify
     prompt: |
-      You are a problem classifier for the Archon codebase. Analyze the user's
+      You are a problem classifier for the HarneesLab codebase. Analyze the user's
       description and determine the issue type and which area of the system is affected.
 
       ## User's Description
@@ -41,7 +41,7 @@ nodes:
       - Choose the MOST SPECIFIC area. "SSE disconnects" = web-ui (not api-server).
       - If ambiguous between two areas, pick the one closer to the user-facing symptom.
       - Use "other" only when the problem genuinely doesn't fit any specific area.
-      - needs_server: Set to "true" if reproducing requires a running Archon server.
+      - needs_server: Set to "true" if reproducing requires a running HarneesLab server.
         Typically true for: web-ui, api-server, core, adapters.
         Typically false for: cli, isolation, workflows, database.
         For "other": use your judgment based on the description.

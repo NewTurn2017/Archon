@@ -386,7 +386,7 @@ gh pr comment {number} --body "$(cat <<'EOF'
 
 ---
 
-*Auto-fixed by Archon comprehensive-pr-review workflow*
+*Auto-fixed by HarneesLab comprehensive-pr-review workflow*
 *Fixes pushed to branch `{HEAD_BRANCH}`*
 EOF
 )"

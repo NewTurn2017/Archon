@@ -285,7 +285,7 @@ gh issue comment $ISSUE_NUMBER --body "$(cat <<'EOF'
 
 ---
 
-*Resolved by Archon workflow `$WORKFLOW_ID`*
+*Resolved by HarneesLab workflow `$WORKFLOW_ID`*
 EOF
 )"
 ```

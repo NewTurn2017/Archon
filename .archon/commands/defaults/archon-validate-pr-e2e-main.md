@@ -1,11 +1,11 @@
 ---
-description: main branch에서 Archon을 시작하고 agent-browser로 bug를 E2E 재현
+description: main branch에서 HarneesLab을 시작하고 agent-browser로 bug를 E2E 재현
 argument-hint: (none - reads from artifacts)
 ---
 
 # E2E 테스트: Main Branch(버그 재현)
 
-Start Archon from the **main branch** code and use browser automation to reproduce the bug or gap described in the PR. Take screenshots as evidence.
+Start HarneesLab from the **main branch** code and use browser automation to reproduce the bug or gap described in the PR. Take screenshots as evidence.
 
 **CRITICAL**: You MUST use the `agent-browser` CLI for ALL browser interactions. Load the `/agent-browser` skill for the full command reference.
 
@@ -18,7 +18,7 @@ The session ID is written to `$ARTIFACTS_DIR/.browser-session` for cleanup.
 
 **ABSOLUTELY FORBIDDEN — NEVER DO ANY OF THESE**:
 - `taskkill //F //IM chrome.exe` or ANY variant that kills chrome by image name — this kills the USER's browser
-- `taskkill //F //IM node.exe` or `taskkill //F //IM bun.exe` — this kills Claude Code, the Archon server, and all other workflows
+- `taskkill //F //IM node.exe` or `taskkill //F //IM bun.exe` — this kills Claude Code, the HarneesLab server, and all other workflows
 - `pkill chrome`, `pkill node`, `pkill bun`, or any broad process-name kill
 - `agent-browser close` without `--session $WORKFLOW_ID` — this kills OTHER workflows' browser sessions
 - Any "kill everything" or "kill all" escalation pattern — if agent-browser isn't working, SKIP E2E testing and note it in your report
@@ -67,7 +67,7 @@ Use the test plan above combined with the PR description and code review to buil
 
 ---
 
-## Phase 2: 시작 Archon on Main Branch
+## Phase 2: 시작 HarneesLab on Main Branch
 
 ### 2.1 격리된 main branch worktree 생성
 
@@ -188,7 +188,7 @@ Follow this pattern for every interaction:
 # 0. Store session ID for cleanup
 echo "$WORKFLOW_ID" > "$ARTIFACTS_DIR/.browser-session"
 
-# 1. Open the Archon UI (ALWAYS use --session)
+# 1. Open the HarneesLab UI (ALWAYS use --session)
 FRONTEND_PORT=$(cat $ARTIFACTS_DIR/.frontend-port | tr -d '\n')
 agent-browser --session $WORKFLOW_ID open "http://localhost:$FRONTEND_PORT"
 
@@ -253,7 +253,7 @@ curl -s "http://localhost:$BACKEND_PORT/api/conversations" | head -c 500
 agent-browser --session $WORKFLOW_ID close 2>/dev/null || true
 ```
 
-### 4.2 main branch Archon 종료(cross-platform)
+### 4.2 main branch HarneesLab 종료(cross-platform)
 
 Kill processes by PID (recorded in Phase 2) AND by port (fallback). This works on both Windows and Unix.
 
@@ -345,9 +345,9 @@ Write to `$ARTIFACTS_DIR/e2e-main.md`:
 
 ## 성공 기준
 
-- **ARCHON_STARTED**: Backend and frontend running on allocated ports
+- **HARNEESLAB_STARTED**: Backend and frontend running on allocated ports
 - **BROWSER_TESTED**: All test cases executed with agent-browser
 - **SCREENSHOTS_TAKEN**: Evidence captured for each test case
 - **BUG_ASSESSED**: Each PR claim tested on main branch
-- **ARCHON_STOPPED**: Processes killed, ports freed — **VERIFY ports are free before finishing**
+- **HARNEESLAB_STOPPED**: Processes killed, ports freed — **VERIFY ports are free before finishing**
 - **ARTIFACT_WRITTEN**: `$ARTIFACTS_DIR/e2e-main.md` created

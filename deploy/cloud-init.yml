@@ -15,21 +15,21 @@
 #   3. Creates a 2GB swapfile (helps small VPS builds avoid OOM)
 #   4. Clones the repo to /opt/harneeslab
 #   5. Prepares .env and Caddyfile from examples
-#   6. Creates a dedicated 'archon' user (docker group only, no sudo)
-#   7. Builds the Docker image (~5 min) as the archon user
+#   6. Creates a dedicated 'harneeslab' user (docker group only, no sudo)
+#   7. Builds the Docker image (~5 min) as the harneeslab user
 #
 # Note: On VPS with <2GB RAM, the docker build step can OOM without swap.
-# Note: The 'archon' user has docker access but NOT sudo. For administrative
+# Note: The 'harneeslab' user has docker access but NOT sudo. For administrative
 #       tasks (updates, reboots), use the default cloud user or root.
 #
-# After the server boots (~5-8 min), SSH in as the archon user:
-#   ssh archon@your-server-ip
+# After the server boots (~5-8 min), SSH in as the harneeslab user:
+#   ssh harneeslab@your-server-ip
 #   1. Edit /opt/harneeslab/.env — set your AI credentials, DOMAIN, DATABASE_URL
 #   2. cd /opt/harneeslab && docker compose --profile with-db --profile cloud up -d
 #   3. Open https://your-domain.com
 #
 # IMPORTANT: Before starting, point your domain's DNS A record to this server's IP.
-#           SSH keys from the default cloud user are copied to 'archon'.
+#           SSH keys from the default cloud user are copied to 'harneeslab'.
 #
 
 package_update: true
@@ -42,7 +42,7 @@ packages:
 
 users:
   - default
-  - name: archon
+  - name: harneeslab
     gecos: HarneesLab Service User
     shell: /bin/bash
     lock_passwd: true
@@ -60,23 +60,23 @@ runcmd:
 
   # --- Docker ---
   - curl -fsSL https://get.docker.com | sh
-  - usermod -aG docker archon
+  - usermod -aG docker harneeslab
 
-  # --- Copy SSH keys from default user to archon (so login works immediately) ---
+  # --- Copy SSH keys from default user to harneeslab (so login works immediately) ---
   - |
     DEFAULT_USER=$(getent passwd 1000 | cut -d: -f1)
     if [ -n "$DEFAULT_USER" ] && [ -f /home/$DEFAULT_USER/.ssh/authorized_keys ]; then
-      mkdir -p /home/archon/.ssh
-      cp /home/$DEFAULT_USER/.ssh/authorized_keys /home/archon/.ssh/authorized_keys
-      chmod 700 /home/archon/.ssh
-      chmod 600 /home/archon/.ssh/authorized_keys
-      chown -R archon:archon /home/archon/.ssh
+      mkdir -p /home/harneeslab/.ssh
+      cp /home/$DEFAULT_USER/.ssh/authorized_keys /home/harneeslab/.ssh/authorized_keys
+      chmod 700 /home/harneeslab/.ssh
+      chmod 600 /home/harneeslab/.ssh/authorized_keys
+      chown -R harneeslab:harneeslab /home/harneeslab/.ssh
     elif [ -f /root/.ssh/authorized_keys ]; then
-      mkdir -p /home/archon/.ssh
-      cp /root/.ssh/authorized_keys /home/archon/.ssh/authorized_keys
-      chmod 700 /home/archon/.ssh
-      chmod 600 /home/archon/.ssh/authorized_keys
-      chown -R archon:archon /home/archon/.ssh
+      mkdir -p /home/harneeslab/.ssh
+      cp /root/.ssh/authorized_keys /home/harneeslab/.ssh/authorized_keys
+      chmod 700 /home/harneeslab/.ssh
+      chmod 600 /home/harneeslab/.ssh/authorized_keys
+      chown -R harneeslab:harneeslab /home/harneeslab/.ssh
     fi
 
   # --- Firewall (443/udp needed for HTTP/3 QUIC via Caddy) ---
@@ -92,14 +92,14 @@ runcmd:
     git clone https://github.com/NewTurn2017/HarneesLab.git /opt/harneeslab
     cp /opt/harneeslab/.env.example /opt/harneeslab/.env
     cp /opt/harneeslab/Caddyfile.example /opt/harneeslab/Caddyfile
-    chown -R archon:archon /opt/harneeslab
+    chown -R harneeslab:harneeslab /opt/harneeslab
 
-  # --- Pre-pull external images (as archon, via docker group) ---
-  - sudo -u archon docker pull postgres:17-alpine
-  - sudo -u archon docker pull caddy:2-alpine
+  # --- Pre-pull external images (as harneeslab, via docker group) ---
+  - sudo -u harneeslab docker pull postgres:17-alpine
+  - sudo -u harneeslab docker pull caddy:2-alpine
 
-  # --- Build the app image as archon ---
-  - sudo -u archon -H bash -c 'cd /opt/harneeslab && docker compose build'
+  # --- Build the app image as harneeslab ---
+  - sudo -u harneeslab -H bash -c 'cd /opt/harneeslab && docker compose build'
 
   # --- Signal completion ---
   - |
@@ -108,10 +108,10 @@ runcmd:
     HarneesLab server setup complete!
     ============================================
 
-    Log in as the 'archon' user (not root):
-      ssh archon@<server-ip>
+    Log in as the 'harneeslab' user (not root):
+      ssh harneeslab@<server-ip>
 
-    Note: the 'archon' user has docker access but no sudo. For system
+    Note: the 'harneeslab' user has docker access but no sudo. For system
     maintenance (apt upgrade, reboots), log in as the default cloud user
     or root.
 
@@ -122,7 +122,7 @@ runcmd:
 
          Required:
            CLAUDE_CODE_OAUTH_TOKEN=sk-ant-oat01-...  (or CLAUDE_API_KEY)
-           DOMAIN=archon.example.com
+           DOMAIN=harneeslab.example.com
            DATABASE_URL=postgresql://postgres:postgres@postgres:5432/remote_coding_agent
 
       2. (Optional) Set up basic auth to protect the Web UI:

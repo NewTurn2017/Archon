@@ -6,12 +6,12 @@
  *
  * 1. CWD .env leak: Bun unconditionally loads .env / .env.local /
  *    .env.development / .env.production from CWD before any user code runs.
- *    When `archon` is invoked from inside a target repo, that repo's env vars
- *    leak into the Archon process. `override: true` in dotenv only fixes keys
+ *    When `hlab` is invoked from inside a target repo, that repo's env vars
+ *    leak into the HarneesLab process. `override: true` in dotenv only fixes keys
  *    that exist in both files — keys that only appear in the target repo's .env
  *    survive unaffected. We strip them.
  *
- * 2. Nested Claude Code session markers: When archon is launched from inside a
+ * 2. Nested Claude Code session markers: When hlab is launched from inside a
  *    Claude Code terminal, the parent shell exports CLAUDECODE=1 and several
  *    CLAUDE_CODE_* markers. The Claude Agent SDK leaks process.env into the
  *    spawned child regardless of the explicit `env` option
@@ -51,7 +51,7 @@ export function stripCwdEnv(cwd: string = process.cwd()): void {
       const code = (result.error as NodeJS.ErrnoException).code;
       if (code !== 'ENOENT') {
         process.stderr.write(
-          `[archon] Warning: could not parse ${filepath} for CWD env stripping: ${result.error.message}\n`
+          `[hlab] Warning: could not parse ${filepath} for CWD env stripping: ${result.error.message}\n`
         );
       }
     } else if (result.parsed) {
@@ -73,7 +73,7 @@ export function stripCwdEnv(cwd: string = process.cwd()): void {
     process.stderr.write(
       '\u26a0  Detected CLAUDECODE=1 \u2014 running inside a Claude Code session.\n' +
         '   If workflows hang silently, this is a known class of issue.\n' +
-        '   Workaround: run `archon serve` from a regular shell.\n' +
+        '   Workaround: run `hlab serve` from a regular shell.\n' +
         '   Suppress: set ARCHON_SUPPRESS_NESTED_CLAUDE_WARNING=1\n' +
         '   Details: https://github.com/coleam00/Archon/issues/1067\n'
     );

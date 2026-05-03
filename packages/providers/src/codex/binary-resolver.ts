@@ -1,5 +1,5 @@
 /**
- * Codex binary resolver for compiled (bun --compile) archon binaries.
+ * Codex binary resolver for compiled (bun --compile) HarneesLab binaries.
  *
  * The @openai/codex-sdk uses `createRequire(import.meta.url)` to locate the
  * native Codex CLI binary, which breaks in compiled binaries where
@@ -93,7 +93,7 @@ export async function resolveCodexBinaryPath(
   const vendorPath = `~/.archon/${CODEX_VENDOR_DIR}/`;
   throw new Error(
     'Codex CLI binary not found. The Codex provider requires a native binary\n' +
-      'that cannot be resolved automatically in compiled Archon builds.\n\n' +
+      'that cannot be resolved automatically in compiled HarneesLab builds.\n\n' +
       'To fix, choose one of:\n' +
       '  1. Install globally: npm install -g @openai/codex\n' +
       '     Then set: CODEX_BIN_PATH=$(which codex)\n\n' +

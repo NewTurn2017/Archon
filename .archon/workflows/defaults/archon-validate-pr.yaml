@@ -109,7 +109,7 @@ nodes:
 
       - **e2e_testable**: Changes affect the Web UI (components, hooks, styles, API routes
         that serve the frontend, SSE streaming, layout, user-visible behavior). These can be
-        validated by starting Archon and using agent-browser to interact with the UI.
+        validated by starting HarneesLab and using agent-browser to interact with the UI.
       - **code_review_only**: Changes are purely backend logic, CLI-only, workflow engine,
         database schemas, git operations, build tooling, tests, documentation, or other
         non-UI code. No visual validation possible.

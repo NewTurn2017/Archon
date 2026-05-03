@@ -118,7 +118,7 @@ describe('serializeToolResult', () => {
 // ─── usageToTokens ─────────────────────────────────────────────────────────
 
 describe('usageToTokens', () => {
-  test('maps Pi Usage to Archon TokenUsage', () => {
+  test('maps Pi Usage to HarneesLab TokenUsage', () => {
     const usage = {
       input: 100,
       output: 50,

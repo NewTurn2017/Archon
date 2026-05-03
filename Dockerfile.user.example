@@ -1,14 +1,14 @@
-# User-extensible Dockerfile for Archon (development / local Docker).
+# User-extensible Dockerfile for HarneesLab (development / local Docker).
 # Copy this file to Dockerfile.user — do NOT modify Dockerfile.user.example.
 # Dockerfile.user is gitignored so your customizations stay local.
 #
 # Build the base image first, then start the stack:
-#   docker compose build           # builds the base archon image
+#   docker compose build           # builds the base HarneesLab image
 #   docker compose up -d           # auto-merges docker-compose.override.yml
 #
 # This file extends the locally-built dev image. Add any tools you need below.
 
-FROM archon
+FROM harneeslab
 
 # Install additional system packages
 USER root
