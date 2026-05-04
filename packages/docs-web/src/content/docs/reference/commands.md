@@ -40,7 +40,7 @@ HarneesLab에서 사용할 수 있는 slash command 전체 목록입니다. Web 
 | `/workflow run <name> [args]` | workflow를 직접 실행 |
 | `/workflow cleanup [days]` | CLI 전용 -- 오래된 run record 삭제(기본값: 7일) |
 
-> **참고:** Workflow는 `.archon/workflows/`의 YAML file입니다. `.archon`은 HarneesLab/Archon configuration과 resource의 표준 경로이며, workflow와 script는 각각 `.archon/workflows/`, `.archon/scripts/` 아래에 둡니다.
+> **참고:** Workflow는 `.harneeslab/workflows/`의 YAML file입니다. `.harneeslab`은 HarneesLab/HarneesLab configuration과 resource의 표준 경로이며, workflow와 script는 각각 `.harneeslab/workflows/`, `.harneeslab/scripts/` 아래에 둡니다.
 
 ## Session 관리
 
@@ -72,7 +72,7 @@ HarneesLab에서 사용할 수 있는 slash command 전체 목록입니다. Web 
 | `/worktree remove [--force]` | 현재 worktree 제거 |
 | `/worktree cleanup merged\|stale` | worktree 정리 |
 | `/worktree orphans` | git에서 확인되는 모든 worktree 표시 |
-| `/init` | 현재 repo에 `.archon` 구조 생성 |
+| `/init` | 현재 repo에 `.harneeslab` 구조 생성 |
 | `/reset-context` | worktree는 유지하고 AI context만 reset |
 
 > **참고:** 실제로는 이 명령을 직접 입력할 일이 거의 없습니다. 원하는 일을 자연어로 설명하면 AI router가 적절한 command 또는 workflow를 호출합니다.

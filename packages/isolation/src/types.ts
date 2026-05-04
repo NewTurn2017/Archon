@@ -33,7 +33,7 @@ interface IsolationRequestBase {
    * Absolute, resolved filesystem path to the main repository checkout.
    *
    * "Canonical" means the real path with symlinks resolved and `~` expanded
-   * (e.g., `/home/user/.archon/workspaces/owner/repo/source`). This must
+   * (e.g., `/home/user/.harneeslab/workspaces/owner/repo/source`). This must
    * point to the primary git checkout, not a worktree, because git worktree
    * operations (add, remove, list) must be executed from the main repo.
    *

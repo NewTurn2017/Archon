@@ -9,33 +9,33 @@ sidebar:
   order: 8
 ---
 
-`~/.archon/.archon/workflows/`에 둔 workflow는 전역으로 로드됩니다. 모든 프로젝트의 `workflow list`에 표시되며 어느 저장소에서든 실행할 수 있습니다. HarneesLab은 Archon fork compatibility 때문에 기본 user-level home 경로로 `~/.archon`을 계속 사용합니다.
+`~/.harneeslab/.harneeslab/workflows/`에 둔 workflow는 전역으로 로드됩니다. 모든 프로젝트의 `workflow list`에 표시되며 어느 저장소에서든 실행할 수 있습니다. HarneesLab은 기본 user-level home 경로는 `~/.harneeslab`입니다.
 
 ## 경로
 
 ```
-~/.archon/.archon/workflows/
+~/.harneeslab/.harneeslab/workflows/
 ```
 
 또는 `HARNEESLAB_HOME`을 설정했다면 다음 경로를 사용합니다.
 
 ```
-$HARNEESLAB_HOME/.archon/workflows/
+$HARNEESLAB_HOME/.harneeslab/workflows/
 ```
 
-`ARCHON_HOME`은 legacy fallback으로 계속 지원됩니다.
+`HARNEESLAB_HOME`을 설정하면 전역 workflow 위치도 해당 home 아래로 바뀝니다.
 
 디렉터리가 없다면 생성하세요.
 
 ```bash
-mkdir -p ~/.archon/.archon/workflows
+mkdir -p ~/.harneeslab/.harneeslab/workflows
 ```
 
 ## 로드 우선순위
 
 1. **기본 제공 워크플로**(가장 낮은 우선순위)
-2. **전역 workflow** -- `~/.archon/.archon/workflows/`(파일명이 같으면 기본 제공 workflow를 덮어씀)
-3. **저장소별 workflow** -- `.archon/workflows/`(파일명이 같으면 전역 workflow를 덮어씀)
+2. **전역 workflow** -- `~/.harneeslab/.harneeslab/workflows/`(파일명이 같으면 기본 제공 workflow를 덮어씀)
+3. **저장소별 workflow** -- `.harneeslab/workflows/`(파일명이 같으면 전역 workflow를 덮어씀)
 
 전역 workflow가 기본 제공 workflow와 같은 파일명을 가지면 전역 버전이 사용됩니다. 저장소별 workflow가 전역 workflow와 같은 파일명을 가지면 저장소별 버전이 사용됩니다.
 
@@ -48,7 +48,7 @@ mkdir -p ~/.archon/.archon/workflows
 모든 프로젝트에서 선호하는 리뷰 체크리스트를 실행하는 workflow입니다.
 
 ```yaml
-# ~/.archon/.archon/workflows/my-review.yaml
+# ~/.harneeslab/.harneeslab/workflows/my-review.yaml
 name: my-review
 description: Personal code review with my standards
 model: sonnet
@@ -66,7 +66,7 @@ nodes:
 프로젝트에 종속되지 않는 검사를 실행하는 workflow입니다.
 
 ```yaml
-# ~/.archon/.archon/workflows/lint-check.yaml
+# ~/.harneeslab/.harneeslab/workflows/lint-check.yaml
 name: lint-check
 description: Check for common code quality issues across any project
 
@@ -85,7 +85,7 @@ nodes:
 익숙하지 않은 코드베이스를 이해하기 위한 간단한 workflow입니다.
 
 ```yaml
-# ~/.archon/.archon/workflows/explain.yaml
+# ~/.harneeslab/.harneeslab/workflows/explain.yaml
 name: explain
 description: Quick explanation of a codebase or module
 model: haiku
@@ -106,8 +106,8 @@ nodes:
 ```bash
 # In your dotfiles repo
 dotfiles/
-└── archon/
-    └── .archon/
+└── harneeslab/
+    └── .harneeslab/
         └── workflows/
             ├── my-review.yaml
             └── explain.yaml
@@ -116,14 +116,14 @@ dotfiles/
 그런 다음 dotfiles 설정 과정에서 symlink를 만듭니다.
 
 ```bash
-ln -sf ~/dotfiles/archon/.archon/workflows ~/.archon/.archon/workflows
+ln -sf ~/dotfiles/harneeslab/.harneeslab/workflows ~/.harneeslab/.harneeslab/workflows
 ```
 
 또는 dotfiles 설치 스크립트의 일부로 복사할 수도 있습니다.
 
 ```bash
-mkdir -p ~/.archon/.archon/workflows
-cp ~/dotfiles/archon/.archon/workflows/*.yaml ~/.archon/.archon/workflows/
+mkdir -p ~/.harneeslab/.harneeslab/workflows
+cp ~/dotfiles/harneeslab/.harneeslab/workflows/*.yaml ~/.harneeslab/.harneeslab/workflows/
 ```
 
 이렇게 하면 개인 workflow를 여러 컴퓨터에서 함께 사용할 수 있습니다.
@@ -144,10 +144,10 @@ hlab workflow run my-review
 
 ### Workflow가 목록에 표시되지 않음
 
-1. **경로 확인** -- 디렉터리는 정확히 `~/.archon/.archon/workflows/`여야 합니다(`.archon`이 두 번 나오는 점에 주의). 첫 번째 `.archon`은 compatibility home directory이고, 두 번째 `.archon`은 그 안의 표준 config directory structure입니다.
+1. **경로 확인** -- 디렉터리는 정확히 `~/.harneeslab/.harneeslab/workflows/`여야 합니다(`.harneeslab`이 두 번 나오는 점에 주의). 첫 번째 `.harneeslab`은 HarneesLab home directory이고, 두 번째 `.harneeslab`은 그 안의 표준 config directory structure입니다.
 
    ```bash
-   ls ~/.archon/.archon/workflows/
+   ls ~/.harneeslab/.harneeslab/workflows/
    ```
 
 2. **파일 확장자 확인** -- Workflow 파일은 `.yaml` 또는 `.yml`로 끝나야 합니다.
@@ -160,4 +160,4 @@ hlab workflow run my-review
 
 4. **이름 충돌 확인** -- 저장소별 workflow가 같은 파일명을 가지면 전역 workflow를 덮어씁니다. 해당 저장소 안에서는 전역 버전이 표시되지 않습니다.
 
-5. **HARNEESLAB_HOME / ARCHON_HOME 확인** -- `HARNEESLAB_HOME` 또는 `ARCHON_HOME`을 커스텀 경로로 설정했다면 전역 workflow는 `~/.archon/.archon/workflows/`가 아니라 해당 home directory 아래의 `.archon/workflows/`에 있어야 합니다.
+5. **HARNEESLAB_HOME 확인** -- `HARNEESLAB_HOME`을 커스텀 경로로 설정했다면 전역 workflow는 `~/.harneeslab/.harneeslab/workflows/`가 아니라 해당 home directory 아래의 `.harneeslab/workflows/`에 있어야 합니다.

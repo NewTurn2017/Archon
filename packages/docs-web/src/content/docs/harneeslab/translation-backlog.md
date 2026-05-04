@@ -12,7 +12,7 @@ description: HarneesLab에서 먼저 손댈 문서 묶음과 이유를 정리한
 ### README
 
 - 이유: GitHub 첫 화면에서 프로젝트 성격을 바로 설명해야 함
-- 범위: 소개, 왜 Archon인가, Getting Started, Web UI, 주요 워크플로 요약
+- 범위: 소개, 왜 HarneesLab인가, Getting Started, Web UI, 주요 워크플로 요약
 - 목표: 포크 방문자가 한국어 프로젝트 방향을 3분 안에 이해할 수 있게 만들기
 - 현재 상태: 완료. README는 HarneesLab 소개, 시작하기, Web UI, 기본 workflow, 설치 흐름을 한국어 중심으로 정리했습니다.
 
@@ -35,7 +35,7 @@ description: HarneesLab에서 먼저 손댈 문서 묶음과 이유를 정리한
 ### 워크플로 작성 가이드
 
 - 대상: `guides/authoring-workflows.md`
-- 이유: Archon의 차별점이 가장 강하게 드러나는 문서
+- 이유: HarneesLab의 차별점이 가장 강하게 드러나는 문서
 
 ### 핵심 개념 문서
 

@@ -66,7 +66,7 @@ nodes:
           enum: [low, medium, high, critical]
       required: [issue_type, title]
 
-  # ── COMMAND NODE: Loads .archon/commands/<name>.md ──
+  # ── COMMAND NODE: Loads .harneeslab/commands/<name>.md ──
   - id: investigate
     command: investigate-bug
     depends_on: [classify]

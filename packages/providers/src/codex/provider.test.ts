@@ -743,9 +743,9 @@ describe('CodexProvider', () => {
 
     test('builds env by preserving process vars and letting request env win on collisions', async () => {
       const originalPath = process.env.PATH;
-      const originalArchonEnv = process.env.ARCHON_CODEX_TEST_ENV;
+      const originalHarneesLabEnv = process.env.HARNEESLAB_CODEX_TEST_ENV;
       process.env.PATH = 'from-process';
-      process.env.ARCHON_CODEX_TEST_ENV = 'kept-from-process';
+      process.env.HARNEESLAB_CODEX_TEST_ENV = 'kept-from-process';
 
       try {
         mockRunStreamed.mockResolvedValue({
@@ -764,7 +764,7 @@ describe('CodexProvider', () => {
           expect.objectContaining({
             env: expect.objectContaining({
               PATH: 'from-request',
-              ARCHON_CODEX_TEST_ENV: 'kept-from-process',
+              HARNEESLAB_CODEX_TEST_ENV: 'kept-from-process',
               MY_SECRET: 'abc123',
             }),
           })
@@ -775,10 +775,10 @@ describe('CodexProvider', () => {
         } else {
           process.env.PATH = originalPath;
         }
-        if (originalArchonEnv === undefined) {
-          delete process.env.ARCHON_CODEX_TEST_ENV;
+        if (originalHarneesLabEnv === undefined) {
+          delete process.env.HARNEESLAB_CODEX_TEST_ENV;
         } else {
-          process.env.ARCHON_CODEX_TEST_ENV = originalArchonEnv;
+          process.env.HARNEESLAB_CODEX_TEST_ENV = originalHarneesLabEnv;
         }
       }
     });
@@ -1012,7 +1012,7 @@ describe('CodexProvider', () => {
         'Model "o5-pro" is not available for your account'
       );
       await expect(consumeGenerator()).rejects.toThrow(
-        'update your model in ~/.archon/config.yaml'
+        'update your model in ~/.harneeslab/config.yaml'
       );
     });
 

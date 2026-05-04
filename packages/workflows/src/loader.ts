@@ -215,7 +215,7 @@ export function parseWorkflow(content: string, filename: string): ParseResult {
     const hasSteps = Array.isArray(raw.steps) && raw.steps.length > 0;
     if (hasSteps) {
       errors.push(
-        '`steps:` format has been removed. Workflows now use `nodes:` (DAG) format exclusively. Your bundled defaults are already updated — custom workflows need manual migration. See docs/sequential-dag-migration-guide.md for conversion patterns, or run: claude "Read docs/sequential-dag-migration-guide.md then convert .archon/workflows/<file> to nodes: format"'
+        '`steps:` format has been removed. Workflows now use `nodes:` (DAG) format exclusively. Your bundled defaults are already updated — custom workflows need manual migration. See docs/sequential-dag-migration-guide.md for conversion patterns, or run: claude "Read docs/sequential-dag-migration-guide.md then convert .harneeslab/workflows/<file> to nodes: format"'
       );
     }
 

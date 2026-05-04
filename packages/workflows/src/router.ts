@@ -214,8 +214,8 @@ export function findWorkflow(
  * Resolve a workflow by name using a 4-tier fallback hierarchy:
  * 1. Exact match
  * 2. Case-insensitive match
- * 3. Suffix match (e.g. "assist" → "archon-assist")
- * 4. Substring match (e.g. "smart" → "archon-smart-pr-review")
+ * 3. Suffix match (e.g. "assist" → "harneeslab-assist")
+ * 4. Substring match (e.g. "smart" → "harneeslab-smart-pr-review")
  *
  * Returns the matched workflow, or undefined if no match found.
  * Throws an Error if multiple workflows match at the same tier (ambiguous).
@@ -252,12 +252,12 @@ export function resolveWorkflowName(
       workflows.filter(w => w.name.toLowerCase() === lowerName),
       'workflow.resolve_case_insensitive_match'
     ) ??
-    // Tier 3: Suffix match (e.g. "assist" matches "archon-assist")
+    // Tier 3: Suffix match (e.g. "assist" matches "harneeslab-assist")
     checkTier(
       workflows.filter(w => w.name.toLowerCase().endsWith(`-${lowerName}`)),
       'workflow.resolve_suffix_match'
     ) ??
-    // Tier 4: Substring match (e.g. "smart" matches "archon-smart-pr-review")
+    // Tier 4: Substring match (e.g. "smart" matches "harneeslab-smart-pr-review")
     checkTier(
       workflows.filter(w => w.name.toLowerCase().includes(lowerName)),
       'workflow.resolve_substring_match'

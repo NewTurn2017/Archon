@@ -173,7 +173,7 @@ export interface NodeConfig {
 export interface SendQueryOptions extends AgentRequestOptions {
   /** Raw YAML node config — provider translates internally to SDK-specific options. */
   nodeConfig?: NodeConfig;
-  /** Per-provider defaults from .archon/config.yaml assistants section. */
+  /** Per-provider defaults from .harneeslab/config.yaml assistants section. */
   assistantConfig?: Record<string, unknown>;
 }
 

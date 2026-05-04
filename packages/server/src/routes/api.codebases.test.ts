@@ -48,7 +48,7 @@ mock.module('@harneeslab/core', () => ({
       this.name = 'ConversationNotFoundError';
     }
   },
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
   generateAndSetTitle: mock(async () => {}),
   createLogger: () => ({
     fatal: mock(() => undefined),
@@ -81,11 +81,11 @@ mock.module('@harneeslab/paths', () => ({
     isLevelEnabled: mock(() => true),
     level: 'info',
   }),
-  getWorkflowFolderSearchPaths: mock(() => ['.archon/workflows']),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands']),
-  getDefaultCommandsPath: mock(() => '/tmp/.archon-test-nonexistent/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/tmp/.archon-test-nonexistent/workflows/defaults'),
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getWorkflowFolderSearchPaths: mock(() => ['.harneeslab/workflows']),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands']),
+  getDefaultCommandsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/workflows/defaults'),
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
 }));
 
 mockAllWorkflowModules();
@@ -571,8 +571,8 @@ describe('DELETE /api/codebases/:id', () => {
     expect(body.error).toContain('not found');
   });
 
-  test('does not delete disk directory for external (non-Archon-managed) repos', async () => {
-    // The codebase's default_cwd is outside the Archon workspaces root
+  test('does not delete disk directory for external (non-HarneesLab-managed) repos', async () => {
+    // The codebase's default_cwd is outside the HarneesLab workspaces root
     mockGetCodebase.mockImplementationOnce(async () => ({
       ...MOCK_CODEBASE,
       default_cwd: '/home/user/my-external-repo',

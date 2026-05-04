@@ -23,7 +23,7 @@ import type {
 import { loadConfig, loadRepoConfig } from '@harneeslab/core';
 
 /**
- * Build ValidationConfig from the repo's .archon/config.yaml
+ * Build ValidationConfig from the repo's .harneeslab/config.yaml
  */
 async function buildValidationConfig(cwd: string): Promise<ValidationConfig> {
   try {
@@ -35,7 +35,7 @@ async function buildValidationConfig(cwd: string): Promise<ValidationConfig> {
   } catch (e) {
     const err = e as NodeJS.ErrnoException;
     if (err.code === 'ENOENT') return {};
-    console.error(`경고: .archon/config.yaml 로드 실패: ${(e as Error).message}`);
+    console.error(`경고: .harneeslab/config.yaml 로드 실패: ${(e as Error).message}`);
     console.error('기본값으로 검증을 계속합니다 (config 설정은 적용되지 않습니다)');
     return {};
   }
@@ -87,16 +87,16 @@ function formatIssueMessage(message: string): string {
     return `Skill '${skillNotFound[1]}'을(를) .claude/skills/ 또는 ~/.claude/skills/에서 찾지 못했습니다`;
   }
 
-  const namedScriptNotFound = /^Named script '(.+)' not found in \.archon\/scripts\/$/.exec(
+  const namedScriptNotFound = /^Named script '(.+)' not found in \.harneeslab\/scripts\/$/.exec(
     message
   );
   if (namedScriptNotFound) {
-    return `Named script '${namedScriptNotFound[1]}'을(를) .archon/scripts/에서 찾지 못했습니다`;
+    return `Named script '${namedScriptNotFound[1]}'을(를) .harneeslab/scripts/에서 찾지 못했습니다`;
   }
 
-  const scriptNotFound = /^Script '(.+)' not found in \.archon\/scripts\/$/.exec(message);
+  const scriptNotFound = /^Script '(.+)' not found in \.harneeslab\/scripts\/$/.exec(message);
   if (scriptNotFound) {
-    return `Script '${scriptNotFound[1]}'을(를) .archon/scripts/에서 찾지 못했습니다`;
+    return `Script '${scriptNotFound[1]}'을(를) .harneeslab/scripts/에서 찾지 못했습니다`;
   }
 
   const runtimeUnavailable = /^Runtime '(.+)' is not available on PATH$/.exec(message);
@@ -118,22 +118,21 @@ function formatIssueMessage(message: string): string {
 }
 
 function formatIssueHint(hint: string): string {
-  const createCommand = /^Create \.archon\/commands\/(.+)\.md$/.exec(hint);
+  const createCommand = /^Create \.harneeslab\/commands\/(.+)\.md$/.exec(hint);
   if (createCommand) {
-    return `.archon/commands/${createCommand[1]}.md 파일을 만드세요`;
+    return `.harneeslab/commands/${createCommand[1]}.md 파일을 만드세요`;
   }
 
   const createCommandOrUseExisting =
-    /^Create \.archon\/commands\/(.+)\.md or use an existing command name$/.exec(hint);
+    /^Create \.harneeslab\/commands\/(.+)\.md or use an existing command name$/.exec(hint);
   if (createCommandOrUseExisting) {
-    return `.archon/commands/${createCommandOrUseExisting[1]}.md 파일을 만들거나 기존 command 이름을 사용하세요`;
+    return `.harneeslab/commands/${createCommandOrUseExisting[1]}.md 파일을 만들거나 기존 command 이름을 사용하세요`;
   }
 
-  const didYouMeanOrCreate = /^Did you mean: (.+)\? Or create \.archon\/commands\/(.+)\.md$/.exec(
-    hint
-  );
+  const didYouMeanOrCreate =
+    /^Did you mean: (.+)\? Or create \.harneeslab\/commands\/(.+)\.md$/.exec(hint);
   if (didYouMeanOrCreate) {
-    return `다음 command를 찾으셨나요: ${didYouMeanOrCreate[1]}? 또는 .archon/commands/${didYouMeanOrCreate[2]}.md 파일을 만드세요`;
+    return `다음 command를 찾으셨나요: ${didYouMeanOrCreate[1]}? 또는 .harneeslab/commands/${didYouMeanOrCreate[2]}.md 파일을 만드세요`;
   }
 
   const didYouMean = /^Did you mean: (.+)\?$/.exec(hint);
@@ -198,17 +197,18 @@ function formatIssueHint(hint: string): string {
     return 'tool restriction 필드를 제거하거나 이를 지원하는 provider로 바꾸세요';
   }
 
-  const createNamedScript = /^Create \.archon\/scripts\/(.+)\.(ts|py) with your script code$/.exec(
-    hint
-  );
+  const createNamedScript =
+    /^Create \.harneeslab\/scripts\/(.+)\.(ts|py) with your script code$/.exec(hint);
   if (createNamedScript) {
-    return `.archon/scripts/${createNamedScript[1]}.${createNamedScript[2]} 파일을 만들고 script 코드를 작성하세요`;
+    return `.harneeslab/scripts/${createNamedScript[1]}.${createNamedScript[2]} 파일을 만들고 script 코드를 작성하세요`;
   }
 
   const createScript =
-    /^Create \.archon\/scripts\/(.+)\.ts \(bun\) or \.archon\/scripts\/(.+)\.py \(uv\)$/.exec(hint);
+    /^Create \.harneeslab\/scripts\/(.+)\.ts \(bun\) or \.harneeslab\/scripts\/(.+)\.py \(uv\)$/.exec(
+      hint
+    );
   if (createScript) {
-    return `.archon/scripts/${createScript[1]}.ts (bun) 또는 .archon/scripts/${createScript[2]}.py (uv) 파일을 만드세요`;
+    return `.harneeslab/scripts/${createScript[1]}.ts (bun) 또는 .harneeslab/scripts/${createScript[2]}.py (uv) 파일을 만드세요`;
   }
 
   if (hint === 'Remove deps or switch to runtime: uv if you need explicit dependency management') {
@@ -367,7 +367,7 @@ function formatScriptResult(result: ScriptValidationResult): string {
 
 /**
  * Validate all commands or a specific command.
- * Also validates scripts from .archon/scripts/ alongside commands.
+ * Also validates scripts from .harneeslab/scripts/ alongside commands.
  * Returns exit code: 0 = all valid, 1 = errors found.
  */
 export async function validateCommandsCommand(

@@ -8,7 +8,7 @@ import { createMockLogger } from '../test/mocks/logger';
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => createMockLogger()),
   BUNDLED_IS_BINARY: false,
-  getArchonHome: mock(() => '/tmp/test-archon-home'),
+  getHarneesLabHome: mock(() => '/tmp/test-harneeslab-home'),
 }));
 
 import { resolveCodexBinaryPath } from './binary-resolver';

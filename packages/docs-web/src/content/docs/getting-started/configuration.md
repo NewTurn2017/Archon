@@ -20,14 +20,14 @@ sidebar:
 | `CLAUDE_API_KEY` | 아니요 | pay-per-use 방식으로 사용할 Anthropic API key입니다(global auth의 대안) |
 | `CODEX_BIN_PATH` | 아니요 | Codex CLI binary의 절대 경로입니다. compiled HarneesLab build에서 auto-detection을 override합니다. |
 | `CODEX_ACCESS_TOKEN` | 예(Codex 사용 시) | Codex access token입니다([AI Assistants](/getting-started/ai-assistants/) 참고) |
-| `HARNEESLAB_HOME` | 아니요 | HarneesLab-managed file의 base directory입니다. 기본값은 compatibility 때문에 `~/.archon`이며, `ARCHON_HOME` fallback도 유지됩니다. |
+| `HARNEESLAB_HOME` | 아니요 | HarneesLab-managed file의 base directory입니다. 기본값은 `~/.harneeslab`이며, custom 위치가 필요할 때 `HARNEESLAB_HOME`을 설정합니다. |
 | `DATABASE_URL` | 아니요 | PostgreSQL connection string입니다(기본값: SQLite) |
 | `LOG_LEVEL` | 아니요 | `debug`, `info`(기본값), `warn`, `error` |
 | `PORT` | 아니요 | server port입니다(기본값: 3090, Docker: 3000) |
 
 ## 프로젝트 설정
 
-저장소에 `.archon/config.yaml`을 만듭니다.
+저장소에 `.harneeslab/config.yaml`을 만듭니다.
 
 ```yaml
 assistants:
@@ -43,4 +43,4 @@ assistants:
 #   path: packages/docs-web/src/content/docs  # Optional: default is docs/
 ```
 
-전체 옵션과 legacy fallback 규칙은 [설정 레퍼런스](/reference/configuration/)를 참고하세요.
+전체 옵션과 fallback 규칙은 [설정 레퍼런스](/reference/configuration/)를 참고하세요.

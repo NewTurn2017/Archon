@@ -50,12 +50,12 @@ Save the current session's task list so it can be restored in future sessions.
    them to any tasks you know about from this session. Confirm you have the
    correct task list.
 
-3. **Log the session mapping** — write the mapping to `.claude/archon/sessions/`:
+3. **Log the session mapping** — write the mapping to `.claude/harneeslab/sessions/`:
 
    ```bash
-   mkdir -p .claude/archon/sessions
+   mkdir -p .claude/harneeslab/sessions
    echo '{"session": "${CLAUDE_SESSION_ID}", "task_list": "<TASK_LIST_ID>", "saved_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' \
-     >> .claude/archon/sessions/task-lists.jsonl
+     >> .claude/harneeslab/sessions/task-lists.jsonl
    ```
 
 4. **Verify the SessionStart hook is installed** — the project-level

@@ -163,7 +163,7 @@ describe('resolvePiSkills', () => {
   let originalHome: string | undefined;
 
   beforeAll(() => {
-    tmpRoot = mkdtempSync(join(tmpdir(), 'archon-pi-skills-'));
+    tmpRoot = mkdtempSync(join(tmpdir(), 'harneeslab-pi-skills-'));
     cwd = join(tmpRoot, 'project');
     const home = join(tmpRoot, 'home');
 

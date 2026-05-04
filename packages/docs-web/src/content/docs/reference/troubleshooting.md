@@ -1,6 +1,6 @@
 ---
 title: 문제 해결
-description: Archon을 로컬 또는 Docker에서 실행할 때 자주 발생하는 문제와 해결책입니다.
+description: HarneesLab을 로컬 또는 Docker에서 실행할 때 자주 발생하는 문제와 해결책입니다.
 category: reference
 audience: [user, operator]
 status: current
@@ -61,7 +61,7 @@ curl http://localhost:3090/health/db
 
 **SQLite(기본값)의 경우:**
 
-SQLite는 별도 설정이 필요 없습니다. Database는 `~/.archon/archon.db`에 자동 생성됩니다. 오류가 보이면 `~/.archon/` directory가 존재하고 writable인지 확인하세요.
+SQLite는 별도 설정이 필요 없습니다. Database는 `~/.harneeslab/harneeslab.db`에 자동 생성됩니다. 오류가 보이면 `~/.harneeslab/` directory가 존재하고 writable인지 확인하세요.
 
 **원격 PostgreSQL의 경우:**
 ```bash
@@ -97,11 +97,11 @@ curl -H "Authorization: token $GH_TOKEN" https://api.github.com/user
 
 **Workspace permission 확인:**
 
-Workspace directory는 기본적으로 `~/.archon/workspaces/`입니다(Docker에서는 `/.archon/workspaces/`). 이 directory가 존재하고 writable인지 확인하세요.
+Workspace directory는 기본적으로 `~/.harneeslab/workspaces/`입니다(Docker에서는 `/.harneeslab/workspaces/`). 이 directory가 존재하고 writable인지 확인하세요.
 
 **수동 clone 시도:**
 ```bash
-git clone https://github.com/user/repo ~/.archon/workspaces/test-repo
+git clone https://github.com/user/repo ~/.harneeslab/workspaces/test-repo
 ```
 
 ## GitHub webhook이 트리거되지 않음
@@ -156,7 +156,7 @@ netstat -ano | findstr :3090
 PORT=4000 bun run dev
 ```
 
-Git worktree에서 실행하면 Archon이 unique port(range 3190-4089)를 자동 할당하므로 main instance와 충돌을 걱정할 필요가 없습니다.
+Git worktree에서 실행하면 HarneesLab이 unique port(range 3190-4089)를 자동 할당하므로 main instance와 충돌을 걱정할 필요가 없습니다.
 
 ### Stale process(Windows)
 
@@ -222,7 +222,7 @@ agent-browser open http://localhost:3090
 
 ## Docker
 
-다음 문제들은 Docker container 안에서 Archon을 실행할 때 해당합니다.
+다음 문제들은 Docker container 안에서 HarneesLab을 실행할 때 해당합니다.
 
 ### Container가 시작되지 않음
 
@@ -272,12 +272,12 @@ docker compose exec postgres psql -U postgres -d remote_coding_agent -c "\dt"
 
 **Container 내부 workspace permission 확인:**
 ```bash
-docker compose exec app ls -la /.archon/workspaces
+docker compose exec app ls -la /.harneeslab/workspaces
 ```
 
 **Container 내부에서 수동 clone 시도:**
 ```bash
-docker compose exec app git clone https://github.com/user/repo /.archon/workspaces/test-repo
+docker compose exec app git clone https://github.com/user/repo /.harneeslab/workspaces/test-repo
 ```
 
 ## Compiled binary 실행 시 "Claude Code not found"
@@ -289,9 +289,9 @@ Claude Code not found. HarneesLab requires the Claude Code executable to be
 reachable at a configured path in compiled builds.
 ```
 
-**원인:** Compiled HarneesLab binary(curl/PowerShell installer 또는 Homebrew의 `archon`)에는 Claude Code가 bundle되어 있지 않습니다. Claude Code executable에 대한 명시적 path가 필요합니다. Source/dev mode(`bun run`)는 `node_modules`를 통해 auto-resolve되며 영향을 받지 않습니다.
+**원인:** Compiled HarneesLab binary(curl/PowerShell installer 또는 Homebrew의 `harneeslab`)에는 Claude Code가 bundle되어 있지 않습니다. Claude Code executable에 대한 명시적 path가 필요합니다. Source/dev mode(`bun run`)는 `node_modules`를 통해 auto-resolve되며 영향을 받지 않습니다.
 
-**수정:** Claude Code를 별도로 설치하고 Archon이 해당 경로를 보게 합니다.
+**수정:** Claude Code를 별도로 설치하고 HarneesLab이 해당 경로를 보게 합니다.
 
 ```bash
 # macOS / Linux / WSL — Anthropic's recommended native installer
@@ -303,7 +303,7 @@ irm https://claude.ai/install.ps1 | iex
 $env:CLAUDE_BIN_PATH = "$env:USERPROFILE\.local\bin\claude.exe"
 ```
 
-영구 설정은 대신 `~/.archon/config.yaml`에 path를 설정하세요.
+영구 설정은 대신 `~/.harneeslab/config.yaml`에 path를 설정하세요.
 
 ```yaml
 assistants:
@@ -326,13 +326,13 @@ assistants:
 **Warning 숨기기:** Deadlock이 발생하지 않는 setup이고 warning만 숨기고 싶다면:
 
 ```bash
-ARCHON_SUPPRESS_NESTED_CLAUDE_WARNING=1 hlab workflow run ...
+HARNEESLAB_SUPPRESS_NESTED_CLAUDE_WARNING=1 hlab workflow run ...
 ```
 
 **Timeout 조정:** 환경이 느려 60초 first-event timeout에 걸린다면:
 
 ```bash
-ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS=120000 hlab workflow run ...
+HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS=120000 hlab workflow run ...
 ```
 
 ## Worktree가 다른 clone에 속함
@@ -344,7 +344,7 @@ ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS=120000 hlab workflow run ...
 - `Cannot adopt <path>: path contains a full git checkout, not a worktree.`
 - `Cannot adopt <path>: .git pointer is not a git-worktree reference.`
 
-**원인:** Archon은 remote URL(`owner/repo`)에서 codebase identity를 도출하므로 같은 remote의 두 local clone은 하나의 `codebase_id`를 공유합니다. Worktree는 shared path(`~/.archon/workspaces/<owner>/<repo>/worktrees/`) 아래 저장되기 때문에 clone A가 만든 worktree가 clone B에서도 disk에 보입니다. Isolation system은 잘못된 filesystem state에서 작업하지 않도록 clone 간 silent adoption을 거부합니다.
+**원인:** HarneesLab은 remote URL(`owner/repo`)에서 codebase identity를 도출하므로 같은 remote의 두 local clone은 하나의 `codebase_id`를 공유합니다. Worktree는 shared path(`~/.harneeslab/workspaces/<owner>/<repo>/worktrees/`) 아래 저장되기 때문에 clone A가 만든 worktree가 clone B에서도 disk에 보입니다. Isolation system은 잘못된 filesystem state에서 작업하지 않도록 clone 간 silent adoption을 거부합니다.
 
 **수정 - 하나를 선택하세요:**
 
@@ -364,10 +364,10 @@ ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS=120000 hlab workflow run ...
    hlab workflow run <name> --branch <different-name> "task"
    ```
 
-3. **하나의 clone에서 작업.** 두 local checkout이 같은 project라면 하나로 통합하세요. HarneesLab의 codebase registration은 현재 remote당 하나의 local path를 가정합니다. 진짜 multi-clone support는 [#1192](https://github.com/coleam00/Archon/issues/1192)에서 추적 중입니다.
+3. **하나의 clone에서 작업.** 두 local checkout이 같은 project라면 하나로 통합하세요. HarneesLab의 codebase registration은 현재 remote당 하나의 local path를 가정합니다. 진짜 multi-clone support는 [#1192](https://github.com/coleam00/HarneesLab/issues/1192)에서 추적 중입니다.
 
 **다른 변형:**
 
-- `path contains a full git checkout, not a worktree`: Archon이 아닌 다른 무언가가 worktree path에 full git repo를 만들었습니다. 제거하거나 이동하세요.
+- `path contains a full git checkout, not a worktree`: HarneesLab이 아닌 다른 무언가가 worktree path에 full git repo를 만들었습니다. 제거하거나 이동하세요.
 - `.git pointer is not a git-worktree reference`: 해당 path의 `.git` file이 예상 밖의 위치(submodule, malformed)를 가리킵니다. `cat <path>/.git`으로 확인하고 수동 정리하세요.
-- `Cannot verify worktree ownership`: `<path>/.git` 읽기 중 filesystem permission 또는 I/O error입니다. `ls -la <path>`와 `~/.archon/workspaces`의 file permission을 확인하세요.
+- `Cannot verify worktree ownership`: `<path>/.git` 읽기 중 filesystem permission 또는 I/O error입니다. `ls -la <path>`와 `~/.harneeslab/workspaces`의 file permission을 확인하세요.

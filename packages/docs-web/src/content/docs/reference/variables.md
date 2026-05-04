@@ -8,7 +8,7 @@ sidebar:
   order: 5
 ---
 
-Archon은 command file, inline prompt, bash script를 실행하기 전에 변수를 치환합니다. 변수에는 세 가지 범주가 있습니다: workflow variable(workflow engine이 치환), positional argument(command handler가 치환), node output reference(DAG workflow 전용).
+HarneesLab은 command file, inline prompt, bash script를 실행하기 전에 변수를 치환합니다. 변수에는 세 가지 범주가 있습니다: workflow variable(workflow engine이 치환), positional argument(command handler가 치환), node output reference(DAG workflow 전용).
 
 ## Workflow 변수
 
@@ -19,9 +19,9 @@ Archon은 command file, inline prompt, bash script를 실행하기 전에 변수
 | `$ARGUMENTS` | workflow를 트리거한 사용자의 입력 메시지 | 사용자 입력을 command에 전달하는 기본 방법 |
 | `$USER_MESSAGE` | `$ARGUMENTS`와 동일 | Alias |
 | `$WORKFLOW_ID` | 현재 workflow run의 unique ID | artifact naming과 log correlation에 유용 |
-| `$ARTIFACTS_DIR` | 미리 생성된 외부 artifact directory(`~/.archon/workspaces/<owner>/<repo>/artifacts/runs/<id>/`) | node 실행 전에 항상 존재하며, working tree 오염을 피하기 위해 repo 밖에 저장 |
-| `$BASE_BRANCH` | git 작업의 base branch | repository default branch에서 auto-detect하거나 `.archon/config.yaml`의 `worktree.baseBranch`로 설정합니다. prompt에서 참조했지만 해석할 수 없으면 오류 발생 |
-| `$DOCS_DIR` | documentation directory path | `.archon/config.yaml`의 `docs.path`로 설정합니다. 설정이 없으면 `docs/`가 기본값입니다. 절대 throw하지 않습니다 |
+| `$ARTIFACTS_DIR` | 미리 생성된 외부 artifact directory(`~/.harneeslab/workspaces/<owner>/<repo>/artifacts/runs/<id>/`) | node 실행 전에 항상 존재하며, working tree 오염을 피하기 위해 repo 밖에 저장 |
+| `$BASE_BRANCH` | git 작업의 base branch | repository default branch에서 auto-detect하거나 `.harneeslab/config.yaml`의 `worktree.baseBranch`로 설정합니다. prompt에서 참조했지만 해석할 수 없으면 오류 발생 |
+| `$DOCS_DIR` | documentation directory path | `.harneeslab/config.yaml`의 `docs.path`로 설정합니다. 설정이 없으면 `docs/`가 기본값입니다. 절대 throw하지 않습니다 |
 | `$CONTEXT` | 가능한 경우 GitHub issue 또는 PR context | GitHub issue/PR에서 workflow가 트리거될 때 채워집니다. 사용할 수 없으면 빈 문자열로 대체 |
 | `$EXTERNAL_CONTEXT` | `$CONTEXT`와 동일 | Alias |
 | `$ISSUE_CONTEXT` | `$CONTEXT`와 동일 | Alias |
@@ -39,7 +39,7 @@ issue context가 있지만 prompt에 context variable이 없으면 context가 pr
 다른 변수와 달리 `$BASE_BRANCH`는 다음 조건이 모두 참이면 workflow를 **즉시 실패**시킵니다.
 - prompt에서 이 변수를 참조했고,
 - git에서 auto-detection이 실패했고,
-- `.archon/config.yaml`에 `worktree.baseBranch`가 설정되어 있지 않음
+- `.harneeslab/config.yaml`에 `worktree.baseBranch`가 설정되어 있지 않음
 
 변수를 참조하지 않으면 base branch를 확인할 수 없어도 오류가 발생하지 않습니다.
 

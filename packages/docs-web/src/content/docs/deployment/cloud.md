@@ -1,6 +1,6 @@
 ---
 title: Cloud 배포
-description: Caddy의 자동 HTTPS와 지속적인 uptime으로 Archon을 cloud VPS에 배포합니다.
+description: Caddy의 자동 HTTPS와 지속적인 uptime으로 HarneesLab을 cloud VPS에 배포합니다.
 category: deployment
 area: infra
 audience: [operator]
@@ -11,7 +11,7 @@ sidebar:
 
 > **함께 보기:** profile, build, configuration, troubleshooting을 포함한 전체 Docker reference는 [Docker Guide](/deployment/docker/)를 참고하세요.
 
-HarneesLab을 24/7 운영하기 위해 cloud VPS에 배포합니다. Caddy를 사용해 HTTPS certificate을 자동으로 발급하고 갱신하며, 서비스가 계속 실행되도록 구성합니다. HarneesLab은 Archon fork이므로 같은 배포 절차를 그대로 사용할 수 있습니다.
+HarneesLab을 24/7 운영하기 위해 cloud VPS에 배포합니다. Caddy를 사용해 HTTPS certificate을 자동으로 발급하고 갱신하며, 서비스가 계속 실행되도록 구성합니다. HarneesLab은 HarneesLab fork이므로 같은 배포 절차를 그대로 사용할 수 있습니다.
 
 **목차:** [사전 준비](#prerequisites) | [Server 설정](#1-server-provisioning--initial-setup) | [DNS 설정](#2-dns-configuration) | [Repository 설정](#3-clone-repository) | [Environment 설정](#4-environment-configuration) | [Database migration](#5-database-migration) | [Caddy 설정](#6-caddy-configuration) | [Service 시작](#7-start-services) | [확인](#8-verify-deployment)
 
@@ -24,7 +24,7 @@ HarneesLab을 24/7 운영하기 위해 cloud VPS에 배포합니다. Caddy를 �
 **필수:**
 
 - Cloud VPS 계정(DigitalOcean, Linode, AWS EC2, Vultr 등)
-- domain name 또는 subdomain(예: `archon.yourdomain.com`)
+- domain name 또는 subdomain(예: `harneeslab.yourdomain.com`)
 - 로컬 머신에 설치된 SSH client
 - 기본적인 command-line 사용 경험
 
@@ -41,7 +41,7 @@ HarneesLab을 24/7 운영하기 위해 cloud VPS에 배포합니다. Caddy를 �
 
 ```bash
 # Generate SSH key (ed25519 recommended)
-ssh-keygen -t ed25519 -C "archon"
+ssh-keygen -t ed25519 -C "harneeslab"
 
 # When prompted:
 # - File location: Press Enter (uses default ~/.ssh/id_ed25519)
@@ -219,7 +219,7 @@ domain을 server의 IP address로 연결합니다.
 
 1. domain registrar 또는 DNS provider(Cloudflare, Namecheap 등)로 이동합니다.
 2. **A Record**를 만듭니다.
-   - **Name:** `archon`(`archon.yourdomain.com`용) 또는 `@`(`yourdomain.com`용)
+   - **Name:** `harneeslab`(`harneeslab.yourdomain.com`용) 또는 `@`(`yourdomain.com`용)
    - **Value:** server의 public IP address
    - **TTL:** 300(5분) 또는 기본값
 
@@ -227,7 +227,7 @@ domain을 server의 IP address로 연결합니다.
 
 ```
 Type: A
-Name: archon
+Name: harneeslab
 Content: 123.45.67.89
 Proxy: Off (DNS Only)
 TTL: Auto
@@ -518,7 +518,7 @@ cp Caddyfile.example Caddyfile
 Caddyfile은 `.env`에서 `{$DOMAIN}`과 `{$PORT}`를 자동으로 읽습니다. `DOMAIN`이 설정되어 있는지 확인합니다.
 
 ```ini
-DOMAIN=archon.yourdomain.com
+DOMAIN=harneeslab.yourdomain.com
 ```
 
 ### Caddy 동작 방식
@@ -593,21 +593,21 @@ docker compose --profile cloud logs -f app
 
 ```bash
 # Basic health check
-curl https://archon.yourdomain.com/api/health
+curl https://harneeslab.yourdomain.com/api/health
 # Expected: {"status":"ok"}
 
 # Database connectivity
-curl https://archon.yourdomain.com/api/health/db
+curl https://harneeslab.yourdomain.com/api/health/db
 # Expected: {"status":"ok","database":"connected"}
 
 # Concurrency status
-curl https://archon.yourdomain.com/api/health/concurrency
+curl https://harneeslab.yourdomain.com/api/health/concurrency
 # Expected: {"status":"ok","active":0,"queued":0,"maxConcurrent":10}
 ```
 
 ### SSL Certificate 확인
 
-browser에서 `https://archon.yourdomain.com/api/health`에 방문합니다.
+browser에서 `https://harneeslab.yourdomain.com/api/health`에 방문합니다.
 
 - green padlock이 표시되어야 합니다.
 - certificate issuer가 "Let's Encrypt"여야 합니다.
@@ -647,7 +647,7 @@ openssl rand -hex 32
 
 | Field                | Value                                                                        |
 | -------------------- | ---------------------------------------------------------------------------- |
-| **Payload URL**      | `https://archon.yourdomain.com/webhooks/github`                              |
+| **Payload URL**      | `https://harneeslab.yourdomain.com/webhooks/github`                              |
 | **Content type**     | `application/json`                                                           |
 | **Secret**           | `.env`의 `WEBHOOK_SECRET`                                                    |
 | **SSL verification** | SSL verification 활성화                                                      |
@@ -728,7 +728,7 @@ docker compose --profile cloud down -v
 **DNS 확인:**
 
 ```bash
-dig archon.yourdomain.com
+dig harneeslab.yourdomain.com
 # Should return your server IP
 ```
 
@@ -814,7 +814,7 @@ cat .env | grep WEBHOOK_SECRET
 **webhook endpoint 테스트:**
 
 ```bash
-curl https://archon.yourdomain.com/webhooks/github
+curl https://harneeslab.yourdomain.com/webhooks/github
 # Should return 400 (missing signature) - means endpoint is reachable
 ```
 

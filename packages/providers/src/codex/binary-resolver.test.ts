@@ -13,7 +13,7 @@ const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
   BUNDLED_IS_BINARY: true,
-  getArchonHome: mock(() => '/tmp/test-archon-home'),
+  getHarneesLabHome: mock(() => '/tmp/test-harneeslab-home'),
 }));
 
 import * as resolver from './binary-resolver';
@@ -84,7 +84,7 @@ describe('resolveCodexBinaryPath (binary mode)', () => {
     const result = await resolver.resolveCodexBinaryPath();
     expect(typeof result).toBe('string');
     const normalized = result!.replace(/\\/g, '/');
-    expect(normalized).toContain('/tmp/test-archon-home/vendor/codex/');
+    expect(normalized).toContain('/tmp/test-harneeslab-home/vendor/codex/');
   });
 
   test('throws with install instructions when binary not found anywhere', async () => {

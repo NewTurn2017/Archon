@@ -5,7 +5,7 @@ import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import type { IWorkflowPlatform, WorkflowMessageMetadata } from './deps';
 import type { WorkflowDeps, WorkflowConfig } from './deps';
-import * as archonPaths from '@harneeslab/paths';
+import * as harneeslabPaths from '@harneeslab/paths';
 import { createLogger, captureWorkflowInvoked, BUNDLED_VERSION } from '@harneeslab/paths';
 import { getDefaultBranch, toRepoPath } from '@harneeslab/git';
 import type { WorkflowDefinition, WorkflowRun, WorkflowExecutionResult } from './schemas';
@@ -201,17 +201,21 @@ async function resolveProjectPaths(
     try {
       const codebase = await deps.store.getCodebase(codebaseId);
       if (codebase) {
-        const parsed = archonPaths.parseOwnerRepo(codebase.name);
+        const parsed = harneeslabPaths.parseOwnerRepo(codebase.name);
         if (parsed) {
           return {
-            artifactsDir: archonPaths.getRunArtifactsPath(parsed.owner, parsed.repo, workflowRunId),
-            logDir: archonPaths.getProjectLogsPath(parsed.owner, parsed.repo),
+            artifactsDir: harneeslabPaths.getRunArtifactsPath(
+              parsed.owner,
+              parsed.repo,
+              workflowRunId
+            ),
+            logDir: harneeslabPaths.getProjectLogsPath(parsed.owner, parsed.repo),
           };
         }
         getLog().warn({ codebaseName: codebase.name }, 'codebase_name_not_owner_repo_format');
       }
     } catch (error) {
-      const fallbackArtifactsDir = join(cwd, '.archon', 'artifacts', 'runs', workflowRunId);
+      const fallbackArtifactsDir = join(cwd, '.harneeslab', 'artifacts', 'runs', workflowRunId);
       getLog().error(
         { err: error as Error, codebaseId, fallbackArtifactsDir },
         'project_paths_resolve_failed_using_fallback'
@@ -220,8 +224,8 @@ async function resolveProjectPaths(
   }
   // Fallback for unregistered repos
   return {
-    artifactsDir: join(cwd, '.archon', 'artifacts', 'runs', workflowRunId),
-    logDir: join(cwd, '.archon', 'logs'),
+    artifactsDir: join(cwd, '.harneeslab', 'artifacts', 'runs', workflowRunId),
+    logDir: join(cwd, '.harneeslab', 'logs'),
   };
 }
 
@@ -639,12 +643,12 @@ export async function executeWorkflow(
 
     // Fire-and-forget anonymous usage telemetry. No PII: only workflow name +
     // description (authored by the user in their YAML) + platform + version.
-    // Opt out via ARCHON_TELEMETRY_DISABLED=1 or DO_NOT_TRACK=1.
+    // Opt out via HARNEESLAB_TELEMETRY_DISABLED=1 or DO_NOT_TRACK=1.
     captureWorkflowInvoked({
       workflowName: workflow.name,
       workflowDescription: workflow.description,
       platform: platform.getPlatformType(),
-      archonVersion: BUNDLED_VERSION,
+      harneeslabVersion: BUNDLED_VERSION,
     });
     deps.store
       .createWorkflowEvent({

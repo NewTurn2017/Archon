@@ -6,12 +6,8 @@ set -e
 # which causes the Claude subprocess to fail silently when spawned with a missing cwd.
 if [ -n "${HARNEESLAB_HOME:-}" ]; then
   HARNEESLAB_DATA_DIR="$HARNEESLAB_HOME"
-elif [ -n "${ARCHON_HOME:-}" ]; then
-  HARNEESLAB_DATA_DIR="$ARCHON_HOME"
-elif [ "${HARNEESLAB_DOCKER:-}" = "true" ]; then
-  HARNEESLAB_DATA_DIR="/.harneeslab"
 else
-  HARNEESLAB_DATA_DIR="/.archon"
+  HARNEESLAB_DATA_DIR="/.harneeslab"
 fi
 export HARNEESLAB_HOME="$HARNEESLAB_DATA_DIR"
 

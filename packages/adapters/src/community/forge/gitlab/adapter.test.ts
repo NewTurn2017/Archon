@@ -22,9 +22,9 @@ const mockLogger = {
 };
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorkspacesPath: mock(() => '/tmp/test-workspaces'),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands', '.claude/commands']),
-  logArchonPaths: mock(() => undefined),
+  getHarneesLabWorkspacesPath: mock(() => '/tmp/test-workspaces'),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands', '.claude/commands']),
+  logHarneesLabPaths: mock(() => undefined),
   validateAppDefaultsPaths: mock(async () => undefined),
 }));
 
@@ -218,7 +218,7 @@ describe('GitLabAdapter', () => {
     test('ignores comments with bot response marker', async () => {
       const adapter = createAdapter();
       const payload = createNotePayload({
-        note: '@harneeslab hello\n\n<!-- archon-bot-response -->',
+        note: '@harneeslab hello\n\n<!-- harneeslab-bot-response -->',
       });
       await adapter.handleWebhook(payload, 'test-secret');
       expect(mockHandleMessage).not.toHaveBeenCalled();
@@ -616,8 +616,8 @@ describe('GitLabAdapter', () => {
       const [, options] = mockFetch.mock.calls[0] as [string, RequestInit];
       const body = JSON.parse(options.body as string) as { body: string };
       expect(body.body).toContain('Test message');
-      expect(body.body).toContain('<!-- archon-bot-response -->');
-      expect(body.body).toBe('Test message\n\n<!-- archon-bot-response -->');
+      expect(body.body).toContain('<!-- harneeslab-bot-response -->');
+      expect(body.body).toBe('Test message\n\n<!-- harneeslab-bot-response -->');
     });
 
     test('encodes nested project path in URL', async () => {

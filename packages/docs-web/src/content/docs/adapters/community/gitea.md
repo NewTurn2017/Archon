@@ -59,7 +59,7 @@ GITEA_WEBHOOK_SECRET=your_secret_from_step_2
 GITEA_ALLOWED_USERS=alice,bob
 
 # Custom @mention name (defaults to BOT_DISPLAY_NAME, then "HarneesLab")
-GITEA_BOT_MENTION=archon
+GITEA_BOT_MENTION=harneeslab
 ```
 
 ## 4단계: Gitea Webhook 설정
@@ -92,8 +92,8 @@ Gitea에서 repository 설정으로 이동합니다.
 
 **첫 mention 동작:**
 
-- repository를 `~/.archon/workspaces/`로 자동 clone합니다.
-- `.archon/commands/`가 있으면 감지하고 로드합니다.
+- repository를 `~/.harneeslab/workspaces/`로 자동 clone합니다.
+- `.harneeslab/commands/`가 있으면 감지하고 로드합니다.
 - AI 어시스턴트에 전체 issue/PR context(title, description, labels)를 주입합니다.
 
 **이후 mention:**
@@ -113,7 +113,7 @@ Gitea adapter는 GitHub adapter와 비슷한 webhook 기반 forge adapter입니�
 - **Signature verification**: `X-Gitea-Signature` header를 사용한 HMAC SHA-256 검증
 - **Streaming mode**: 항상 batch(응답당 하나의 일관된 comment, comment spam 방지)
 - **Conversation ID format**: issue는 `owner/repo#number`, PR은 `owner/repo!number`
-- **Self-loop prevention**: bot comment에는 숨겨진 HTML marker(`<!-- archon-bot-response -->`)가 포함되어 자기 메시지로 다시 트리거되는 것을 방지합니다.
+- **Self-loop prevention**: bot comment에는 숨겨진 HTML marker(`<!-- harneeslab-bot-response -->`)가 포함되어 자기 메시지로 다시 트리거되는 것을 방지합니다.
 - **Retry logic**: transient network error(timeout, connection reset)는 exponential backoff로 최대 3회 재시도합니다.
 
 ### Close/Merge cleanup

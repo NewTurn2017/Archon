@@ -147,9 +147,9 @@ Alternative: Add a unit test in `workflow.test.ts` that confirms `workflowRunCom
 
 ```typescript
 it('throws when --from-branch is used with --no-worktree', async () => {
-  const { discoverWorkflowsWithConfig } = await import('@archon/workflows');
-  const conversationDb = await import('@archon/core/db/conversations');
-  const codebaseDb = await import('@archon/core/db/codebases');
+  const { discoverWorkflowsWithConfig } = await import('@harneeslab/workflows');
+  const conversationDb = await import('@harneeslab/core/db/conversations');
+  const codebaseDb = await import('@harneeslab/core/db/codebases');
 
   (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
     workflows: [{ name: 'assist', description: 'Help', steps: [] }],

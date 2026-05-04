@@ -44,24 +44,24 @@ async function safeStat(
   }
 }
 
-/** Normalize copyFiles to always include .archon at the start */
+/** Normalize copyFiles to always include .harneeslab at the start */
 function normalizeCopyFiles(copyFiles: string[] | undefined): string[] {
   if (!copyFiles) {
-    return ['.archon'];
+    return ['.harneeslab'];
   }
-  if (copyFiles.includes('.archon')) {
+  if (copyFiles.includes('.harneeslab')) {
     return copyFiles;
   }
-  return ['.archon', ...copyFiles];
+  return ['.harneeslab', ...copyFiles];
 }
 
 /**
- * Sync .archon folder from canonical repo to worktree if canonical repo is newer
+ * Sync .harneeslab folder from canonical repo to worktree if canonical repo is newer
  *
  * @param worktreePath - Path to the worktree
  * @returns true if sync occurred, false if skipped
  */
-export async function syncArchonToWorktree(worktreePath: string): Promise<boolean> {
+export async function syncHarneesLabToWorktree(worktreePath: string): Promise<boolean> {
   try {
     // 1. Verify this is actually a worktree
     if (!(await isWorktreePath(worktreePath))) {
@@ -71,17 +71,17 @@ export async function syncArchonToWorktree(worktreePath: string): Promise<boolea
     // 2. Get canonical repo path
     const canonicalRepoPath = await getCanonicalRepoPath(worktreePath);
 
-    // 3. Check if .archon exists in both locations
-    const canonicalArchonPath = join(canonicalRepoPath, '.archon');
-    const worktreeArchonPath = join(worktreePath, '.archon');
+    // 3. Check if .harneeslab exists in both locations
+    const canonicalHarneesLabPath = join(canonicalRepoPath, '.harneeslab');
+    const worktreeHarneesLabPath = join(worktreePath, '.harneeslab');
 
     // Canonical must exist; for worktree, ENOENT is expected (will be copied)
-    const canonicalStat = await safeStat(canonicalArchonPath, 'canonical', false);
+    const canonicalStat = await safeStat(canonicalHarneesLabPath, 'canonical', false);
     if (!canonicalStat) {
       return false;
     }
 
-    const worktreeStat = await safeStat(worktreeArchonPath, 'worktree', true);
+    const worktreeStat = await safeStat(worktreeHarneesLabPath, 'worktree', true);
 
     // 4. Compare modification times - skip if worktree is up-to-date
     if (worktreeStat && canonicalStat.mtime <= worktreeStat.mtime) {
@@ -95,7 +95,7 @@ export async function syncArchonToWorktree(worktreePath: string): Promise<boolea
       copyFiles = repoConfig.worktree?.copyFiles;
     } catch (error) {
       getLog().warn({ canonicalRepoPath, err: error }, 'repo_config_load_failed_using_default');
-      copyFiles = ['.archon'];
+      copyFiles = ['.harneeslab'];
     }
 
     // 6. Perform sync using existing utility
@@ -107,7 +107,7 @@ export async function syncArchonToWorktree(worktreePath: string): Promise<boolea
 
     getLog().info(
       { canonicalRepo: canonicalRepoPath, worktree: worktreePath, filesCopied: copied.length },
-      'archon_synced_to_worktree'
+      'harneeslab_synced_to_worktree'
     );
 
     return true;
@@ -115,7 +115,7 @@ export async function syncArchonToWorktree(worktreePath: string): Promise<boolea
     const err = error as NodeJS.ErrnoException;
     getLog().error(
       { worktreePath, err, errorName: err.name, code: err.code ?? 'UNKNOWN' },
-      'archon_sync_failed'
+      'harneeslab_sync_failed'
     );
     return false;
   }

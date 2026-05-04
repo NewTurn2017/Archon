@@ -105,8 +105,8 @@ function buildModelAccessMessage(model?: string): string {
   const suggested = normalizedModel ? CODEX_MODEL_FALLBACKS[normalizedModel] : undefined;
 
   const fixLine = suggested
-    ? `To fix: update your model in ~/.archon/config.yaml:\n  assistants:\n    codex:\n      model: ${suggested}`
-    : 'To fix: update your model in ~/.archon/config.yaml to one your account can access.';
+    ? `To fix: update your model in ~/.harneeslab/config.yaml:\n  assistants:\n    codex:\n      model: ${suggested}`
+    : 'To fix: update your model in ~/.harneeslab/config.yaml to one your account can access.';
 
   const workflowLine = suggested
     ? `Or set it per-workflow with \`model: ${suggested}\` in workflow YAML.`

@@ -170,7 +170,7 @@ This runs `check:bundled`, type-check, lint, format check, and tests. All five m
 ### Database
 
 **Auto-Detection (SQLite is the default — zero setup):**
-- **Without `DATABASE_URL`**: Uses SQLite at `~/.archon/archon.db` (auto-initialized, recommended for most users)
+- **Without `DATABASE_URL`**: Uses SQLite at `~/.harneeslab/harneeslab.db` (auto-initialized, recommended for most users)
 - **With `DATABASE_URL` set**: Uses PostgreSQL (optional, for cloud/advanced deployments)
 
 ```bash
@@ -325,7 +325,7 @@ packages/
 │       └── index.ts          # Package exports
 ├── paths/                    # @harneeslab/paths - Path resolution and logger (zero @harneeslab/* deps)
 │   └── src/
-│       ├── archon-paths.ts   # Archon directory path utilities
+│       ├── harneeslab-paths.ts   # HarneesLab directory path utilities
 │       ├── logger.ts         # Pino logger factory
 │       └── index.ts          # Package exports
 ├── adapters/                 # @harneeslab/adapters - Platform adapters (Slack, Telegram, GitHub, Discord)
@@ -461,11 +461,11 @@ import type { DagNode, WorkflowDefinition } from '@/lib/api';
 **Environment Variables:**
 
 see .env.example
-see .archon/config.yaml setup as needed
+see .harneeslab/config.yaml setup as needed
 
 **Assistant Defaults:**
 
-The system supports configuring default models and options per assistant in `.archon/config.yaml`:
+The system supports configuring default models and options per assistant in `.harneeslab/config.yaml`:
 
 ```yaml
 assistants:
@@ -493,7 +493,7 @@ assistants:
 
 **Configuration Priority:**
 1. Workflow-level options (in YAML `model`, `modelReasoningEffort`, etc.)
-2. Config file defaults (`.archon/config.yaml` `assistants.*`)
+2. Config file defaults (`.harneeslab/config.yaml` `assistants.*`)
 3. SDK defaults
 
 **Model Validation:**
@@ -540,11 +540,11 @@ curl http://localhost:3637/api/conversations/<conversationId>/messages
 - Database is shared (same conversations/codebases available)
 - Kill the server when done: `pkill -f "bun.*dev"` or use the specific port
 
-### Archon Directory Structure
+### HarneesLab Directory Structure
 
-**User-level (`~/.archon/`):**
+**User-level (`~/.harneeslab/`):**
 ```
-~/.archon/
+~/.harneeslab/
 ├── workspaces/owner/repo/        # Project-centric layout
 │   ├── source/                   # Cloned repo or symlink → local path
 │   ├── worktrees/                # Git worktrees for this project
@@ -555,21 +555,21 @@ curl http://localhost:3637/api/conversations/<conversationId>/messages
 ├── vendor/codex/                  # Codex native binary (binary builds, user-placed)
 ├── web-dist/<version>/            # Cached web UI dist (hlab serve, binary only)
 ├── update-check.json              # Update check cache (binary builds, 24h TTL)
-├── archon.db                     # SQLite database (when DATABASE_URL not set)
+├── harneeslab.db                     # SQLite database (when DATABASE_URL not set)
 └── config.yaml                   # Global configuration (non-secrets)
 ```
 
-**Repo-level (`.archon/` in any repository):**
+**Repo-level (`.harneeslab/` in any repository):**
 ```
-.archon/
+.harneeslab/
 ├── commands/       # Custom commands
 ├── workflows/      # Workflow definitions (YAML files)
 ├── scripts/        # Named scripts for script: nodes (.ts/.js for bun, .py for uv)
 └── config.yaml     # Repo-specific configuration
 ```
 
-- `ARCHON_HOME` - Override the base directory (default: `~/.archon`)
-- Docker: Paths automatically set to `/.archon/`
+- `HARNEESLAB_HOME` - Override the base directory (default: `~/.harneeslab`)
+- Docker: Paths automatically set to `/.harneeslab/`
 
 ## Development Guidelines
 
@@ -669,8 +669,8 @@ async function createSession(conversationId: string, codebaseId: string) {
 **Log Levels:** `fatal` > `error` > `warn` > `info` (default) > `debug` > `trace`
 
 **Verbosity:**
-- CLI: `archon --quiet` (errors only) — suppresses Pino logs and workflow progress output
-- CLI: `archon --verbose` (debug) — enables debug Pino logs and tool-level workflow progress events
+- CLI: `harneeslab --quiet` (errors only) — suppresses Pino logs and workflow progress output
+- CLI: `harneeslab --verbose` (debug) — enables debug Pino logs and tool-level workflow progress events
 - Server: `LOG_LEVEL=debug bun run start`
 
 **Never log:** API keys or tokens (mask: `token.slice(0, 8) + '...'`), user message content, PII.
@@ -683,41 +683,41 @@ async function createSession(conversationId: string, codebaseId: string) {
 - `$ARTIFACTS_DIR` - External artifacts directory for the current workflow run (pre-created by executor)
 - `$WORKFLOW_ID` - The workflow run ID
 - `$BASE_BRANCH` - Base branch; auto-detected from git when `worktree.baseBranch` is not set; fails only if referenced in a prompt and auto-detection also fails
-- `$DOCS_DIR` - Documentation directory path; configured via `docs.path` in `.archon/config.yaml`. Defaults to `docs/`. Never throws.
+- `$DOCS_DIR` - Documentation directory path; configured via `docs.path` in `.harneeslab/config.yaml`. Defaults to `docs/`. Never throws.
 - `$LOOP_USER_INPUT` - User feedback provided via `/workflow approve <id> <text>` at an interactive loop gate. Only populated on the first iteration of a resumed interactive loop; empty string on all other iterations.
 - `$REJECTION_REASON` - Reviewer feedback provided via `/workflow reject <id> <reason>` at an approval gate. Only populated in `on_reject` prompts; empty string elsewhere.
 
 **Command Types:**
 
 1. **Codebase Commands** (per-repo):
-   - Stored in `.archon/commands/` (plain text/markdown)
-   - Discovered from the repository `.archon/commands/` directory
+   - Stored in `.harneeslab/commands/` (plain text/markdown)
+   - Discovered from the repository `.harneeslab/commands/` directory
    - Surfaced via `GET /api/commands` for the workflow builder and invoked by workflow `command:` nodes
 
 2. **Workflows** (YAML-based):
-   - Stored in `.archon/workflows/` (searched recursively)
+   - Stored in `.harneeslab/workflows/` (searched recursively)
    - Multi-step AI execution chains, discovered at runtime
-   - **`nodes:` (DAG format)**: Nodes with explicit `depends_on` edges; independent nodes in the same topological layer run concurrently. Node types: `command:` (named command file), `prompt:` (inline prompt), `bash:` (shell script, stdout captured as `$nodeId.output`, no AI, receives managed per-project env vars in its subprocess environment when configured), `loop:` (iterative AI prompt until completion signal), `approval:` (human gate; pauses until user approves or rejects; `capture_response: true` stores the user's comment as `$<node-id>.output` for downstream nodes, default false), `script:` (inline TypeScript/Python or named script from `.archon/scripts/`, runs via `bun` or `uv`, stdout captured as `$nodeId.output`, no AI, receives managed per-project env vars in its subprocess environment when configured, supports `deps:` for dependency installation and `timeout:` in ms, requires `runtime: bun` or `runtime: uv`) . Supports `when:` conditions, `trigger_rule` join semantics, `$nodeId.output` substitution, `output_format` for structured JSON output (Claude and Codex), `allowed_tools`/`denied_tools` for per-node tool restrictions (Claude only), `hooks` for per-node SDK hook callbacks (Claude only), `mcp` for per-node MCP server config files (Claude only, env vars expanded at execution time), and `skills` for per-node skill preloading via AgentDefinition wrapping (Claude only), `agents` for inline sub-agent definitions invokable via the Task tool (Claude only), and `effort`/`thinking`/`maxBudgetUsd`/`systemPrompt`/`fallbackModel`/`betas`/`sandbox` for Claude SDK advanced options (Claude only, also settable at workflow level)
-   - Provider inherited from `.archon/config.yaml` unless explicitly set; per-node `provider` and `model` overrides supported
+   - **`nodes:` (DAG format)**: Nodes with explicit `depends_on` edges; independent nodes in the same topological layer run concurrently. Node types: `command:` (named command file), `prompt:` (inline prompt), `bash:` (shell script, stdout captured as `$nodeId.output`, no AI, receives managed per-project env vars in its subprocess environment when configured), `loop:` (iterative AI prompt until completion signal), `approval:` (human gate; pauses until user approves or rejects; `capture_response: true` stores the user's comment as `$<node-id>.output` for downstream nodes, default false), `script:` (inline TypeScript/Python or named script from `.harneeslab/scripts/`, runs via `bun` or `uv`, stdout captured as `$nodeId.output`, no AI, receives managed per-project env vars in its subprocess environment when configured, supports `deps:` for dependency installation and `timeout:` in ms, requires `runtime: bun` or `runtime: uv`) . Supports `when:` conditions, `trigger_rule` join semantics, `$nodeId.output` substitution, `output_format` for structured JSON output (Claude and Codex), `allowed_tools`/`denied_tools` for per-node tool restrictions (Claude only), `hooks` for per-node SDK hook callbacks (Claude only), `mcp` for per-node MCP server config files (Claude only, env vars expanded at execution time), and `skills` for per-node skill preloading via AgentDefinition wrapping (Claude only), `agents` for inline sub-agent definitions invokable via the Task tool (Claude only), and `effort`/`thinking`/`maxBudgetUsd`/`systemPrompt`/`fallbackModel`/`betas`/`sandbox` for Claude SDK advanced options (Claude only, also settable at workflow level)
+   - Provider inherited from `.harneeslab/config.yaml` unless explicitly set; per-node `provider` and `model` overrides supported
    - Model and options can be set per workflow or inherited from config defaults
    - `interactive: true` at the workflow level forces foreground execution on web (required for approval-gate workflows in the web UI)
    - Model validation ensures provider/model compatibility at load time
    - Commands: `/workflow list`, `/workflow reload`, `/workflow status`, `/workflow cancel`, `/workflow resume <id>` (re-runs failed workflow, skipping completed nodes), `/workflow abandon <id>`, `/workflow cleanup [days]` (CLI only — deletes old run records)
    - Resilient loading: One broken YAML doesn't abort discovery; errors shown in `/workflow list`
    - `resolveWorkflowName()` (in `router.ts`) resolves workflow names via a 4-tier fallback — exact, case-insensitive, suffix (`-name`), substring — with ambiguity detection; used by both the CLI and all chat platforms
-   - Router fallback: if no `/invoke-workflow` is produced, falls back to `archon-assist` (with "Routing unclear" notice); raw AI response returned only when `archon-assist` is unavailable
+   - Router fallback: if no `/invoke-workflow` is produced, falls back to `harneeslab-assist` (with "Routing unclear" notice); raw AI response returned only when `harneeslab-assist` is unavailable
    - Claude routing calls use `tools: []` to prevent tool use at the API level; Codex tool bypass is detected and triggers the same fallback
 
 **Defaults:**
-- Bundled in `.archon/commands/defaults/` and `.archon/workflows/defaults/`
+- Bundled in `.harneeslab/commands/defaults/` and `.harneeslab/workflows/defaults/`
 - Binary builds: Embedded at compile time (no filesystem access needed) via `packages/workflows/src/defaults/bundled-defaults.generated.ts`
 - Source builds: Loaded from filesystem at runtime
 - Merged with repo-specific commands/workflows (repo overrides defaults by name)
-- Opt-out: Set `defaults.loadDefaultCommands: false` or `defaults.loadDefaultWorkflows: false` in `.archon/config.yaml`
+- Opt-out: Set `defaults.loadDefaultCommands: false` or `defaults.loadDefaultWorkflows: false` in `.harneeslab/config.yaml`
 - **After adding, removing, or editing a default file, run `bun run generate:bundled`** to refresh the embedded bundle. `bun run validate` (and CI) run `check:bundled` and will fail loudly if the generated file is stale.
 
 **Global workflows** (user-level, applies to every project):
-- Path: `~/.archon/.archon/workflows/` (or `$ARCHON_HOME/.archon/workflows/`)
+- Path: `~/.harneeslab/.harneeslab/workflows/` (or `$HARNEESLAB_HOME/.harneeslab/workflows/`)
 - Load priority: bundled < global < repo-specific (repo overrides global by filename)
 - See the docs site at `packages/docs-web/` for details
 

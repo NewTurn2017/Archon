@@ -17,7 +17,7 @@ import { t } from '@/lib/i18n';
 const SIDEBAR_MIN = 240;
 const SIDEBAR_MAX = 400;
 const SIDEBAR_DEFAULT = 260;
-const STORAGE_KEY = 'archon-sidebar-width';
+const STORAGE_KEY = 'harneeslab-sidebar-width';
 
 function getInitialWidth(): number {
   try {

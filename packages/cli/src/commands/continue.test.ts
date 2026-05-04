@@ -72,7 +72,7 @@ describe('continueCommand', () => {
     });
     mockFindLatestRunByWorkingPath.mockResolvedValueOnce({
       id: 'run-1',
-      workflow_name: 'archon-assist',
+      workflow_name: 'harneeslab-assist',
       status: 'completed',
     });
     mockExecFileAsync.mockImplementation((_cmd: string, args: string[]) => {
@@ -81,15 +81,15 @@ describe('continueCommand', () => {
     });
     mockWorkflowRunCommand.mockResolvedValueOnce(undefined);
 
-    await continueCommand('feature/test', '다음 작업', { workflow: 'archon-assist' });
+    await continueCommand('feature/test', '다음 작업', { workflow: 'harneeslab-assist' });
 
     expect(consoleLogSpy).toHaveBeenCalledWith('branch에서 계속 진행: feature/test');
-    expect(consoleLogSpy).toHaveBeenCalledWith('워크플로: archon-assist');
+    expect(consoleLogSpy).toHaveBeenCalledWith('워크플로: harneeslab-assist');
     expect(consoleLogSpy).toHaveBeenCalledWith('경로: /repo/worktree');
-    expect(consoleLogSpy).toHaveBeenCalledWith('이전 run: run-1 (archon-assist, completed)');
+    expect(consoleLogSpy).toHaveBeenCalledWith('이전 run: run-1 (harneeslab-assist, completed)');
     expect(mockWorkflowRunCommand).toHaveBeenCalledWith(
       '/repo/worktree',
-      'archon-assist',
+      'harneeslab-assist',
       expect.stringContaining('## 사용자 지시\n\n다음 작업'),
       { noWorktree: true, codebaseId: 'codebase-1' }
     );

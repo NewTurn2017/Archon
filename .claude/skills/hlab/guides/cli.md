@@ -47,5 +47,5 @@ This stores credentials globally — no `.env` or API key needed for CLI usage.
 ## Notes
 
 - **No `.env` required**: CLI-only usage doesn't need any environment variables. If no API keys are in the environment, the CLI auto-defaults to global Claude auth from `claude /login`.
-- **Database**: SQLite auto-creates at `~/.archon/archon.db` — no setup needed for CLI-only use.
-- **Config**: `~/.archon/config.yaml` is auto-created on first run with sensible defaults. Per-repo config can be added at `<repo>/.archon/config.yaml` to override the AI assistant or configure command folders. Neither file needs manual creation for basic usage.
+- **Database**: SQLite auto-creates at `~/.harneeslab/harneeslab.db` — no setup needed for CLI-only use.
+- **Config**: `~/.harneeslab/config.yaml` is auto-created on first run with sensible defaults. Per-repo config can be added at `<repo>/.harneeslab/config.yaml` to override the AI assistant or configure command folders. Neither file needs manual creation for basic usage.

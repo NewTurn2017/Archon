@@ -1,5 +1,5 @@
 /**
- * Script discovery - finds and loads script files from .archon/scripts/.
+ * Script discovery - finds and loads script files from .harneeslab/scripts/.
  *
  * Scripts are keyed by filename without extension. Runtime is auto-detected
  * from the file extension: .ts/.js -> bun, .py -> uv.
@@ -107,7 +107,7 @@ async function scanScriptDir(
 }
 
 /**
- * Discover scripts from a directory (expected to be .archon/scripts/ or equivalent).
+ * Discover scripts from a directory (expected to be .harneeslab/scripts/ or equivalent).
  * Returns a Map of script name -> ScriptDefinition.
  * Throws if duplicate script names are found across different extensions.
  * Returns an empty Map if the directory does not exist.

@@ -3,7 +3,7 @@ title: Community Provider 추가하기
 description: packages/providers/src/community/ 아래에 새 AI agent provider를 추가하는 단계별 가이드.
 ---
 
-Archon의 provider registry(Phase 2, [#1195](https://github.com/coleam00/Archon/pull/1195))는 community provider를 단일 디렉터리 안의 변경만으로 추가할 수 있도록 설계되어 있습니다. 이 가이드는 Pi provider를 reference implementation으로 삼아 그 패턴을 설명합니다(`packages/providers/src/community/pi/`).
+HarneesLab의 provider registry(Phase 2, [#1195](https://github.com/coleam00/HarneesLab/pull/1195))는 community provider를 단일 디렉터리 안의 변경만으로 추가할 수 있도록 설계되어 있습니다. 이 가이드는 Pi provider를 reference implementation으로 삼아 그 패턴을 설명합니다(`packages/providers/src/community/pi/`).
 
 ## 구현 Contract
 
@@ -23,7 +23,7 @@ export interface IAgentProvider {
 }
 ```
 
-Provider는 `MessageChunk` variant stream을 yield합니다(`packages/providers/src/types.ts` 참고). Archon은 모든 backend를 이 shape로 normalize하므로, platform adapter, DAG executor, orchestrator는 상대가 Claude, Codex, Pi, 또는 여러분의 provider인지 알 필요가 없습니다.
+Provider는 `MessageChunk` variant stream을 yield합니다(`packages/providers/src/types.ts` 참고). HarneesLab은 모든 backend를 이 shape로 normalize하므로, platform adapter, DAG executor, orchestrator는 상대가 Claude, Codex, Pi, 또는 여러분의 provider인지 알 필요가 없습니다.
 
 ## 디렉터리 구조
 
@@ -50,7 +50,7 @@ packages/providers/src/community/pi/
 
 ### 1. Capabilities (정직하게 시작하기)
 
-실제로 연결한 기능만 선언하세요. workflow node가 provider가 지원하지 않는 기능을 사용할 때 dag-executor는 사용자에게 warning을 냅니다. 적게 선언하면 warning을 통해 바로잡을 수 있지만, 과하게 선언하면 Archon이 configuration을 조용히 버리게 됩니다.
+실제로 연결한 기능만 선언하세요. workflow node가 provider가 지원하지 않는 기능을 사용할 때 dag-executor는 사용자에게 warning을 냅니다. 적게 선언하면 warning을 통해 바로잡을 수 있지만, 과하게 선언하면 HarneesLab이 configuration을 조용히 버리게 됩니다.
 
 ```typescript
 // capabilities.ts
@@ -92,7 +92,7 @@ function getLog() {
 
 export class YourProvider implements IAgentProvider {
   async *sendQuery(prompt, cwd, resumeSessionId, options): AsyncGenerator<MessageChunk> {
-    // 1. Parse assistantConfig (user-level defaults from .archon/config.yaml)
+    // 1. Parse assistantConfig (user-level defaults from .harneeslab/config.yaml)
     // 2. Resolve model (options.model || config default)
     // 3. Resolve auth (options.env → process.env → config)
     // 4. Translate nodeConfig to SDK options (only for capabilities you declared)
@@ -164,7 +164,7 @@ export function registerCommunityProviders(): void {
 - **`packages/core/src/config/config-types.ts`의 `AssistantDefaultsConfig` 또는 `AssistantDefaults`를 수정하지 마세요.** Community provider default는 이 사례를 위해 설계된 generic `[string]` index signature 뒤에 위치합니다. typed slot을 추가하면 Phase 2 contract를 깨고, 이후 provider들도 같은 방식을 따르게 만듭니다.
 - **CLI나 server entrypoint에서 `registerProvider()`를 직접 호출하지 마세요.** `registerCommunityProviders()` aggregator를 사용하세요. Entrypoint는 provider별 호출로 커지면 안 됩니다.
 - **Capability를 과장해서 선언하지 마세요.** workflow node가 `hooks: [...]`를 사용하지만 provider가 이를 조용히 무시하면 사용자는 아무 feedback도 받지 못합니다. `hooks: false`라고 정직하게 선언하면 dag-executor가 warning을 냅니다.
-- **Session state나 credential을 provider의 SDK-managed directory 밖에 쓰지 마세요.** Archon의 config, workspace, session은 다른 곳에서 관리합니다. Provider는 자기 SDK의 storage convention 안에 머물러야 합니다. 예를 들어 Claude는 `~/.claude/`에 쓰고, Codex는 자체 thread store를 사용하는 방식을 참고하세요.
+- **Session state나 credential을 provider의 SDK-managed directory 밖에 쓰지 마세요.** HarneesLab의 config, workspace, session은 다른 곳에서 관리합니다. Provider는 자기 SDK의 storage convention 안에 머물러야 합니다. 예를 들어 Claude는 `~/.claude/`에 쓰고, Codex는 자체 thread store를 사용하는 방식을 참고하세요.
 
 ## Reference implementation
 

@@ -1,0 +1,10 @@
+name: harneeslab-assist
+description: |
+  사용할 때: 다른 workflow가 요청에 맞지 않을 때.
+  처리 범위: 질문, 디버깅, 탐색, 일회성 작업, 설명, CI 실패, 일반적인 도움.
+  역량: 모든 도구를 사용할 수 있는 전체 Claude Code agent.
+  참고: 추적을 위해 assist mode가 사용되었음을 사용자에게 알린다.
+
+nodes:
+  - id: assist
+    command: harneeslab-assist

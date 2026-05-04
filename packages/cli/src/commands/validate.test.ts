@@ -34,9 +34,9 @@ describe('validateCommandsCommand', () => {
     expect(exitCode).toBe(1);
     const output = loggedOutput();
     expect(output).toContain("Command 'definitely-missing-command'을(를) 찾지 못했습니다");
-    expect(output).toContain('.archon/commands/definitely-missing-command.md 파일을 만드세요');
+    expect(output).toContain('.harneeslab/commands/definitely-missing-command.md 파일을 만드세요');
     expect(output).not.toContain("Command 'definitely-missing-command' not found");
-    expect(output).not.toContain('Create .archon/commands/definitely-missing-command.md');
+    expect(output).not.toContain('Create .harneeslab/commands/definitely-missing-command.md');
   });
 
   it('preserves validator issue text in JSON output', async () => {
@@ -53,7 +53,7 @@ describe('validateCommandsCommand', () => {
     expect(parsed.valid).toBe(false);
     expect(parsed.issues[0]).toMatchObject({
       message: "Command 'definitely-missing-command' not found",
-      hint: 'Create .archon/commands/definitely-missing-command.md',
+      hint: 'Create .harneeslab/commands/definitely-missing-command.md',
     });
   });
 });

@@ -17,8 +17,7 @@
 # Data:
 #   Set HARNEESLAB_DATA in .env to control where HarneesLab stores data on the host:
 #     HARNEESLAB_DATA=/opt/harneeslab-data    # Any absolute path on the host
-#   Legacy ARCHON_DATA is still accepted by the interpolation fallback.
-#   Default: Docker-managed volume (archon_data, preserved for compatibility)
+#   Default: Docker-managed volume (harneeslab_data)
 #
 # Cloud (HTTPS):
 #   1. Set DOMAIN=harneeslab.example.com in .env
@@ -39,7 +38,7 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     volumes:
-      - ${HARNEESLAB_DATA:-${ARCHON_DATA:-archon_data}}:/.harneeslab
+      - ${HARNEESLAB_DATA:-harneeslab_data}:/.harneeslab
     networks:
       - harneeslab-network
     restart: unless-stopped
@@ -123,7 +122,6 @@ services:
 
 volumes:
   harneeslab_data:
-  archon_data:
   postgres_data:
   caddy_data:
   caddy_config:

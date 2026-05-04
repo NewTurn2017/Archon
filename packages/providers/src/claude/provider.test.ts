@@ -1003,15 +1003,15 @@ describe('sendQuery decomposition behaviors', () => {
 
     const consumeGenerator = async (): Promise<void> => {
       // Use env var to set a short timeout for the test
-      const original = process.env.ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS;
-      process.env.ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS = '50';
+      const original = process.env.HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS;
+      process.env.HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS = '50';
       try {
         for await (const _ of client.sendQuery('test', '/workspace')) {
           // consume
         }
       } finally {
-        if (original !== undefined) process.env.ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS = original;
-        else delete process.env.ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS;
+        if (original !== undefined) process.env.HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS = original;
+        else delete process.env.HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS;
       }
     };
 

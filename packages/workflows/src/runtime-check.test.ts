@@ -22,7 +22,7 @@ mock.module('@harneeslab/paths', () => ({
     debug: mock(() => undefined),
     trace: mock(() => undefined),
   })),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands']),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands']),
   getDefaultCommandsPath: mock(() => '/defaults/commands'),
   findMarkdownFilesRecursive: mock(async () => []),
 }));

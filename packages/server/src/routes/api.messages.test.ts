@@ -49,7 +49,7 @@ mock.module('@harneeslab/core', () => ({
       this.name = 'ConversationNotFoundError';
     }
   },
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
   generateAndSetTitle: mock(async () => {}),
   createLogger: () => ({
     fatal: mock(() => undefined),
@@ -82,11 +82,11 @@ mock.module('@harneeslab/paths', () => ({
     isLevelEnabled: mock(() => true),
     level: 'info',
   }),
-  getWorkflowFolderSearchPaths: mock(() => ['.archon/workflows']),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands']),
-  getDefaultCommandsPath: mock(() => '/tmp/.archon-test-nonexistent/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/tmp/.archon-test-nonexistent/workflows/defaults'),
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getWorkflowFolderSearchPaths: mock(() => ['.harneeslab/workflows']),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands']),
+  getDefaultCommandsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/workflows/defaults'),
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
 }));
 
 mockAllWorkflowModules();

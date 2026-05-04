@@ -37,7 +37,7 @@ Expected response: `{"status":"ok"}`
 
 ## 4. Database
 
-- **SQLite (default)**: Auto-creates at `~/.archon/archon.db`. No setup needed.
+- **SQLite (default)**: Auto-creates at `~/.harneeslab/harneeslab.db`. No setup needed.
 - **PostgreSQL (optional)**: Set `DATABASE_URL` in `.env` and run migrations:
 
 ```bash
@@ -62,11 +62,11 @@ cd <harneeslab-repo> && docker-compose --profile with-db up -d --build
 ```
 
 **systemd (Linux):**
-Create a service file at `/etc/systemd/system/archon.service` pointing to `bun run start`.
+Create a service file at `/etc/systemd/system/harneeslab.service` pointing to `bun run start`.
 
 ## Important Notes
 
 - Only use **one instance** at a time per set of platform tokens — running multiple instances causes token conflicts.
 - The server must be running for Telegram, Slack, Discord, and GitHub platforms to work.
 - CLI workflows work independently and do not require the server.
-- **Configuration**: `~/.archon/config.yaml` is auto-created on first run with sensible defaults. Environment variables in `.env` override matching config values (e.g., `TELEGRAM_STREAMING_MODE` overrides `streaming.telegram`).
+- **Configuration**: `~/.harneeslab/config.yaml` is auto-created on first run with sensible defaults. Environment variables in `.env` override matching config values (e.g., `TELEGRAM_STREAMING_MODE` overrides `streaming.telegram`).

@@ -18,7 +18,7 @@
 
 HarneesLab은 AI 코딩 agent를 위한 workflow engine입니다. 계획, 구현, 검증, 코드 리뷰, PR 생성 같은 개발 절차를 YAML workflow로 정의하고, 여러 프로젝트에서 같은 방식으로 반복 실행할 수 있습니다.
 
-HarneesLab은 NewTurn2017의 Archon fork입니다. 저장소, 릴리스, 문서, 한국어 우선 제품 경험은 HarneesLab으로 가져가되, 기존 Archon workflow와 CLI 사용 흐름은 호환성을 위해 유지합니다.
+HarneesLab은 NewTurn2017의 HarneesLab fork입니다. 저장소, 릴리스, 문서, 한국어 우선 제품 경험은 HarneesLab으로 가져가되, 기존 HarneesLab workflow와 CLI 사용 흐름은 호환성을 위해 유지합니다.
 
 Dockerfile이 인프라를, GitHub Actions가 CI/CD를 반복 가능하게 만든 것처럼 HarneesLab은 AI 코딩 workflow를 반복 가능하게 만듭니다. 소프트웨어 개발을 위한 n8n에 가깝게 생각하면 됩니다.
 
@@ -32,14 +32,14 @@ HarneesLab은 이 부분을 workflow로 고정합니다. workflow는 단계, 검
 - **격리 실행**: 각 workflow run은 독립된 git worktree에서 실행됩니다. 여러 수정 작업을 병렬로 돌려도 branch 충돌이 줄어듭니다.
 - **비동기 작업**: workflow를 시작한 뒤 다른 일을 하다가, 리뷰 코멘트가 포함된 PR 결과로 돌아올 수 있습니다.
 - **조합 가능**: bash script, test, git operation 같은 deterministic node와 planning, code generation, review 같은 AI node를 함께 구성합니다.
-- **이식 가능**: `.archon/workflows/`에 workflow를 정의하고 repo에 commit하면 CLI, Web UI, Slack, Telegram, GitHub에서 같은 절차로 실행됩니다.
+- **이식 가능**: `.harneeslab/workflows/`에 workflow를 정의하고 repo에 commit하면 CLI, Web UI, Slack, Telegram, GitHub에서 같은 절차로 실행됩니다.
 
 ## 실행 예시
 
 다음은 기능 구현을 계획하고, 테스트가 통과할 때까지 구현 loop를 돌고, 사람 승인을 받은 뒤 PR을 만드는 HarneesLab workflow 예시입니다.
 
 ```yaml
-# .archon/workflows/build-feature.yaml
+# .harneeslab/workflows/build-feature.yaml
 nodes:
   - id: plan
     prompt: "Explore the codebase and create an implementation plan"
@@ -76,7 +76,7 @@ nodes:
 ```text
 사용자: hlab로 설정 페이지에 다크 모드를 추가해줘
 
-에이전트: 이 작업에는 archon-idea-to-pr workflow를 실행하겠습니다.
+에이전트: 이 작업에는 harneeslab-idea-to-pr workflow를 실행하겠습니다.
        -> hlab/task-dark-mode branch에 격리 worktree 생성...
        -> 계획 수립...
        -> 구현 중(task 1/4)...
@@ -87,24 +87,20 @@ nodes:
        -> PR 준비 완료: https://github.com/you/project/pull/47
 ```
 
-## 호환성 정책
+## 독립 네임스페이스 정책
 
-HarneesLab은 public brand, GitHub repository, npm package scope, CLI binary를 HarneesLab 기준으로 전환하고 있습니다.
+HarneesLab은 public brand, GitHub repository, npm package scope, CLI binary, runtime directory, workflow namespace를 모두 HarneesLab 기준으로 사용합니다.
 
 | 영역 | 현재 기준 |
 | --- | --- |
 | Repository | `NewTurn2017/HarneesLab` |
 | Package scope | `@harneeslab/*` |
 | CLI binary | `hlab` |
-| Repo-local workflow directory | `.archon/` 유지 |
-| Bundled workflow/command namespace | `archon-*` 유지 |
-| Local default home | `~/.archon` 유지 |
+| Repo-local workflow directory | `.harneeslab/` |
+| Bundled workflow/command namespace | `harneeslab-*` |
+| Local default home | `~/.harneeslab` |
 
-`.archon/` directory와 `archon-*` workflow 이름은 기존 사용자, repo-local workflow, agent skill, 자동화 스크립트와의 호환성 때문에 아직 유지합니다. 새 custom runtime 위치가 필요하면 `HARNEESLAB_HOME`을 사용하고, 기존 `ARCHON_HOME`은 legacy fallback으로 계속 동작합니다. Docker compose도 기존 데이터 보호를 위해 기본 named volume을 `archon_data`로 유지하며, 새 이름을 쓰려면 `HARNEESLAB_DATA`를 명시합니다.
-
-## 이전 버전
-
-Python 기반의 기존 Archon(task management + RAG)을 찾고 있다면 [`archive/v1-task-management-rag`](https://github.com/coleam00/Archon/tree/archive/v1-task-management-rag) branch에 보존되어 있습니다.
+HarneesLab은 hard-cutover 이후 pre-rebrand runtime fallback을 기본 동작으로 지원하지 않습니다. 새 custom runtime 위치가 필요하면 `HARNEESLAB_HOME`을 사용하고, Docker host data 위치는 `HARNEESLAB_DATA`로 지정합니다.
 
 ## 시작하기
 
@@ -209,7 +205,7 @@ brew install <tap>/hlab
 > $env:CLAUDE_BIN_PATH = "$env:USERPROFILE\.local\bin\claude.exe"
 > ```
 >
-> 또는 `~/.archon/config.yaml`에 `assistants.claude.claudeBinaryPath`를 설정합니다. Docker image에는 Claude Code가 사전 설치되어 있습니다. 자세한 내용은 [AI Assistants: Binary path configuration](https://harneeslab.codewithgenie.com/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only)을 참고하세요.
+> 또는 `~/.harneeslab/config.yaml`에 `assistants.claude.claudeBinaryPath`를 설정합니다. Docker image에는 Claude Code가 사전 설치되어 있습니다. 자세한 내용은 [AI Assistants: Binary path configuration](https://harneeslab.codewithgenie.com/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only)을 참고하세요.
 
 ### 사용 시작
 
@@ -260,27 +256,27 @@ HarneesLab은 자주 쓰는 개발 작업용 default workflow를 포함합니다
 
 | Workflow | 하는 일 |
 | --- | --- |
-| `archon-assist` | 일반 Q&A, debugging, exploration. 모든 도구를 사용할 수 있는 Claude Code agent |
-| `archon-fix-github-issue` | issue 분류 -> 조사/계획 -> 구현 -> 검증 -> PR -> smart review -> self-fix |
-| `archon-idea-to-pr` | feature idea -> plan -> implement -> validate -> PR -> 병렬 review -> self-fix |
-| `archon-plan-to-pr` | 기존 plan 실행 -> 구현 -> 검증 -> PR -> review -> self-fix |
-| `archon-issue-review-full` | GitHub issue fix와 multi-agent review pipeline |
-| `archon-smart-pr-review` | PR 복잡도 분류 -> targeted review agents -> finding 종합 |
-| `archon-comprehensive-pr-review` | 병렬 review agent 5개를 사용하는 comprehensive PR review |
-| `archon-create-issue` | 문제 분류 -> context 수집 -> 조사 -> GitHub issue 생성 |
-| `archon-validate-pr` | main branch와 feature branch를 모두 대상으로 하는 PR validation |
-| `archon-resolve-conflicts` | merge conflict 감지 -> 양쪽 변경 분석 -> 해결 -> 검증 -> commit |
-| `archon-feature-development` | plan 기반 feature 구현 -> 검증 -> PR 생성 |
-| `archon-architect` | architecture sweep, complexity reduction, codebase health 개선 |
-| `archon-refactor-safely` | type-check hook과 behavior verification을 포함한 safe refactoring |
-| `archon-ralph-dag` | PRD implementation loop. story 단위 반복 실행 |
-| `archon-remotion-generate` | AI로 Remotion video composition 생성 또는 수정 |
-| `archon-test-loop-dag` | loop node test workflow. 완료될 때까지 counter 반복 |
-| `archon-piv-loop` | 사람 검토를 사이에 둔 Plan-Implement-Validate loop |
+| `harneeslab-assist` | 일반 Q&A, debugging, exploration. 모든 도구를 사용할 수 있는 Claude Code agent |
+| `harneeslab-fix-github-issue` | issue 분류 -> 조사/계획 -> 구현 -> 검증 -> PR -> smart review -> self-fix |
+| `harneeslab-idea-to-pr` | feature idea -> plan -> implement -> validate -> PR -> 병렬 review -> self-fix |
+| `harneeslab-plan-to-pr` | 기존 plan 실행 -> 구현 -> 검증 -> PR -> review -> self-fix |
+| `harneeslab-issue-review-full` | GitHub issue fix와 multi-agent review pipeline |
+| `harneeslab-smart-pr-review` | PR 복잡도 분류 -> targeted review agents -> finding 종합 |
+| `harneeslab-comprehensive-pr-review` | 병렬 review agent 5개를 사용하는 comprehensive PR review |
+| `harneeslab-create-issue` | 문제 분류 -> context 수집 -> 조사 -> GitHub issue 생성 |
+| `harneeslab-validate-pr` | main branch와 feature branch를 모두 대상으로 하는 PR validation |
+| `harneeslab-resolve-conflicts` | merge conflict 감지 -> 양쪽 변경 분석 -> 해결 -> 검증 -> commit |
+| `harneeslab-feature-development` | plan 기반 feature 구현 -> 검증 -> PR 생성 |
+| `harneeslab-architect` | architecture sweep, complexity reduction, codebase health 개선 |
+| `harneeslab-refactor-safely` | type-check hook과 behavior verification을 포함한 safe refactoring |
+| `harneeslab-ralph-dag` | PRD implementation loop. story 단위 반복 실행 |
+| `harneeslab-remotion-generate` | AI로 Remotion video composition 생성 또는 수정 |
+| `harneeslab-test-loop-dag` | loop node test workflow. 완료될 때까지 counter 반복 |
+| `harneeslab-piv-loop` | 사람 검토를 사이에 둔 Plan-Implement-Validate loop |
 
 default workflow 목록은 `hlab workflow list`로 확인할 수 있습니다. 또는 원하는 작업을 자연어로 설명하면 router가 적절한 workflow를 선택합니다.
 
-직접 workflow를 정의할 수도 있습니다. default workflow를 `.archon/workflows/defaults/`에서 복사해 수정하거나, repo의 `.archon/workflows/`에 YAML 파일을 추가하세요. command는 `.archon/commands/`에 markdown file로 둘 수 있습니다. 같은 이름의 repo-local file은 bundled default를 override합니다.
+직접 workflow를 정의할 수도 있습니다. default workflow를 `.harneeslab/workflows/defaults/`에서 복사해 수정하거나, repo의 `.harneeslab/workflows/`에 YAML 파일을 추가하세요. command는 `.harneeslab/commands/`에 markdown file로 둘 수 있습니다. 같은 이름의 repo-local file은 bundled default를 override합니다.
 
 자세한 내용은 [Authoring Workflows](https://harneeslab.codewithgenie.com/guides/authoring-workflows/)와 [Authoring Commands](https://harneeslab.codewithgenie.com/guides/authoring-commands/)를 참고하세요.
 
@@ -350,14 +346,14 @@ Web UI와 CLI는 바로 사용할 수 있습니다. 원격 접근이 필요하�
 
 HarneesLab은 workflow가 시작될 때 `workflow_invoked`라는 anonymous event 하나만 보냅니다. maintainer가 실제로 사용되는 workflow를 파악하고 우선순위를 정하기 위한 용도이며, PII는 수집하지 않습니다.
 
-**수집하는 것:** workflow name, workflow description(YAML에 작성한 값), trigger platform(`cli`, `web`, `slack` 등), HarneesLab version, `~/.archon/telemetry-id`에 저장되는 random install UUID.
+**수집하는 것:** workflow name, workflow description(YAML에 작성한 값), trigger platform(`cli`, `web`, `slack` 등), HarneesLab version, `~/.harneeslab/telemetry-id`에 저장되는 random install UUID.
 
 **수집하지 않는 것:** code, prompt, message, git remote, file path, username, token, AI output, workflow node detail.
 
 **Opt out:** 환경 변수에 다음 중 하나를 설정하세요.
 
 ```bash
-ARCHON_TELEMETRY_DISABLED=1
+HARNEESLAB_TELEMETRY_DISABLED=1
 DO_NOT_TRACK=1        # Astro, Bun, Prisma, Nuxt 등에서 사용하는 de facto standard
 ```
 

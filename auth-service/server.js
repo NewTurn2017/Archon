@@ -11,7 +11,6 @@ const USERNAME = process.env.AUTH_USERNAME ?? '';
 const PASSWORD_HASH = process.env.AUTH_PASSWORD_HASH ?? '';
 const COOKIE_SECRET = process.env.COOKIE_SECRET ?? '';
 const COOKIE_NAME = 'harneeslab_auth';
-const LEGACY_COOKIE_NAME = 'archon_auth';
 const COOKIE_MAX_AGE = parseInt(process.env.COOKIE_MAX_AGE ?? '86400', 10);
 
 if (!USERNAME || !PASSWORD_HASH || !COOKIE_SECRET) {
@@ -147,7 +146,7 @@ const server = http.createServer(async (req, res) => {
     // GET /verify — Caddy forward_auth calls this for every protected request
     if (req.method === 'GET' && url.pathname === '/verify') {
       const cookies = parseCookies(req.headers['cookie']);
-      const session = verifyCookie(cookies[COOKIE_NAME] ?? cookies[LEGACY_COOKIE_NAME] ?? '');
+      const session = verifyCookie(cookies[COOKIE_NAME] ?? '');
       if (session === 'authenticated') {
         res.writeHead(200, { 'X-Auth-User': USERNAME });
         return res.end();
@@ -185,10 +184,7 @@ const server = http.createServer(async (req, res) => {
       const cookieValue = signCookie('authenticated');
       res.writeHead(302, {
         Location: safeRd,
-        'Set-Cookie': [
-          `${COOKIE_NAME}=${cookieValue}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${COOKIE_MAX_AGE}`,
-          `${LEGACY_COOKIE_NAME}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
-        ],
+        'Set-Cookie': `${COOKIE_NAME}=${cookieValue}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=${COOKIE_MAX_AGE}`,
       });
       return res.end();
     }
@@ -197,10 +193,7 @@ const server = http.createServer(async (req, res) => {
     if (url.pathname === '/logout') {
       res.writeHead(302, {
         Location: '/login',
-        'Set-Cookie': [
-          `${COOKIE_NAME}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
-          `${LEGACY_COOKIE_NAME}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
-        ],
+        'Set-Cookie': `${COOKIE_NAME}=; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=0`,
       });
       return res.end();
     }

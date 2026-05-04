@@ -35,9 +35,9 @@ import {
   getCommandFolderSearchPaths,
   getDefaultCommandsPath,
   getDefaultWorkflowsPath,
-  getArchonWorkspacesPath,
+  getHarneesLabWorkspacesPath,
   getRunArtifactsPath,
-  getArchonHome,
+  getHarneesLabHome,
   isDocker,
   checkForUpdate,
   BUNDLED_IS_BINARY,
@@ -1108,7 +1108,7 @@ export function registerApiRoutes(
             conversation.id,
             message,
             conversation.ai_assistant_type,
-            getArchonWorkspacesPath()
+            getHarneesLabWorkspacesPath()
           );
         }
 
@@ -1242,11 +1242,11 @@ export function registerApiRoutes(
         return c.json({ error: `Maximum ${String(MAX_FILES_PER_MESSAGE)} files per message` }, 400);
       }
 
-      const archonHome = getArchonHome();
-      uploadDir = join(archonHome, 'artifacts', 'uploads', conversationId);
+      const harneeslabHome = getHarneesLabHome();
+      uploadDir = join(harneeslabHome, 'artifacts', 'uploads', conversationId);
 
       // Guard against path traversal in conversationId (belt-and-suspenders after regex above)
-      if (!uploadDir.startsWith(archonHome + sep)) {
+      if (!uploadDir.startsWith(harneeslabHome + sep)) {
         return c.json({ error: 'Invalid conversation ID' }, 400);
       }
 
@@ -1566,8 +1566,8 @@ export function registerApiRoutes(
       // Delete from database (unlinks conversations and sessions)
       await codebaseDb.deleteCodebase(id);
 
-      // Remove workspace directory from disk — only for Archon-managed repos
-      const workspacesRoot = normalize(getArchonWorkspacesPath());
+      // Remove workspace directory from disk — only for HarneesLab-managed repos
+      const workspacesRoot = normalize(getHarneesLabWorkspacesPath());
       const normalizedCwd = normalize(codebase.default_cwd);
       if (
         normalizedCwd.startsWith(workspacesRoot + '/') ||
@@ -1727,7 +1727,7 @@ export function registerApiRoutes(
             conv.id,
             message,
             conv.ai_assistant_type,
-            getArchonWorkspacesPath(),
+            getHarneesLabWorkspacesPath(),
             workflowName
           );
         }
@@ -2205,7 +2205,7 @@ export function registerApiRoutes(
       if (codebases.length > 0) workingDir = codebases[0].default_cwd;
     }
     if (!workingDir) {
-      workingDir = getArchonHome();
+      workingDir = getHarneesLabHome();
     }
 
     const { definition } = getValidatedBody(c, saveWorkflowBodySchema);
@@ -2266,7 +2266,7 @@ export function registerApiRoutes(
       if (codebases.length > 0) workingDir = codebases[0].default_cwd;
     }
     if (!workingDir) {
-      workingDir = getArchonHome();
+      workingDir = getHarneesLabHome();
     }
 
     const [workflowFolder] = getWorkflowFolderSearchPaths();

@@ -10,7 +10,7 @@ sidebar:
 
 [7장](/book/first-workflow/)에서는 command를 하나씩 순서대로 실행하는 workflow를 만들었습니다. 이것만으로도 계획, 구현, 검증, 리뷰 같은 많은 범위를 다룰 수 있습니다. 하지만 sequential step만으로 깔끔하게 해결하기 어려운 문제도 있습니다. "이전 결과가 feature request가 아니라 bug일 때만 이 node를 실행하라" 또는 "독립적인 reviewer 세 개가 끝날 때까지 기다렸다가 finding을 합쳐라" 같은 문제입니다.
 
-이때 **DAG workflow**(Directed Acyclic Graph)를 사용합니다. 직선이 아니라 graph를 설명하는 방식입니다. 어떤 node가 있고, 무엇이 무엇에 의존하고, 각 node가 어떤 조건에서 실행되어야 하는지 표현합니다. Archon의 `nodes:` format이 이 graph를 제공합니다.
+이때 **DAG workflow**(Directed Acyclic Graph)를 사용합니다. 직선이 아니라 graph를 설명하는 방식입니다. 어떤 node가 있고, 무엇이 무엇에 의존하고, 각 node가 어떤 조건에서 실행되어야 하는지 표현합니다. HarneesLab의 `nodes:` format이 이 graph를 제공합니다.
 
 ---
 
@@ -45,11 +45,11 @@ nodes:
     depends_on: [investigate]
 ```
 
-Archon은 `investigate`가 성공적으로 완료될 때까지 `implement`를 시작하지 않습니다. `investigate`가 실패하면 `implement`는 건너뜁니다.
+HarneesLab은 `investigate`가 성공적으로 완료될 때까지 `implement`를 시작하지 않습니다. `investigate`가 실패하면 `implement`는 건너뜁니다.
 
 ### 병렬 실행
 
-공유 dependency가 없는 node는 **동시에** 실행됩니다. Archon은 node를 topological layer로 묶고 각 layer를 병렬로 실행합니다.
+공유 dependency가 없는 node는 **동시에** 실행됩니다. HarneesLab은 node를 topological layer로 묶고 각 layer를 병렬로 실행합니다.
 
 ```yaml
 nodes:
@@ -73,7 +73,7 @@ nodes:
 
 ### Layer
 
-Archon은 topological layer를 자동으로 계산합니다. 여러분은 *무엇*(어떤 node, 어떤 dependency)을 설명하고, Archon은 *언제*를 계산합니다. 위 workflow에는 세 개 layer가 있습니다.
+HarneesLab은 topological layer를 자동으로 계산합니다. 여러분은 *무엇*(어떤 node, 어떤 dependency)을 설명하고, HarneesLab은 *언제*를 계산합니다. 위 workflow에는 세 개 layer가 있습니다.
 
 ```
 Layer 1: scope
@@ -95,7 +95,7 @@ bug report나 feature request를 받아 어느 쪽인지 판단하고, 수정 �
 
 ### 단계별 YAML
 
-`.archon/workflows/classify-and-route.yaml`을 만듭니다.
+`.harneeslab/workflows/classify-and-route.yaml`을 만듭니다.
 
 ```yaml
 name: classify-and-route
@@ -172,7 +172,7 @@ when: "$nodeId.output != 'VALUE'"
 when: "$nodeId.output.field == 'VALUE'"   # JSON field access
 ```
 
-표현식이 잘못되었거나 평가할 수 없으면 Archon은 fail open합니다. 조용히 건너뛰지 않고 node를 실행합니다.
+표현식이 잘못되었거나 평가할 수 없으면 HarneesLab은 fail open합니다. 조용히 건너뛰지 않고 node를 실행합니다.
 
 ### Node output 접근
 
@@ -192,7 +192,7 @@ downstream으로 context를 전달하기 위해 `prompt:` text 안에서 `$nodeI
 
 ### `output_format`으로 structured output 만들기
 
-`output_format`은 AI node의 JSON output을 강제하라고 Archon에 지시합니다. JSON Schema를 넘기면 Archon은 node가 그 shape의 data를 반환하도록 보장합니다.
+`output_format`은 AI node의 JSON output을 강제하라고 HarneesLab에 지시합니다. JSON Schema를 넘기면 HarneesLab은 node가 그 shape의 data를 반환하도록 보장합니다.
 
 ```yaml
 - id: classify
@@ -230,11 +230,11 @@ classify-and-route 예시는 `implement`에 `none_failed_min_one_success`를 사
 
 ## Node type
 
-Archon은 네 가지 node type을 지원합니다.
+HarneesLab은 네 가지 node type을 지원합니다.
 
 | Type | Syntax | 사용할 때 |
 |------|--------|-------------|
-| **Command** | `command: my-command` | `.archon/commands/my-command.md`에서 command를 로드합니다. 표준 선택지입니다. |
+| **Command** | `command: my-command` | `.harneeslab/commands/my-command.md`에서 command를 로드합니다. 표준 선택지입니다. |
 | **Prompt** | `prompt: "inline instructions..."` | 재사용 command file이 필요 없는 빠른 일회성 지시. |
 | **Bash** | `bash: "shell command"` | AI 없이 shell script 실행. stdout은 `$nodeId.output`으로 capture됩니다. 결정적 작업에만 사용합니다. |
 | **Loop** | `loop: { prompt: "...", until: SIGNAL }` | output에 completion signal이 나타날 때까지 AI prompt를 반복합니다. [Loop Nodes](/guides/loop-nodes/)를 보세요. |
@@ -261,7 +261,7 @@ Archon은 네 가지 node type을 지원합니다.
 - id: implement-stories
   loop:
     prompt: |
-      Read progress from .archon/progress.json.
+      Read progress from .harneeslab/progress.json.
       Implement the next incomplete story with tests.
       Update progress. If all stories done: <promise>COMPLETE</promise>
     until: COMPLETE
@@ -281,7 +281,7 @@ Archon은 네 가지 node type을 지원합니다.
 
 **먼저 단순한 input으로 테스트하세요.** 실제 data에 full workflow를 실행하기 전에 conditional의 각 branch가 올바르게 routing되는지 확인하세요. 명백한 bug인 단순 test input을 만들고 BUG path가 실행되는지 확인합니다. 그다음 명확한 feature request로 테스트합니다.
 
-**실패는 DAG resume에 맡기세요.** 긴 workflow가 중간에 실패하면 다시 실행하세요. Archon은 이미 완료된 node를 자동으로 건너뛰고 멈춘 지점부터 재개합니다. `--resume` flag는 필요 없습니다.
+**실패는 DAG resume에 맡기세요.** 긴 workflow가 중간에 실패하면 다시 실행하세요. HarneesLab은 이미 완료된 node를 자동으로 건너뛰고 멈춘 지점부터 재개합니다. `--resume` flag는 필요 없습니다.
 
 ---
 

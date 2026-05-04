@@ -29,7 +29,7 @@ import { homedir } from 'os';
 import { randomBytes } from 'crypto';
 import { spawn, execSync, type ChildProcess } from 'child_process';
 import { getRegisteredProviders } from '@harneeslab/providers';
-import { getArchonHome } from '@harneeslab/paths';
+import { getHarneesLabHome } from '@harneeslab/paths';
 
 // =============================================================================
 // Types
@@ -299,7 +299,7 @@ Node.js 18 이상이 필요합니다.
  * Check for existing global configuration.
  */
 export function checkExistingConfig(): ExistingConfig | null {
-  const envPath = join(getArchonHome(), '.env');
+  const envPath = join(getHarneesLabHome(), '.env');
 
   if (!existsSync(envPath)) {
     return null;
@@ -1300,13 +1300,13 @@ function writeEnvFiles(
   content: string,
   repoPath: string
 ): { globalPath: string; repoEnvPath: string } {
-  const archonHome = getArchonHome();
-  const globalPath = join(archonHome, '.env');
+  const harneeslabHome = getHarneesLabHome();
+  const globalPath = join(harneeslabHome, '.env');
   const repoEnvPath = join(repoPath, '.env');
 
   // Create the global config directory if needed.
-  if (!existsSync(archonHome)) {
-    mkdirSync(archonHome, { recursive: true });
+  if (!existsSync(harneeslabHome)) {
+    mkdirSync(harneeslabHome, { recursive: true });
   }
 
   // Write to global location
@@ -1323,7 +1323,7 @@ function writeEnvFiles(
  *
  * Always overwrites existing files to ensure the latest skill version is installed.
  */
-export function copyArchonSkill(targetPath: string): void {
+export function copyHarneesLabSkill(targetPath: string): void {
   const skillRoot = join(targetPath, '.claude', 'skills', 'hlab');
   for (const [relativePath, content] of Object.entries(BUNDLED_SKILL_FILES)) {
     const dest = join(skillRoot, relativePath);
@@ -1665,7 +1665,7 @@ export async function setupCommand(options: SetupOptions): Promise<void> {
     const skillTarget = skillTargetRaw;
     s.start('HarneesLab skill 설치 중...');
     try {
-      copyArchonSkill(skillTarget);
+      copyHarneesLabSkill(skillTarget);
     } catch (err) {
       s.stop('HarneesLab skill 설치 실패');
       cancel(`skill을 설치하지 못했습니다: ${(err as NodeJS.ErrnoException).message}`);
@@ -1689,9 +1689,9 @@ export async function setupCommand(options: SetupOptions): Promise<void> {
 
     if (!isCancel(docsPath) && typeof docsPath === 'string' && docsPath.trim()) {
       try {
-        const archonDir = join(options.repoPath, '.archon');
-        mkdirSync(archonDir, { recursive: true });
-        const configPath = join(archonDir, 'config.yaml');
+        const harneeslabDir = join(options.repoPath, '.harneeslab');
+        mkdirSync(harneeslabDir, { recursive: true });
+        const configPath = join(harneeslabDir, 'config.yaml');
         const existing = existsSync(configPath) ? readFileSync(configPath, 'utf-8') : '';
         if (!existing.includes('docs:')) {
           const escaped = docsPath.trim().replace(/"/g, '\\"');

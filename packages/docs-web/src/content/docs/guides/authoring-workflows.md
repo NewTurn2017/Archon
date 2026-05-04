@@ -35,20 +35,20 @@ nodes:
     context: fresh
 ```
 
-> **default를 template으로 사용하기:** HarneesLab은 `.archon/workflows/defaults/`에 default workflows를 제공합니다. `.archon`과 `archon-*` workflow 이름은 upstream Archon과의 호환성을 위해 유지됩니다. 실제 예시를 살펴본 뒤 복사해서 수정하세요.
+> **default를 template으로 사용하기:** HarneesLab은 `.harneeslab/workflows/defaults/`에 default workflows를 제공합니다. `.harneeslab`과 `harneeslab-*` workflow 이름은 upstream HarneesLab과의 호환성을 위해 유지됩니다. 실제 예시를 살펴본 뒤 복사해서 수정하세요.
 > ```bash
-> cp .archon/workflows/defaults/archon-fix-github-issue.yaml .archon/workflows/my-fix-issue.yaml
+> cp .harneeslab/workflows/defaults/harneeslab-fix-github-issue.yaml .harneeslab/workflows/my-fix-issue.yaml
 > ```
-> `.archon/workflows/`의 같은 이름 file은 bundled default를 덮어씁니다.
+> `.harneeslab/workflows/`의 같은 이름 file은 bundled default를 덮어씁니다.
 
 ---
 
 ## 파일 위치
 
-workflow는 working directory 기준 `.archon/workflows/`에 둡니다. `.archon` 디렉터리 이름은 repo-local workflow convention으로 계속 유지됩니다.
+workflow는 working directory 기준 `.harneeslab/workflows/`에 둡니다. `.harneeslab` 디렉터리 이름은 repo-local workflow convention으로 계속 유지됩니다.
 
 ```
-.archon/
+.harneeslab/
 ├── workflows/
 │   ├── my-workflow.yaml
 │   └── review/
@@ -59,9 +59,9 @@ workflow는 working directory 기준 `.archon/workflows/`에 둡니다. `.archon
 
 HarneesLab은 workflow를 recursive하게 발견하므로 subdirectory를 사용할 수 있습니다. workflow file load에 실패하면(syntax error, validation failure) 해당 file은 skip되고 error가 `hlab workflow list` 또는 `/workflow list`에 보고됩니다.
 
-> **Global workflows:** 모든 project에 적용되는 workflow는 `~/.archon/.archon/workflows/`에 두세요. global workflow는 같은 이름의 repo workflow에 의해 덮어써집니다. [전역 워크플로](/guides/global-workflows/)를 참고하세요.
+> **Global workflows:** 모든 project에 적용되는 workflow는 `~/.harneeslab/.harneeslab/workflows/`에 두세요. global workflow는 같은 이름의 repo workflow에 의해 덮어써집니다. [전역 워크플로](/guides/global-workflows/)를 참고하세요.
 
-> **CLI vs Server:** CLI는 실행한 위치에서 workflow file을 읽습니다(uncommitted changes도 보임). server는 `~/.archon/workspaces/owner/repo/`의 workspace clone에서 읽으며, 이 clone은 worktree creation 전에 remote에서만 sync됩니다. workflow를 local에서 수정하고 push하지 않으면 server는 변경을 보지 못합니다.
+> **CLI vs Server:** CLI는 실행한 위치에서 workflow file을 읽습니다(uncommitted changes도 보임). server는 `~/.harneeslab/workspaces/owner/repo/`의 workspace clone에서 읽으며, 이 clone은 worktree creation 전에 remote에서만 sync됩니다. workflow를 local에서 수정하고 push하지 않으면 server는 변경을 보지 못합니다.
 
 ---
 
@@ -124,7 +124,7 @@ interactive: true                # Web only: run in foreground instead of backgr
 # Required for DAG-based
 nodes:
   - id: classify                 # Unique node ID (used for dependency refs and $id.output)
-    command: classify-issue      # Loads from .archon/commands/classify-issue.md
+    command: classify-issue      # Loads from .harneeslab/commands/classify-issue.md
     output_format:               # Optional: enforce structured JSON output (Claude + Codex)
       type: object
       properties:
@@ -155,7 +155,7 @@ nodes:
     provider: claude             # Per-node provider override
     model: haiku                 # Per-node model override
     # hooks:                     # Optional: per-node SDK hook callbacks (Claude only) — see hooks guide
-    # mcp: .archon/mcp/servers.json  # Optional: per-node MCP servers (Claude only)
+    # mcp: .harneeslab/mcp/servers.json  # Optional: per-node MCP servers (Claude only)
     # skills: [remotion-best-practices]  # Optional: per-node skills (Claude only) — see skills guide
 ```
 
@@ -165,7 +165,7 @@ nodes:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `command` | string | `.archon/commands/`에서 로드할 command name |
+| `command` | string | `.harneeslab/commands/`에서 로드할 command name |
 | `prompt` | string | inline prompt string |
 | `bash` | string | shell script(AI 없음). stdout은 `$nodeId.output`으로 capture됩니다. optional `timeout`(ms, 기본값 120000) |
 | `loop` | object | completion signal까지 반복되는 AI prompt입니다. [Loop 노드](/guides/loop-nodes/) 참고 |
@@ -532,7 +532,7 @@ row가 terminal status에 도달하면 같은 path에서 같은 workflow를 다�
 
 **Known limitation**: 이전 node의 AI session context는 restore되지 않습니다. downstream node가 artifact가 아니라 prior run session의 in-context knowledge에 의존한다면 해당 artifact를 명시적으로 다시 읽어야 할 수 있습니다.
 
-**Fresh start**: 이전 run에서 completed node가 하나도 없으면 Archon은 fresh start합니다(skip할 node 없음).
+**Fresh start**: 이전 run에서 completed node가 하나도 없으면 HarneesLab은 fresh start합니다(skip할 node 없음).
 
 ---
 
@@ -580,7 +580,7 @@ workflow는 workflow level에서 AI model과 provider-specific option을 configu
 model과 option은 다음 순서로 resolve됩니다.
 
 1. **Workflow-level** - workflow YAML의 explicit setting
-2. **Config defaults** - `.archon/config.yaml`의 `assistants.*`
+2. **Config defaults** - `.harneeslab/config.yaml`의 `assistants.*`
 3. **SDK defaults** - Claude/Codex SDK의 built-in default
 
 ### Provider와 Model
@@ -684,7 +684,7 @@ hlab validate workflows <name>
 
 ### 예시: Config Defaults + Workflow Override
 
-**`.archon/config.yaml`:**
+**`.harneeslab/config.yaml`:**
 ```yaml
 assistants:
   claude:
@@ -863,8 +863,8 @@ nodes:
   - id: implement-loop
     loop:
       prompt: |
-        Read PRD from `.archon/prd.md`.
-        Read progress from `.archon/progress.json`.
+        Read PRD from `.harneeslab/prd.md`.
+        Read progress from `.harneeslab/progress.json`.
         Implement the next incomplete story with tests.
         Run validation: `bun run validate`.
         Update progress file.
@@ -1107,13 +1107,13 @@ streaming output을 보며 각 step을 확인하세요.
 
 ### Artifact 확인
 
-workflow 실행 후 해당 run의 `$ARTIFACTS_DIR`에 있는 artifact를 확인하세요(위치: `~/.archon/workspaces/owner/repo/artifacts/runs/{workflow-id}/`).
+workflow 실행 후 해당 run의 `$ARTIFACTS_DIR`에 있는 artifact를 확인하세요(위치: `~/.harneeslab/workspaces/owner/repo/artifacts/runs/{workflow-id}/`).
 
 ### Log 확인
 
 workflow execution log 위치:
 ```
-~/.archon/workspaces/owner/repo/logs/{workflow-id}.jsonl
+~/.harneeslab/workspaces/owner/repo/logs/{workflow-id}.jsonl
 ```
 
 각 line은 JSON event입니다(step start, AI response, tool call 등).
@@ -1165,5 +1165,5 @@ workflow를 deploy하기 전에:
 16. **`systemPrompt`** — node별 default system prompt를 override합니다(Claude 전용)
 17. **`sandbox`** — node 또는 workflow별 OS-level filesystem/network restriction입니다(Claude 전용)
 18. **Loop node** — completion signal까지 iterative execution하려면 DAG node 안에서 `loop:`를 사용합니다
-19. **Default를 template으로 사용** — `.archon/workflows/defaults/`에서 실제 예시를 보고 복사/수정하세요
+19. **Default를 template으로 사용** — `.harneeslab/workflows/defaults/`에서 실제 예시를 보고 복사/수정하세요
 20. **철저히 test하세요** — 각 command, artifact flow, edge case를 확인하세요

@@ -86,7 +86,7 @@ Screenshot은 먼저 WSL-native path에 저장한 뒤, `/mnt/c/` mount를 통해
 # Save to WSL home, then copy to project
 wsl -d Ubuntu -- bash -c '
   agent-browser screenshot /home/user/screenshot.png 2>&1 &&
-  cp /home/user/screenshot.png /path/to/archon/e2e-screenshots/my-test.png
+  cp /home/user/screenshot.png /path/to/harneeslab/e2e-screenshots/my-test.png
 '
 ```
 

@@ -90,7 +90,7 @@ export class PiProvider implements IAgentProvider {
     const modelRef = requestOptions?.model ?? piConfig.model;
     if (!modelRef) {
       throw new Error(
-        'Pi provider requires a model. Set `model` on the workflow node or `assistants.pi.model` in .archon/config.yaml. ' +
+        'Pi provider requires a model. Set `model` on the workflow node or `assistants.pi.model` in .harneeslab/config.yaml. ' +
           "Format: '<pi-provider-id>/<model-id>' (e.g. 'google/gemini-2.5-pro')."
       );
     }
@@ -119,7 +119,7 @@ export class PiProvider implements IAgentProvider {
     //
     //    Per-request env vars override the file via setRuntimeApiKey — this
     //    mirrors Claude's process-env + request-env merge pattern and
-    //    ensures codebase-scoped env vars (from .archon/config.yaml `env:`)
+    //    ensures codebase-scoped env vars (from .harneeslab/config.yaml `env:`)
     //    win over the user's global Pi login.
     //
     //    Pi's internal resolution order:
@@ -146,7 +146,7 @@ export class PiProvider implements IAgentProvider {
     const resolvedKey = await authStorage.getApiKey(parsed.provider);
     if (!resolvedKey) {
       const envHint = envVarName
-        ? `Set ${envVarName} in the environment or codebase env vars (.archon/config.yaml env: section).`
+        ? `Set ${envVarName} in the environment or codebase env vars (.harneeslab/config.yaml env: section).`
         : `Provider '${parsed.provider}' is not in the HarneesLab adapter's env-var table — file an issue if you want a shortcut env var for it.`;
       const loginHint = `Or run \`pi\` and type \`/login\` locally to authenticate '${parsed.provider}' via OAuth; credentials land in ~/.pi/agent/auth.json and are picked up automatically.`;
       throw new Error(
@@ -169,7 +169,7 @@ export class PiProvider implements IAgentProvider {
     //    4b. tools: covers allowed_tools / denied_tools. `undefined` leaves Pi
     //        defaults; an explicit empty array means "no tools" (valid idiom
     //        matching e2e-claude-smoke's `allowed_tools: []`).
-    //        requestOptions.env (codebase-scoped env vars from .archon/config.yaml)
+    //        requestOptions.env (codebase-scoped env vars from .harneeslab/config.yaml)
     //        is injected into bash subprocesses via a BashSpawnHook, mirroring
     //        Claude's options.env and Codex's constructor env.
     const { tools: filteredTools, unknownTools } = resolvePiTools(

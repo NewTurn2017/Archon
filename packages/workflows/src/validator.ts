@@ -294,10 +294,10 @@ export async function validateWorkflowResources(
           nodeId: node.id,
           field: 'command',
           message: `Command '${node.command}' not found`,
-          hint: `Create .archon/commands/${node.command}.md or use an existing command name`,
+          hint: `Create .harneeslab/commands/${node.command}.md or use an existing command name`,
         };
         if (similar.length > 0) {
-          issue.hint = `Did you mean: ${similar.map(s => `'${s}'`).join(', ')}? Or create .archon/commands/${node.command}.md`;
+          issue.hint = `Did you mean: ${similar.map(s => `'${s}'`).join(', ')}? Or create .harneeslab/commands/${node.command}.md`;
           issue.suggestions = similar;
         }
         issues.push(issue);
@@ -439,9 +439,9 @@ export async function validateWorkflowResources(
     if (isScriptNode(node)) {
       const script = node.script;
 
-      // Named script: validate file exists in .archon/scripts/
+      // Named script: validate file exists in .harneeslab/scripts/
       if (!isInlineScript(script)) {
-        const scriptsDir = resolve(cwd, '.archon', 'scripts');
+        const scriptsDir = resolve(cwd, '.harneeslab', 'scripts');
         const extensions = node.runtime === 'uv' ? ['.py'] : ['.ts', '.js'];
         const existsResults = await Promise.all(
           extensions.map(ext => fileExists(join(scriptsDir, `${script}${ext}`)))
@@ -453,8 +453,8 @@ export async function validateWorkflowResources(
             level: 'error',
             nodeId: node.id,
             field: 'script',
-            message: `Named script '${script}' not found in .archon/scripts/`,
-            hint: `Create .archon/scripts/${script}.${node.runtime === 'uv' ? 'py' : 'ts'} with your script code`,
+            message: `Named script '${script}' not found in .harneeslab/scripts/`,
+            hint: `Create .harneeslab/scripts/${script}.${node.runtime === 'uv' ? 'py' : 'ts'} with your script code`,
           });
         }
       }
@@ -519,7 +519,7 @@ export async function validateCommand(
       level: 'error',
       field: 'file',
       message: `Command '${commandName}' not found`,
-      hint: `Create .archon/commands/${commandName}.md`,
+      hint: `Create .harneeslab/commands/${commandName}.md`,
     };
     if (similar.length > 0) {
       issue.hint = `Did you mean: ${similar.map(s => `'${s}'`).join(', ')}?`;
@@ -571,13 +571,13 @@ export interface ScriptValidationResult {
 }
 
 /**
- * Discover all script names from .archon/scripts/ in the given cwd.
+ * Discover all script names from .harneeslab/scripts/ in the given cwd.
  * Returns a list of { name, path, runtime } entries.
  */
 export async function discoverAvailableScripts(
   cwd: string
 ): Promise<{ name: string; path: string; runtime: ScriptRuntime }[]> {
-  const scriptsDir = resolve(cwd, '.archon', 'scripts');
+  const scriptsDir = resolve(cwd, '.harneeslab', 'scripts');
   try {
     const scripts = await discoverScripts(scriptsDir);
     return [...scripts.values()].map(s => ({ name: s.name, path: s.path, runtime: s.runtime }));
@@ -596,7 +596,7 @@ export async function validateScript(
   cwd: string
 ): Promise<ScriptValidationResult> {
   const issues: ValidationIssue[] = [];
-  const scriptsDir = resolve(cwd, '.archon', 'scripts');
+  const scriptsDir = resolve(cwd, '.harneeslab', 'scripts');
 
   // Find the script file (any supported extension)
   const allExtensions = ['.ts', '.js', '.py'];
@@ -616,8 +616,8 @@ export async function validateScript(
     issues.push({
       level: 'error',
       field: 'file',
-      message: `Script '${scriptName}' not found in .archon/scripts/`,
-      hint: `Create .archon/scripts/${scriptName}.ts (bun) or .archon/scripts/${scriptName}.py (uv)`,
+      message: `Script '${scriptName}' not found in .harneeslab/scripts/`,
+      hint: `Create .harneeslab/scripts/${scriptName}.ts (bun) or .harneeslab/scripts/${scriptName}.py (uv)`,
     });
     return { scriptName, valid: false, issues };
   }

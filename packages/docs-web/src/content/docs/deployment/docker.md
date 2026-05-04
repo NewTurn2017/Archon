@@ -9,7 +9,7 @@ sidebar:
   order: 2
 ---
 
-Docker로 server에 HarneesLab을 배포합니다. 자동 HTTPS, PostgreSQL, Web UI 구성이 포함됩니다. HarneesLab은 Archon fork이므로 기존 Archon-compatible 배포 흐름과 runtime path fallback을 함께 지원합니다.
+Docker로 server에 HarneesLab을 배포합니다. 자동 HTTPS, PostgreSQL, Web UI 구성이 포함됩니다. HarneesLab은 HarneesLab fork이므로 기존 HarneesLab-compatible 배포 흐름과 runtime path fallback을 함께 지원합니다.
 
 > **Claude Code는 image에 미리 설치되어 있습니다.** 공식 `ghcr.io/newturn2017/harneeslab` image에는 npm으로 설치된 Claude Code와 미리 설정된 `CLAUDE_BIN_PATH`가 포함되어 있어 추가 설정이 필요 없습니다. npm install을 생략한 custom image를 build하는 경우에는 mounted `cli.js`를 가리키도록 `CLAUDE_BIN_PATH`를 직접 설정하세요([AI Assistants → Binary path configuration](/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only) 참고).
 
@@ -266,7 +266,7 @@ HarneesLab은 Docker Compose profile로 PostgreSQL 또는 HTTPS를 선택적으�
 
 ### No profile(SQLite)
 
-zero-config 기본값입니다. database container가 필요 없으며, SQLite file은 compatibility volume인 `archon_data`에 저장됩니다.
+zero-config 기본값입니다. database container가 필요 없으며, SQLite file은 compatibility volume인 `harneeslab_data`에 저장됩니다.
 
 ### `--profile with-db`(PostgreSQL)
 
@@ -444,9 +444,9 @@ MAX_CONCURRENT_CONVERSATIONS=10
 
 ### Data Directory
 
-container는 새 compose 기준으로 모든 data를 `/.harneeslab/`에 저장합니다(workspaces, worktrees, artifacts, logs, SQLite DB). 기존 `ARCHON_DOCKER`/`/.archon` compose 구성도 compatibility path로 계속 동작합니다.
+container는 새 compose 기준으로 모든 data를 `/.harneeslab/`에 저장합니다(workspaces, worktrees, artifacts, logs, SQLite DB). 기존 `HARNEESLAB_DOCKER`/`/.harneeslab` compose 구성도 compatibility path로 계속 동작합니다.
 
-기본값은 Docker-managed volume입니다. host의 특정 위치에 data를 저장하려면 `.env`에 `HARNEESLAB_DATA`를 설정합니다. 기존 `ARCHON_DATA`도 fallback으로 계속 인식됩니다.
+기본값은 Docker-managed volume입니다. host의 특정 위치에 data를 저장하려면 `.env`에 `HARNEESLAB_DATA`를 설정합니다. `HARNEESLAB_DATA`를 설정하면 기본 Docker volume 대신 해당 경로를 사용합니다.
 
 ```ini
 # Store HarneesLab data at a specific host path
@@ -460,7 +460,7 @@ mkdir -p /opt/harneeslab-data
 sudo chown -R 1001:1001 /opt/harneeslab-data
 ```
 
-`HARNEESLAB_DATA`와 `ARCHON_DATA`가 모두 설정되어 있지 않으면 Docker가 기존 사용자 보호를 위해 compatibility volume(`archon_data`)을 자동으로 관리합니다. 새 이름의 named volume을 사용하려면 `HARNEESLAB_DATA=harneeslab_data`를 설정하거나, 원하는 host path로 migration한 뒤 `HARNEESLAB_DATA`를 지정하세요.
+`HARNEESLAB_DATA`가 설정되어 있지 않으면 Docker가 `harneeslab_data` named volume을 자동으로 관리합니다. host path를 직접 관리하려면 `HARNEESLAB_DATA`를 지정하세요.
 
 HarneesLab compose file은 service/network label을 새 이름으로 정리했기 때문에 upgrade 시 Docker가 network와 container를 다시 만들 수 있습니다. 이 동작은 stateless network/container에 한정되며, data는 위의 volume 설정에 따라 유지됩니다. 기존 data를 보존해야 하면 `docker compose down -v`는 실행하지 마세요.
 

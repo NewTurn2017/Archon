@@ -109,12 +109,12 @@ hlab version
 > ```bash
 > # Download and install using gh (requires GitHub authentication)
 > gh release download v0.1.0 --repo NewTurn2017/HarneesLab \
->   --pattern "archon-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')" \
->   --dir /tmp/archon-install
+>   --pattern "harneeslab-$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/x64/;s/aarch64/arm64/')" \
+>   --dir /tmp/harneeslab-install
 >
 > # Install the binary
-> chmod +x /tmp/archon-install/archon-*
-> sudo mv /tmp/archon-install/archon-* /usr/local/bin/archon
+> chmod +x /tmp/harneeslab-install/harneeslab-*
+> sudo mv /tmp/harneeslab-install/harneeslab-* /usr/local/bin/harneeslab
 >
 > # Verify
 > hlab version

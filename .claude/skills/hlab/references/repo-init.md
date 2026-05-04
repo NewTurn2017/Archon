@@ -1,13 +1,13 @@
 # Initializing HarneesLab in a Repository
 
-Set up the `.archon/` directory structure in any git repository to enable custom workflows and commands.
+Set up the `.harneeslab/` directory structure in any git repository to enable custom workflows and commands.
 
 ## Directory Structure
 
 Create the following in your repository root:
 
 ```
-.archon/
+.harneeslab/
 ├── commands/         # Custom command files (.md)
 ├── workflows/        # Workflow definitions (.yaml)
 ├── mcp/              # MCP server config files (.json) — optional
@@ -15,16 +15,16 @@ Create the following in your repository root:
 ```
 
 ```bash
-mkdir -p .archon/commands .archon/workflows
+mkdir -p .harneeslab/commands .harneeslab/workflows
 ```
 
 ## Minimal config.yaml
 
-Create `.archon/config.yaml` only if you need to override defaults:
+Create `.harneeslab/config.yaml` only if you need to override defaults:
 
 ```yaml
 # AI provider for this repo (default: inherited from global config)
-assistant: claude                 # Repo-level key. In ~/.archon/config.yaml, use 'defaultAssistant' instead
+assistant: claude                 # Repo-level key. In ~/.harneeslab/config.yaml, use 'defaultAssistant' instead
 
 # Worktree settings
 worktree:
@@ -41,10 +41,10 @@ defaults:
 
 ## How Bundled Defaults Work
 
-HarneesLab ships with built-in commands and workflows (like `archon-assist`, `archon-fix-github-issue`). These are loaded at runtime automatically — no files need to be copied into your repo.
+HarneesLab ships with built-in commands and workflows (like `harneeslab-assist`, `harneeslab-fix-github-issue`). These are loaded at runtime automatically — no files need to be copied into your repo.
 
 - **To see bundled workflows**: `hlab workflow list`
-- **To override a default**: Create a file with the same name in your repo's `.archon/workflows/` or `.archon/commands/`. Repo files take priority.
+- **To override a default**: Create a file with the same name in your repo's `.harneeslab/workflows/` or `.harneeslab/commands/`. Repo files take priority.
 - **To disable defaults**: Set `defaults.loadDefaultWorkflows: false` or `defaults.loadDefaultCommands: false` in config.
 
 ## .gitignore Considerations
@@ -53,14 +53,14 @@ Add to your `.gitignore`:
 
 ```gitignore
 # HarneesLab runtime artifacts (never commit)
-.archon/mcp/          # May contain env var references
+.harneeslab/mcp/          # May contain env var references
 ```
 
-The `.archon/commands/` and `.archon/workflows/` directories should be committed — they are part of your project's workflow definitions.
+The `.harneeslab/commands/` and `.harneeslab/workflows/` directories should be committed — they are part of your project's workflow definitions.
 
 ## Global Configuration
 
-The global config at `~/.archon/config.yaml` applies to all repositories. Use `guides/config.md` for interactive config editing, or create it manually:
+The global config at `~/.harneeslab/config.yaml` applies to all repositories. Use `guides/config.md` for interactive config editing, or create it manually:
 
 ```yaml
 botName: HarneesLab

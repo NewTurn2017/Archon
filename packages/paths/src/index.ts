@@ -1,17 +1,17 @@
-// Archon path resolution utilities
+// HarneesLab path resolution utilities
 export {
   expandTilde,
   isDocker,
-  getArchonHome,
-  getArchonWorkspacesPath,
-  getArchonWorktreesPath,
-  getArchonConfigPath,
+  getHarneesLabHome,
+  getHarneesLabWorkspacesPath,
+  getHarneesLabWorktreesPath,
+  getHarneesLabConfigPath,
   getCommandFolderSearchPaths,
   getWorkflowFolderSearchPaths,
-  getAppArchonBasePath,
+  getAppHarneesLabBasePath,
   getDefaultCommandsPath,
   getDefaultWorkflowsPath,
-  logArchonPaths,
+  logHarneesLabPaths,
   validateAppDefaultsPaths,
   parseOwnerRepo,
   getProjectRoot,
@@ -26,7 +26,7 @@ export {
   createProjectSourceSymlink,
   findMarkdownFilesRecursive,
   getWebDistDir,
-} from './archon-paths';
+} from './harneeslab-paths';
 
 // Logger
 export { createLogger, setLogLevel, getLogLevel, rootLogger } from './logger';

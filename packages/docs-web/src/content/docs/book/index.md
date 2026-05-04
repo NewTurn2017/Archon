@@ -11,14 +11,14 @@ hero:
   tagline: 10개 장으로 처음부터 워크플로 작성까지 익히기.
   actions:
     - text: 읽기 시작하기
-      link: /book/what-is-archon/
+      link: /book/what-is-harneeslab/
       icon: right-arrow
       variant: primary
 ---
 
 ## 이 가이드 사용법
 
-- **HarneesLab이 처음인가요?** [HarneesLab이란 무엇인가?](/book/what-is-archon/)부터 시작해 장 순서대로 읽으세요.
+- **HarneesLab이 처음인가요?** [HarneesLab이란 무엇인가?](/book/what-is-harneeslab/)부터 시작해 장 순서대로 읽으세요.
 - **빠르게 시작하고 싶나요?** [처음 5분](/book/first-five-minutes/)으로 바로 이동하세요.
 - **특정 워크플로를 찾고 있나요?** [핵심 워크플로](/book/essential-workflows/)를 보세요.
 - **커스텀 자동화를 만들고 있나요?** [첫 명령 만들기](/book/first-command/)부터 시작하세요.
@@ -26,7 +26,7 @@ hero:
 ## 목차
 
 ### 1부: 방향 잡기
-1. [HarneesLab이란 무엇인가?](/book/what-is-archon/)
+1. [HarneesLab이란 무엇인가?](/book/what-is-harneeslab/)
 2. [처음 5분](/book/first-five-minutes/)
 3. [HarneesLab은 실제로 어떻게 동작하나](/book/how-it-works/)
 

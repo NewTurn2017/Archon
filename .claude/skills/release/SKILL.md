@@ -13,18 +13,18 @@ description: |
 
 # Release Skill
 
-Creates a release by comparing dev to main, generating changelog entries from commits, bumping the version, and creating a PR. After the tag is pushed and the release workflow finishes building binaries, updates the Homebrew formula with the real SHA256 values from the published `checksums.txt`, syncs the `coleam00/homebrew-archon` tap, and verifies the end-to-end install path via `/test-release`.
+Creates a release by comparing dev to main, generating changelog entries from commits, bumping the version, and creating a PR. After the tag is pushed and the release workflow finishes building binaries, updates the Homebrew formula with the real SHA256 values from the published `checksums.txt`, syncs the `coleam00/homebrew-harneeslab` tap, and verifies the end-to-end install path via `/test-release`.
 
 > **⚠️ CRITICAL — Homebrew formula SHAs cannot be known until after the release workflow builds binaries.**
 >
-> The `version` field in `homebrew/archon.rb` and the `sha256` fields must be updated **atomically**. Never update one without the other.
+> The `version` field in `homebrew/harneeslab.rb` and the `sha256` fields must be updated **atomically**. Never update one without the other.
 >
 > The correct sequence is:
 > 1. Tag is pushed → release workflow fires → binaries built → `checksums.txt` uploaded
 > 2. Fetch `checksums.txt` from the published release
 > 3. Parse the SHA256 per platform
-> 4. Update `homebrew/archon.rb` with the new version AND the new SHAs in a single commit
-> 5. Sync to the `coleam00/homebrew-archon/Formula/archon.rb` tap repo
+> 4. Update `homebrew/harneeslab.rb` with the new version AND the new SHAs in a single commit
+> 5. Sync to the `coleam00/homebrew-harneeslab/Formula/harneeslab.rb` tap repo
 >
 > Updating the formula's `version` field without also updating the `sha256` values creates a stale, misleading formula that looks valid but produces checksum mismatches on install. This has happened before (v0.3.0: version updated to 0.3.0 but SHAs were still from v0.2.13). Always do both or neither.
 
@@ -202,7 +202,7 @@ If the user merges the PR themselves and comes back, still offer to tag, release
 
 > **Note**: The `update-homebrew` CI job in `.github/workflows/release.yml` runs automatically
 > after the release job and handles the formula update + push to dev (part of Step 10).
-> Step 11 (tap sync to `coleam00/homebrew-archon`) is always manual. Check the Actions tab
+> Step 11 (tap sync to `coleam00/homebrew-harneeslab`) is always manual. Check the Actions tab
 > before running Step 10 manually.
 
 After the tag is pushed, `.github/workflows/release.yml` builds platform binaries and uploads them to the GitHub release. This takes 5-10 minutes. The Homebrew formula SHA256 values cannot be known until these binaries exist.
@@ -212,8 +212,8 @@ After the tag is pushed, `.github/workflows/release.yml` builds platform binarie
 ```bash
 echo "Waiting for release workflow to finish uploading binaries..."
 for i in {1..30}; do
-  ASSET_COUNT=$(gh release view "vx.y.z" --repo coleam00/Archon --json assets --jq '.assets | length')
-  # Expect 7 assets: 5 binaries (darwin-arm64, darwin-x64, linux-arm64, linux-x64, windows-x64.exe) + archon-web.tar.gz + checksums.txt
+  ASSET_COUNT=$(gh release view "vx.y.z" --repo coleam00/HarneesLab --json assets --jq '.assets | length')
+  # Expect 7 assets: 5 binaries (darwin-arm64, darwin-x64, linux-arm64, linux-x64, windows-x64.exe) + harneeslab-web.tar.gz + checksums.txt
   if [ "$ASSET_COUNT" -ge 7 ]; then
     echo "All $ASSET_COUNT assets uploaded"
     break
@@ -224,7 +224,7 @@ done
 
 if [ "$ASSET_COUNT" -lt 7 ]; then
   echo "ERROR: Release workflow did not finish uploading assets after 15 minutes"
-  echo "Check https://github.com/coleam00/Archon/actions for the release workflow run"
+  echo "Check https://github.com/coleam00/HarneesLab/actions for the release workflow run"
   exit 1
 fi
 ```
@@ -233,12 +233,12 @@ fi
 
 ```bash
 TMP_DIR=$(mktemp -d)
-gh release download "vx.y.z" --repo coleam00/Archon --pattern "checksums.txt" --dir "$TMP_DIR"
+gh release download "vx.y.z" --repo coleam00/HarneesLab --pattern "checksums.txt" --dir "$TMP_DIR"
 
-DARWIN_ARM64_SHA=$(awk '/archon-darwin-arm64$/ {print $1}' "$TMP_DIR/checksums.txt")
-DARWIN_X64_SHA=$(awk '/archon-darwin-x64$/ {print $1}' "$TMP_DIR/checksums.txt")
-LINUX_ARM64_SHA=$(awk '/archon-linux-arm64$/ {print $1}' "$TMP_DIR/checksums.txt")
-LINUX_X64_SHA=$(awk '/archon-linux-x64$/ {print $1}' "$TMP_DIR/checksums.txt")
+DARWIN_ARM64_SHA=$(awk '/harneeslab-darwin-arm64$/ {print $1}' "$TMP_DIR/checksums.txt")
+DARWIN_X64_SHA=$(awk '/harneeslab-darwin-x64$/ {print $1}' "$TMP_DIR/checksums.txt")
+LINUX_ARM64_SHA=$(awk '/harneeslab-linux-arm64$/ {print $1}' "$TMP_DIR/checksums.txt")
+LINUX_X64_SHA=$(awk '/harneeslab-linux-x64$/ {print $1}' "$TMP_DIR/checksums.txt")
 
 # Sanity check — all four must be present and non-empty
 for var in DARWIN_ARM64_SHA DARWIN_X64_SHA LINUX_ARM64_SHA LINUX_X64_SHA; do
@@ -252,42 +252,42 @@ done
 rm -rf "$TMP_DIR"
 ```
 
-**Update `homebrew/archon.rb` in the main repo atomically with version AND SHAs:**
+**Update `homebrew/harneeslab.rb` in the main repo atomically with version AND SHAs:**
 
 Rewrite the formula file using the exact template below. Do NOT edit in place with sed — the whole file should be regenerated from this template so there is zero risk of partial updates.
 
 ```bash
-cat > homebrew/archon.rb << EOF
-# Homebrew formula for Archon CLI
-# To install: brew install coleam00/archon/archon
+cat > homebrew/harneeslab.rb << EOF
+# Homebrew formula for HarneesLab CLI
+# To install: brew install coleam00/harneeslab/harneeslab
 #
 # This formula downloads pre-built binaries from GitHub releases.
-# For development, see: https://github.com/coleam00/Archon
+# For development, see: https://github.com/coleam00/HarneesLab
 
-class Archon < Formula
+class HarneesLab < Formula
   desc "Remote agentic coding platform - control AI assistants from anywhere"
-  homepage "https://github.com/coleam00/Archon"
+  homepage "https://github.com/coleam00/HarneesLab"
   version "x.y.z"
   license "MIT"
 
   on_macos do
     on_arm do
-      url "https://github.com/coleam00/Archon/releases/download/v#{version}/archon-darwin-arm64"
+      url "https://github.com/coleam00/HarneesLab/releases/download/v#{version}/harneeslab-darwin-arm64"
       sha256 "${DARWIN_ARM64_SHA}"
     end
     on_intel do
-      url "https://github.com/coleam00/Archon/releases/download/v#{version}/archon-darwin-x64"
+      url "https://github.com/coleam00/HarneesLab/releases/download/v#{version}/harneeslab-darwin-x64"
       sha256 "${DARWIN_X64_SHA}"
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/coleam00/Archon/releases/download/v#{version}/archon-linux-arm64"
+      url "https://github.com/coleam00/HarneesLab/releases/download/v#{version}/harneeslab-linux-arm64"
       sha256 "${LINUX_ARM64_SHA}"
     end
     on_intel do
-      url "https://github.com/coleam00/Archon/releases/download/v#{version}/archon-linux-x64"
+      url "https://github.com/coleam00/HarneesLab/releases/download/v#{version}/harneeslab-linux-x64"
       sha256 "${LINUX_X64_SHA}"
     end
   end
@@ -295,21 +295,21 @@ class Archon < Formula
   def install
     binary_name = case
     when OS.mac? && Hardware::CPU.arm?
-      "archon-darwin-arm64"
+      "harneeslab-darwin-arm64"
     when OS.mac? && Hardware::CPU.intel?
-      "archon-darwin-x64"
+      "harneeslab-darwin-x64"
     when OS.linux? && Hardware::CPU.arm?
-      "archon-linux-arm64"
+      "harneeslab-linux-arm64"
     when OS.linux? && Hardware::CPU.intel?
-      "archon-linux-x64"
+      "harneeslab-linux-x64"
     end
 
-    bin.install binary_name => "archon"
+    bin.install binary_name => "harneeslab"
   end
 
   test do
-    # Basic version check - archon version should exit with 0 on success
-    assert_match version.to_s, shell_output("#{bin}/archon version")
+    # Basic version check - harneeslab version should exit with 0 on success
+    assert_match version.to_s, shell_output("#{bin}/harneeslab version")
   end
 end
 EOF
@@ -320,7 +320,7 @@ EOF
 ```bash
 git checkout main
 git pull origin main
-git add homebrew/archon.rb
+git add homebrew/harneeslab.rb
 git commit -m "chore(homebrew): update formula to vx.y.z"
 git push origin main
 
@@ -332,18 +332,18 @@ git push origin dev
 
 ### Step 11: Sync the Homebrew Tap Repo
 
-The `coleam00/homebrew-archon` repository hosts the actual tap formula that Homebrew reads when users run `brew tap coleam00/archon && brew install coleam00/archon/archon`. The file `coleam00/Archon/homebrew/archon.rb` is the source-of-truth template; the file `coleam00/homebrew-archon/Formula/archon.rb` is what users actually install from. These must be kept in sync.
+The `coleam00/homebrew-harneeslab` repository hosts the actual tap formula that Homebrew reads when users run `brew tap coleam00/harneeslab && brew install coleam00/harneeslab/harneeslab`. The file `coleam00/HarneesLab/homebrew/harneeslab.rb` is the source-of-truth template; the file `coleam00/homebrew-harneeslab/Formula/harneeslab.rb` is what users actually install from. These must be kept in sync.
 
 ```bash
 TAP_DIR=$(mktemp -d)
-git clone git@github.com:coleam00/homebrew-archon.git "$TAP_DIR"
-cp homebrew/archon.rb "$TAP_DIR/Formula/archon.rb"
+git clone git@github.com:coleam00/homebrew-harneeslab.git "$TAP_DIR"
+cp homebrew/harneeslab.rb "$TAP_DIR/Formula/harneeslab.rb"
 
 cd "$TAP_DIR"
 if git diff --quiet; then
   echo "Tap formula already matches — no sync needed"
 else
-  git add Formula/archon.rb
+  git add Formula/harneeslab.rb
   git commit -m "chore: sync formula to vx.y.z"
   git push origin main
 fi
@@ -351,7 +351,7 @@ cd -
 rm -rf "$TAP_DIR"
 ```
 
-If the `git clone` fails with a permissions error, the user running the release skill does not have push access to `coleam00/homebrew-archon`. Ask them to request push access from the repo owner, or to perform the sync manually via the GitHub web UI. Do not skip this step silently — the release is not complete until the tap is synced.
+If the `git clone` fails with a permissions error, the user running the release skill does not have push access to `coleam00/homebrew-harneeslab`. Ask them to request push access from the repo owner, or to perform the sync manually via the GitHub web UI. Do not skip this step silently — the release is not complete until the tap is synced.
 
 ### Step 12: Verify the Release End-to-End
 
@@ -362,7 +362,7 @@ After the formula is synced, the final verification step is to actually install 
 ```
 
 This will:
-- Install via `brew tap coleam00/archon && brew install coleam00/archon/archon`
+- Install via `brew tap coleam00/harneeslab && brew install coleam00/harneeslab/harneeslab`
 - Verify the binary reports the correct version and `Build: binary`
 - Verify bundled workflows load
 - Verify the SDK spawn path works (a minimal assist workflow)
@@ -384,6 +384,6 @@ If you have a VPS available, also run `/test-release curl-vps x.y.z <vps-target>
 - NEVER add emoji to changelog entries unless the user asks
 - If the user says "ship it" without specifying bump type, default to patch
 - The commit message is just `Release x.y.z` — clean and simple
-- **NEVER update `homebrew/archon.rb` version field without also updating the `sha256` values**. They must move together atomically. The correct SHAs only exist after the release workflow finishes building binaries — see Step 10. Updating the version field alone produces a stale formula that looks valid but causes checksum mismatches on install.
-- **NEVER skip Step 11 (tap sync).** The `coleam00/Archon/homebrew/archon.rb` file is only a template; users install from `coleam00/homebrew-archon/Formula/archon.rb`. If you update one without the other, users get stale or wrong data.
+- **NEVER update `homebrew/harneeslab.rb` version field without also updating the `sha256` values**. They must move together atomically. The correct SHAs only exist after the release workflow finishes building binaries — see Step 10. Updating the version field alone produces a stale formula that looks valid but causes checksum mismatches on install.
+- **NEVER skip Step 11 (tap sync).** The `coleam00/HarneesLab/homebrew/harneeslab.rb` file is only a template; users install from `coleam00/homebrew-harneeslab/Formula/harneeslab.rb`. If you update one without the other, users get stale or wrong data.
 - **NEVER announce a release that failed `/test-release brew`.** A release that installs but crashes on first invocation is worse than no release — it burns user trust. If the release verification fails, cut a hotfix before telling anyone the release exists.

@@ -10,7 +10,7 @@ sidebar:
 
 아무것도 없는 상태에서 동작하는 HarneesLab 설정까지 필요한 모든 것을 다룹니다. Web UI를 선호하든 CLI를 선호하든 이 문서에서 시작할 수 있습니다.
 
-HarneesLab은 Archon fork를 바탕으로 반복 가능한 AI coding workflow harness와 학습 가능한 에이전트 워크플로를 실험하기 위한 문서 사이트입니다. public brand, package scope, CLI binary는 HarneesLab 기준으로 전환되었고, repo-local `.archon/` directory와 `archon-*` workflow/command namespace는 호환성을 위해 유지합니다.
+HarneesLab은 HarneesLab fork를 바탕으로 반복 가능한 AI coding workflow harness와 학습 가능한 에이전트 워크플로를 실험하기 위한 문서 사이트입니다. public brand, package scope, CLI binary는 HarneesLab 기준으로 전환되었고, repo-local `.harneeslab/` directory와 `harneeslab-*` workflow/command namespace는 호환성을 위해 유지합니다.
 
 ---
 
@@ -132,7 +132,7 @@ CLAUDE_USE_GLOBAL_AUTH=true
 
 여기까지면 충분합니다. 나머지는 합리적인 기본값이 있습니다.
 
-- **Database:** `~/.archon/archon.db`의 SQLite(자동 생성, 추가 설정 없음)
+- **Database:** `~/.harneeslab/harneeslab.db`의 SQLite(자동 생성, 추가 설정 없음)
 - **Port:** API server는 3090, Web UI dev server는 5173
 - **AI assistant:** Claude(기본값)
 
@@ -264,16 +264,16 @@ cd /path/to/your/repository
 hlab workflow list
 
 # codebase에 대해 질문
-hlab workflow run archon-assist "How does the auth module work?"
+hlab workflow run harneeslab-assist "How does the auth module work?"
 
 # isolated branch에서 feature 계획
-hlab workflow run archon-feature-development --branch feat/dark-mode "Add dark mode"
+hlab workflow run harneeslab-feature-development --branch feat/dark-mode "Add dark mode"
 
 # GitHub issue 수정
-hlab workflow run archon-fix-github-issue --branch fix/issue-42 "Fix issue #42"
+hlab workflow run harneeslab-fix-github-issue --branch fix/issue-42 "Fix issue #42"
 ```
 
-여기까지입니다. CLI는 git repo를 자동 감지하고, 상태 추적에는 SQLite(`~/.archon/archon.db`)를 사용하며, 출력은 stdout으로 streaming합니다.
+여기까지입니다. CLI는 git repo를 자동 감지하고, 상태 추적에는 SQLite(`~/.harneeslab/harneeslab.db`)를 사용하며, 출력은 stdout으로 streaming합니다.
 
 > **대상 디렉터리는 git repository여야 합니다.** HarneesLab은 격리를 위해 git worktree를 사용하므로 `.git` 폴더가 필요합니다. 프로젝트가 아직 git repo가 아니라면 먼저 `git init && git add . && git commit -m "initial commit"`을 실행하세요.
 
@@ -342,61 +342,61 @@ hlab complete <branch> --force              # uncommitted-changes check 건너�
 
 | Workflow | 기능 |
 |----------|-------------|
-| `archon-assist` | 일반 Q&A, debugging, 탐색, CI failure 등을 처리하는 범용 workflow |
-| `archon-fix-github-issue` | 조사, root cause analysis, fix 구현, validation, PR 생성 |
-| `archon-idea-to-pr` | feature idea를 plan, implement, validate하고 PR과 parallel review, self-fix까지 수행 |
-| `archon-plan-to-pr` | 기존 plan을 실행하고 implement, validate, PR, review까지 진행 |
-| `archon-feature-development` | plan에서 feature를 구현하고 validate한 뒤 PR 생성 |
-| `archon-comprehensive-pr-review` | automatic fix를 포함한 multi-agent PR review(5개 parallel reviewer) |
-| `archon-smart-pr-review` | 복잡도에 맞춰 관련 agent만 route하는 PR review |
-| `archon-create-issue` | 문제를 classify하고 context 수집, investigate 후 GitHub issue 생성 |
-| `archon-validate-pr` | main과 feature branch 양쪽을 테스트하는 철저한 PR validation |
-| `archon-resolve-conflicts` | PR의 merge conflict를 detect, analyze, resolve |
-| `archon-refactor-safely` | type-check hook과 behavior verification을 포함한 안전한 refactoring |
-| `archon-architect` | architecture sweep, complexity reduction, codebase health 점검 |
-| `archon-ralph-dag` | PRD implementation loop(story가 끝날 때까지 반복) |
-| `archon-issue-review-full` | GitHub issue를 위한 comprehensive fix와 full multi-agent review |
-| `archon-test-loop-dag` | 모든 test가 통과할 때까지 반복하는 test-fix cycle |
-| `archon-remotion-generate` | AI로 Remotion video composition 생성 또는 수정 |
-| `archon-interactive-prd` | guided conversation을 통해 PRD 생성 |
-| `archon-piv-loop` | human-in-the-loop 방식의 guided Plan-Implement-Validate development |
-| `archon-adversarial-dev` | adversarial development로 완전한 application을 처음부터 구축 |
+| `harneeslab-assist` | 일반 Q&A, debugging, 탐색, CI failure 등을 처리하는 범용 workflow |
+| `harneeslab-fix-github-issue` | 조사, root cause analysis, fix 구현, validation, PR 생성 |
+| `harneeslab-idea-to-pr` | feature idea를 plan, implement, validate하고 PR과 parallel review, self-fix까지 수행 |
+| `harneeslab-plan-to-pr` | 기존 plan을 실행하고 implement, validate, PR, review까지 진행 |
+| `harneeslab-feature-development` | plan에서 feature를 구현하고 validate한 뒤 PR 생성 |
+| `harneeslab-comprehensive-pr-review` | automatic fix를 포함한 multi-agent PR review(5개 parallel reviewer) |
+| `harneeslab-smart-pr-review` | 복잡도에 맞춰 관련 agent만 route하는 PR review |
+| `harneeslab-create-issue` | 문제를 classify하고 context 수집, investigate 후 GitHub issue 생성 |
+| `harneeslab-validate-pr` | main과 feature branch 양쪽을 테스트하는 철저한 PR validation |
+| `harneeslab-resolve-conflicts` | PR의 merge conflict를 detect, analyze, resolve |
+| `harneeslab-refactor-safely` | type-check hook과 behavior verification을 포함한 안전한 refactoring |
+| `harneeslab-architect` | architecture sweep, complexity reduction, codebase health 점검 |
+| `harneeslab-ralph-dag` | PRD implementation loop(story가 끝날 때까지 반복) |
+| `harneeslab-issue-review-full` | GitHub issue를 위한 comprehensive fix와 full multi-agent review |
+| `harneeslab-test-loop-dag` | 모든 test가 통과할 때까지 반복하는 test-fix cycle |
+| `harneeslab-remotion-generate` | AI로 Remotion video composition 생성 또는 수정 |
+| `harneeslab-interactive-prd` | guided conversation을 통해 PRD 생성 |
+| `harneeslab-piv-loop` | human-in-the-loop 방식의 guided Plan-Implement-Validate development |
+| `harneeslab-adversarial-dev` | adversarial development로 완전한 application을 처음부터 구축 |
 
-이 bundled workflow들은 대부분의 프로젝트에서 바로 사용할 수 있습니다. 커스터마이즈하려면 `.archon/workflows/defaults/`에서 하나를 `.archon/workflows/`로 복사해 수정하세요. 같은 이름의 파일은 기본값을 override합니다.
+이 bundled workflow들은 대부분의 프로젝트에서 바로 사용할 수 있습니다. 커스터마이즈하려면 `.harneeslab/workflows/defaults/`에서 하나를 `.harneeslab/workflows/`로 복사해 수정하세요. 같은 이름의 파일은 기본값을 override합니다.
 
-> **자동 선택:** workflow 이름을 외울 필요가 없습니다. 원하는 일을 설명하기만 하면 router가 모든 workflow description을 읽고 가장 적합한 것을 선택합니다. 예를 들어 "fix issue #42"는 `archon-fix-github-issue`로 route되고, "review this PR"은 `archon-smart-pr-review`로 route됩니다. 명확히 맞는 것이 없으면 `archon-assist`로 fallback합니다.
+> **자동 선택:** workflow 이름을 외울 필요가 없습니다. 원하는 일을 설명하기만 하면 router가 모든 workflow description을 읽고 가장 적합한 것을 선택합니다. 예를 들어 "fix issue #42"는 `harneeslab-fix-github-issue`로 route되고, "review this PR"은 `harneeslab-smart-pr-review`로 route됩니다. 명확히 맞는 것이 없으면 `harneeslab-assist`로 fallback합니다.
 
 ---
 
 ## 대상 repo 커스터마이즈
 
-대상 repo에 `.archon/` 디렉터리를 추가해 repo-specific 동작을 정의할 수 있습니다.
+대상 repo에 `.harneeslab/` 디렉터리를 추가해 repo-specific 동작을 정의할 수 있습니다.
 
 ```
 your-repo/
-└── .archon/
+└── .harneeslab/
     ├── config.yaml         # AI assistant, worktree copy rule
     ├── commands/            # custom command(.md files)
     └── workflows/           # custom multi-step workflow(.yaml files)
 ```
 
-**예시 `.archon/config.yaml`:**
+**예시 `.harneeslab/config.yaml`:**
 
 ```yaml
 assistant: claude
 commands:
-  folder: .claude/commands/archon    # 추가 command search path
+  folder: .claude/commands/harneeslab    # 추가 command search path
 worktree:
   copyFiles:
     - .env.example                   # worktree에 같은 이름으로 복사
     - .env
 ```
 
-`.archon/` config가 없어도 platform은 합리적인 기본값(bundled commands와 workflows)을 사용합니다.
+`.harneeslab/` config가 없어도 platform은 합리적인 기본값(bundled commands와 workflows)을 사용합니다.
 
 ### custom command 만들기
 
-repo의 `.archon/commands/`에 `.md` 파일을 두세요.
+repo의 `.harneeslab/commands/`에 `.md` 파일을 두세요.
 
 ```markdown
 ---
@@ -413,7 +413,7 @@ argument-hint: <module>
 
 ### custom workflow 만들기
 
-repo의 `.archon/workflows/`에 `.yaml` 파일을 두세요.
+repo의 `.harneeslab/workflows/`에 `.yaml` 파일을 두세요.
 
 ```yaml
 name: my-workflow
@@ -437,7 +437,7 @@ workflow는 여러 command를 DAG node로 연결하고, parallel execution과 co
 > commands와 workflows는 runtime에 현재 working directory에서 load됩니다. 고정된 global location에서 load되지 않습니다.
 >
 > - **CLI:** `hlab` 명령을 실행한 위치에서 읽습니다. local repo에서 실행하면 uncommitted change도 즉시 반영됩니다.
-> - **Server (Telegram/Slack/GitHub):** `~/.archon/workspaces/owner/repo/`의 workspace clone에서 읽습니다. 이 clone은 worktree 생성 전에만 remote에서 sync되므로 server가 변경 사항을 보려면 **commit and push**가 필요합니다.
+> - **Server (Telegram/Slack/GitHub):** `~/.harneeslab/workspaces/owner/repo/`의 workspace clone에서 읽습니다. 이 clone은 worktree 생성 전에만 remote에서 sync되므로 server가 변경 사항을 보려면 **commit and push**가 필요합니다.
 >
 > 요약하면 CLI는 local files를 보고, server는 push된 내용을 봅니다.
 
@@ -448,8 +448,8 @@ workflow는 여러 command를 DAG node로 연결하고, parallel execution과 co
 `--branch` flag를 사용하면 CLI가 git worktree를 만들어 격리된 디렉터리에서 작업합니다. 이렇게 하면 parallel task끼리 또는 main branch와 충돌하지 않습니다.
 
 ```
-~/.archon/
-├── archon.db              # SQLite database(자동 생성)
+~/.harneeslab/
+├── harneeslab.db              # SQLite database(자동 생성)
 └── workspaces/            # project 중심 layout
     └── owner/repo/
         ├── source/        # clone 또는 local path symlink
@@ -489,10 +489,10 @@ CLI는 standalone으로 동작하지만 Telegram, Slack, Discord, GitHub webhook
 실제 원인은 보통 이전 HarneesLab run에서 다른 path를 사용해 생긴 stale symlink입니다. error output에서 다음 내용을 찾아보세요.
 
 ```
-Source symlink at ~/.archon/workspaces/.../source already points to <old-path>, expected <new-path>
+Source symlink at ~/.harneeslab/workspaces/.../source already points to <old-path>, expected <new-path>
 ```
 
-`~/.archon/workspaces/<github-user>/<repo-name>`의 stale workspace folder를 수동으로 삭제한 뒤 명령을 다시 실행하면 해결됩니다.
+`~/.harneeslab/workspaces/<github-user>/<repo-name>`의 stale workspace folder를 수동으로 삭제한 뒤 명령을 다시 실행하면 해결됩니다.
 
 > 앞으로는 `hlab isolation cleanup`이 이를 자동으로 처리할 예정입니다.
 
@@ -587,7 +587,7 @@ HarneesLab이 실행할 수 있는 AI prompt를 repo에 추가하세요.
 
 ```
 your-repo/
-└── .archon/
+└── .harneeslab/
     ├── commands/        # AI instruction을 담은 Markdown file
     └── workflows/       # command를 연결하는 YAML workflow
 ```

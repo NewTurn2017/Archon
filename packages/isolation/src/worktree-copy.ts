@@ -2,7 +2,7 @@
  * Worktree file copy utility
  *
  * Copies git-ignored files from the canonical repo to a new worktree
- * based on configuration in .archon/config.yaml
+ * based on configuration in .harneeslab/config.yaml
  */
 
 import { copyFile, cp, stat, mkdir } from 'fs/promises';

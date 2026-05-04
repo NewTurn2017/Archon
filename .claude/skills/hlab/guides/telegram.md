@@ -5,7 +5,7 @@
 1. Open Telegram and search for **@BotFather**
 2. Send `/newbot`
 3. Choose a display name (e.g., "HarneesLab Bot")
-4. Choose a username (must end in `bot`, e.g., `my_archon_bot`)
+4. Choose a username (must end in `bot`, e.g., `my_harneeslab_bot`)
 5. **Copy the bot token** — this is your `TELEGRAM_BOT_TOKEN`
 
 ## 2. Get Your User ID

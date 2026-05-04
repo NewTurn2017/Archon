@@ -28,7 +28,7 @@ const mockLogger = {
 // Mock @harneeslab/paths (createLogger moved here from @harneeslab/core)
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonHome: mock(() => '/home/test/.archon'),
+  getHarneesLabHome: mock(() => '/home/test/.harneeslab'),
 }));
 
 // Mock @harneeslab/isolation (getIsolationProvider moved here from @harneeslab/core)
@@ -338,7 +338,7 @@ describe('workflowListCommand', () => {
     expect(discoverWorkflowsWithConfig).toHaveBeenCalledWith(
       '/test/path',
       expect.any(Function),
-      expect.objectContaining({ globalSearchPath: '/home/test/.archon' })
+      expect.objectContaining({ globalSearchPath: '/home/test/.harneeslab' })
     );
   });
 
@@ -377,7 +377,7 @@ describe('workflowRunCommand', () => {
     });
 
     await expect(workflowRunCommand('/test/path', 'assist', 'hello')).rejects.toThrow(
-      '.archon/workflows/에서 workflow를 찾지 못했습니다.'
+      '.harneeslab/workflows/에서 workflow를 찾지 못했습니다.'
     );
   });
 
@@ -426,8 +426,8 @@ describe('workflowRunCommand', () => {
 
     (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
       workflows: [
-        makeTestWorkflowWithSource({ name: 'archon-assist', description: 'Help' }),
-        makeTestWorkflowWithSource({ name: 'archon-plan', description: 'Plan' }),
+        makeTestWorkflowWithSource({ name: 'harneeslab-assist', description: 'Help' }),
+        makeTestWorkflowWithSource({ name: 'harneeslab-plan', description: 'Plan' }),
       ],
       errors: [],
     });
@@ -445,12 +445,12 @@ describe('workflowRunCommand', () => {
       default_cwd: '/test/path',
     });
 
-    // Should resolve successfully — "assist" suffix-matches "archon-assist"
+    // Should resolve successfully — "assist" suffix-matches "harneeslab-assist"
     await workflowRunCommand('/test/path', 'assist', 'hello');
 
     // Verify suffix matching tier was used
     expect(mockLogger.info).toHaveBeenCalledWith(
-      expect.objectContaining({ requested: 'assist', matched: 'archon-assist' }),
+      expect.objectContaining({ requested: 'assist', matched: 'harneeslab-assist' }),
       'workflow.resolve_suffix_match'
     );
   });
@@ -461,13 +461,16 @@ describe('workflowRunCommand', () => {
 
     (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
       workflows: [
-        makeTestWorkflowWithSource({ name: 'archon-smart-pr-review', description: 'Smart review' }),
-        makeTestWorkflowWithSource({ name: 'archon-assist', description: 'Help' }),
+        makeTestWorkflowWithSource({
+          name: 'harneeslab-smart-pr-review',
+          description: 'Smart review',
+        }),
+        makeTestWorkflowWithSource({ name: 'harneeslab-assist', description: 'Help' }),
       ],
       errors: [],
     });
 
-    // "smart" substring-matches only "archon-smart-pr-review"
+    // "smart" substring-matches only "harneeslab-smart-pr-review"
     // Will fail downstream at executeWorkflow mock, but must NOT throw "not found"
     const error = await workflowRunCommand('/test/path', 'smart', 'hello').catch(
       (e: unknown) => e as Error
@@ -486,7 +489,7 @@ describe('workflowRunCommand', () => {
     (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
       workflows: [
         makeTestWorkflowWithSource({ name: 'assist', description: 'Help' }),
-        makeTestWorkflowWithSource({ name: 'archon-assist', description: 'Long' }),
+        makeTestWorkflowWithSource({ name: 'harneeslab-assist', description: 'Long' }),
       ],
       errors: [],
     });
@@ -523,7 +526,7 @@ describe('workflowRunCommand', () => {
       await import('@harneeslab/workflows/workflow-discovery');
     (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
       workflows: [
-        makeTestWorkflowWithSource({ name: 'archon-review', description: 'Review' }),
+        makeTestWorkflowWithSource({ name: 'harneeslab-review', description: 'Review' }),
         makeTestWorkflowWithSource({ name: 'custom-review', description: 'Custom review' }),
       ],
       errors: [],
@@ -540,10 +543,13 @@ describe('workflowRunCommand', () => {
     (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
       workflows: [
         makeTestWorkflowWithSource({
-          name: 'archon-comprehensive-pr-review',
+          name: 'harneeslab-comprehensive-pr-review',
           description: 'Full review',
         }),
-        makeTestWorkflowWithSource({ name: 'archon-smart-pr-review', description: 'Smart review' }),
+        makeTestWorkflowWithSource({
+          name: 'harneeslab-smart-pr-review',
+          description: 'Smart review',
+        }),
       ],
       errors: [],
     });
@@ -562,7 +568,7 @@ describe('workflowRunCommand', () => {
     (discoverWorkflowsWithConfig as ReturnType<typeof mock>).mockResolvedValueOnce({
       workflows: [
         makeTestWorkflowWithSource({ name: 'assist', description: 'Short name' }),
-        makeTestWorkflowWithSource({ name: 'archon-assist', description: 'Long name' }),
+        makeTestWorkflowWithSource({ name: 'harneeslab-assist', description: 'Long name' }),
       ],
       errors: [],
     });

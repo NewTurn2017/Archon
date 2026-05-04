@@ -310,7 +310,7 @@ describe('GitHubAdapter', () => {
       const adapter = createSelfFilterAdapter();
       // Comment has the marker but author is a real user (using PAT)
       const payload = createCommentPayload(
-        '@harneeslab fix this\n\n<!-- archon-bot-response -->',
+        '@harneeslab fix this\n\n<!-- harneeslab-bot-response -->',
         'Wirasm'
       );
 
@@ -363,7 +363,7 @@ describe('GitHubAdapter', () => {
         owner: 'owner',
         repo: 'repo',
         issue_number: 123,
-        body: 'test\n\n<!-- archon-bot-response -->',
+        body: 'test\n\n<!-- harneeslab-bot-response -->',
       });
     });
 
@@ -375,8 +375,8 @@ describe('GitHubAdapter', () => {
 
       const body = mockCreateComment.mock.calls[0][0].body as string;
       expect(body).toContain('Hello world');
-      expect(body).toContain('<!-- archon-bot-response -->');
-      expect(body).toBe('Hello world\n\n<!-- archon-bot-response -->');
+      expect(body).toContain('<!-- harneeslab-bot-response -->');
+      expect(body).toBe('Hello world\n\n<!-- harneeslab-bot-response -->');
     });
 
     test('should reject invalid conversationId format', async () => {

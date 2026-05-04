@@ -678,7 +678,7 @@ function AdvancedTab({
           onChange={(e): void => {
             onUpdate({ mcp: e.target.value || undefined });
           }}
-          placeholder=".archon/mcp/github.json"
+          placeholder=".harneeslab/mcp/github.json"
           className={cn(inputClass, 'font-mono')}
         />
         <p className="text-[9px] text-text-tertiary">{t('inspector.mcpPathHint')}</p>

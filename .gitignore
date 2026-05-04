@@ -14,6 +14,7 @@ build/
 node_modules/
 dist/
 coverage/
+*.tsbuildinfo
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -27,7 +28,7 @@ yarn-error.log*
 .env.local
 
 # Per-user MCP server configs (may contain secrets/topics)
-.archon/mcp/
+.harneeslab/mcp/
 
 # Caddy configuration (keep Caddyfile.example)
 Caddyfile
@@ -41,9 +42,9 @@ sessions/
 api_sessions/
 e2e-screenshots/
 
-# Archon logs and artifacts (generated at runtime)
-.archon/logs/
-.archon/artifacts/
+# HarneesLab logs and artifacts (generated at runtime)
+.harneeslab/logs/
+.harneeslab/artifacts/
 
 # Agent artifacts (generated, local only)
 .agents/
@@ -51,7 +52,7 @@ e2e-screenshots/
 .agents/plans/
 .agents/pr-reviews
 .claude/PRPs/
-.claude/archon/
+.claude/harneeslab/
 .claude/mockups/
 .claude/settings.local.json
 e2e-testing-findings-session2.md
@@ -104,4 +105,4 @@ packages/server/.env
 .playwright-cli/
 skills-lock.json
 test-results/
-.archon/ralph/
+.harneeslab/ralph/

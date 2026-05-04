@@ -17,7 +17,7 @@ import {
   onConversationClosed,
   ConversationLockManager,
 } from '@harneeslab/core';
-import { getArchonWorkspacesPath, getCommandFolderSearchPaths } from '@harneeslab/paths';
+import { getHarneesLabWorkspacesPath, getCommandFolderSearchPaths } from '@harneeslab/paths';
 import {
   isWorktreePath,
   cloneRepository,
@@ -43,7 +43,7 @@ function getLog(): ReturnType<typeof createLogger> {
 const MAX_LENGTH = 65000; // GitHub comment limit (~65,536, leave buffer for safety)
 
 /** Hidden marker added to bot comments to prevent self-triggering loops */
-const BOT_RESPONSE_MARKER = '<!-- archon-bot-response -->';
+const BOT_RESPONSE_MARKER = '<!-- harneeslab-bot-response -->';
 
 export class GitHubAdapter implements IPlatformAdapter {
   private octokit: Octokit;
@@ -523,7 +523,7 @@ export class GitHubAdapter implements IPlatformAdapter {
   }
 
   /**
-   * Auto-detect and load commands from .archon/commands/ (or configured folder)
+   * Auto-detect and load commands from .harneeslab/commands/ (or configured folder)
    */
   private async autoDetectAndLoadCommands(repoPath: string, codebaseId: string): Promise<void> {
     const commandFolders = getCommandFolderSearchPaths();
@@ -582,7 +582,7 @@ export class GitHubAdapter implements IPlatformAdapter {
 
     // Canonical path includes owner to prevent collisions between repos with same name
     // e.g., alice/utils and bob/utils get separate directories
-    const canonicalPath = join(getArchonWorkspacesPath(), owner, repo);
+    const canonicalPath = join(getHarneesLabWorkspacesPath(), owner, repo);
 
     if (existing) {
       // Check if existing codebase points to a worktree path - fix it if so

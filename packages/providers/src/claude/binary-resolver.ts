@@ -43,7 +43,7 @@ const INSTALL_INSTRUCTIONS =
   '  Or via npm (alternative):\n' +
   '    npm install -g @anthropic-ai/claude-code\n' +
   '    export CLAUDE_BIN_PATH="$(npm root -g)/@anthropic-ai/claude-code/cli.js"\n\n' +
-  'Persist the path in ~/.archon/config.yaml instead of the env var:\n' +
+  'Persist the path in ~/.harneeslab/config.yaml instead of the env var:\n' +
   '    assistants:\n' +
   '      claude:\n' +
   '        claudeBinaryPath: /absolute/path/to/claude\n\n' +
@@ -79,7 +79,7 @@ export async function resolveClaudeBinaryPath(
     if (!fileExists(configClaudeBinaryPath)) {
       throw new Error(
         `assistants.claude.claudeBinaryPath is set to "${configClaudeBinaryPath}" but the file does not exist.\n` +
-          'Please verify the path in .archon/config.yaml points to the Claude Code executable.'
+          'Please verify the path in .harneeslab/config.yaml points to the Claude Code executable.'
       );
     }
     getLog().info(

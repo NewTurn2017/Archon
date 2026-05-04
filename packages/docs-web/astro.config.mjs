@@ -17,7 +17,7 @@ export default defineConfig({
         src: './src/assets/logo.png',
         alt: 'HarneesLab',
       },
-      description: 'HarneesLab is an Archon fork for studying, teaching, and building repeatable AI coding workflows.',
+      description: 'HarneesLab is an HarneesLab fork for studying, teaching, and building repeatable AI coding workflows.',
       head: [
         {
           tag: 'script',

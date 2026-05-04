@@ -11,8 +11,8 @@ import type { WorkflowDefinition } from '@harneeslab/workflows/schemas/workflow'
 const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorkspacesPath: mock(() => '/home/test/.archon/workspaces'),
-  getArchonHome: mock(() => '/home/test/.archon'),
+  getHarneesLabWorkspacesPath: mock(() => '/home/test/.harneeslab/workspaces'),
+  getHarneesLabHome: mock(() => '/home/test/.harneeslab'),
 }));
 
 // DB mocks
@@ -120,10 +120,10 @@ mock.module('../config/config-loader', () => ({
 }));
 
 // Worktree sync mock
-const mockSyncArchonToWorktree = mock(() => Promise.resolve(false));
+const mockSyncHarneesLabToWorktree = mock(() => Promise.resolve(false));
 
 mock.module('../utils/worktree-sync', () => ({
-  syncArchonToWorktree: mockSyncArchonToWorktree,
+  syncHarneesLabToWorktree: mockSyncHarneesLabToWorktree,
 }));
 
 // Orchestrator (isolation & dispatch) mocks
@@ -236,7 +236,7 @@ const mockSession: Session = {
   ended_reason: null,
 };
 
-const testWorkflowDefs = makeTestWorkflowList(['fix-bug', 'add-feature', 'archon-assist']);
+const testWorkflowDefs = makeTestWorkflowList(['fix-bug', 'add-feature', 'harneeslab-assist']);
 const testWorkflows = testWorkflowDefs.map(w => ({
   workflow: w,
   source: 'bundled' as const,
@@ -277,7 +277,7 @@ function clearAllMocks(): void {
   mockDiscoverWorkflows.mockClear();
   mockExecuteWorkflow.mockClear();
   mockFindWorkflow.mockClear();
-  mockSyncArchonToWorktree.mockClear();
+  mockSyncHarneesLabToWorktree.mockClear();
   mockValidateAndResolveIsolation.mockClear();
   mockDispatchBackgroundWorkflow.mockClear();
   mockBuildOrchestratorPrompt.mockClear();
@@ -362,11 +362,11 @@ describe('parseOrchestratorCommands', () => {
 
   test('parses --prompt with double quotes', () => {
     const response =
-      'I will analyze this.\n/invoke-workflow archon-assist --project test-project --prompt "Analyze the orchestrator module architecture"';
+      'I will analyze this.\n/invoke-workflow harneeslab-assist --project test-project --prompt "Analyze the orchestrator module architecture"';
     const result = parseOrchestratorCommands(response, codebases, workflows);
 
     expect(result.workflowInvocation).not.toBeNull();
-    expect(result.workflowInvocation?.workflowName).toBe('archon-assist');
+    expect(result.workflowInvocation?.workflowName).toBe('harneeslab-assist');
     expect(result.workflowInvocation?.projectName).toBe('test-project');
     expect(result.workflowInvocation?.synthesizedPrompt).toBe(
       'Analyze the orchestrator module architecture'
@@ -394,7 +394,7 @@ describe('parseOrchestratorCommands', () => {
 
   test('parses --prompt with spaces in the quoted value', () => {
     const response =
-      '/invoke-workflow archon-assist --project test-project --prompt "Analyze the database schema and migration patterns in the project, focusing on table structure and relationships"';
+      '/invoke-workflow harneeslab-assist --project test-project --prompt "Analyze the database schema and migration patterns in the project, focusing on table structure and relationships"';
     const result = parseOrchestratorCommands(response, codebases, workflows);
 
     expect(result.workflowInvocation?.synthesizedPrompt).toBe(
@@ -415,7 +415,7 @@ describe('parseOrchestratorCommands', () => {
 
   test('parses --prompt with --project= equals syntax', () => {
     const response =
-      '/invoke-workflow archon-assist --project=test-project --prompt "Summarize the README"';
+      '/invoke-workflow harneeslab-assist --project=test-project --prompt "Summarize the README"';
     const result = parseOrchestratorCommands(response, codebases, workflows);
 
     expect(result.workflowInvocation?.projectName).toBe('test-project');
@@ -1066,7 +1066,7 @@ describe('orchestrator-agent handleMessage', () => {
       mockClient.sendQuery.mockImplementation(async function* () {
         yield {
           type: 'assistant',
-          content: `Running analysis.\n/invoke-workflow archon-assist --project test-project --prompt "${synthesized}"`,
+          content: `Running analysis.\n/invoke-workflow harneeslab-assist --project test-project --prompt "${synthesized}"`,
         };
         yield { type: 'result', sessionId: 'session-id' };
       });
@@ -1127,7 +1127,7 @@ describe('orchestrator-agent handleMessage', () => {
       mockClient.sendQuery.mockImplementation(async function* () {
         yield {
           type: 'assistant',
-          content: '/invoke-workflow archon-assist --project test-project',
+          content: '/invoke-workflow harneeslab-assist --project test-project',
         };
         yield { type: 'result', sessionId: 'session-id' };
       });
@@ -1137,7 +1137,7 @@ describe('orchestrator-agent handleMessage', () => {
       expect(mockValidateAndResolveIsolation).not.toHaveBeenCalled();
       expect(platform.sendMessage).toHaveBeenCalledWith(
         'chat-456',
-        expect.stringContaining('archon-assist')
+        expect.stringContaining('harneeslab-assist')
       );
     });
   });
@@ -1154,9 +1154,9 @@ describe('orchestrator-agent handleMessage', () => {
       await handleMessage(platform, 'chat-456', 'help');
 
       expect(mockDiscoverWorkflows).toHaveBeenCalledWith(
-        '/home/test/.archon/workspaces',
+        '/home/test/.harneeslab/workspaces',
         expect.any(Function),
-        { globalSearchPath: '/home/test/.archon' }
+        { globalSearchPath: '/home/test/.harneeslab' }
       );
     });
 
@@ -1178,7 +1178,7 @@ describe('orchestrator-agent handleMessage', () => {
       );
     });
 
-    test('syncs .archon to worktree before repo workflow discovery', async () => {
+    test('syncs .harneeslab to worktree before repo workflow discovery', async () => {
       mockGetOrCreateConversation.mockResolvedValue(mockConversationWithProject);
       mockGetCodebase.mockResolvedValue(mockCodebase);
       mockClient.sendQuery.mockImplementation(async function* () {
@@ -1187,7 +1187,7 @@ describe('orchestrator-agent handleMessage', () => {
       });
 
       const callOrder: string[] = [];
-      mockSyncArchonToWorktree.mockImplementation(async () => {
+      mockSyncHarneesLabToWorktree.mockImplementation(async () => {
         callOrder.push('sync');
         return false;
       });
@@ -1199,12 +1199,12 @@ describe('orchestrator-agent handleMessage', () => {
 
       await handleMessage(platform, 'chat-456', 'help');
 
-      expect(mockSyncArchonToWorktree).toHaveBeenCalledWith('/workspace/project');
+      expect(mockSyncHarneesLabToWorktree).toHaveBeenCalledWith('/workspace/project');
       expect(callOrder).toEqual(['sync', 'discover-repo']);
     });
 
     test('handles workflow discovery failure gracefully', async () => {
-      mockDiscoverWorkflows.mockRejectedValue(new Error('No .archon/workflows directory'));
+      mockDiscoverWorkflows.mockRejectedValue(new Error('No .harneeslab/workflows directory'));
       mockClient.sendQuery.mockImplementation(async function* () {
         yield { type: 'assistant', content: 'I can still help!' };
         yield { type: 'result', sessionId: 'session-id' };
@@ -1464,7 +1464,7 @@ describe('orchestrator-agent handleMessage', () => {
         'conv-123',
         'Hello world',
         'claude',
-        '/home/test/.archon/workspaces'
+        '/home/test/.harneeslab/workspaces'
       );
     });
 

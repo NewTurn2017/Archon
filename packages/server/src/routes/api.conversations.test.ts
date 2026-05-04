@@ -26,10 +26,13 @@ mock.module('@harneeslab/core', () => ({
   handleMessage: mock(async () => {}),
   getDatabaseType: () => 'sqlite',
   loadConfig: mock(async () => ({})),
-  getWorkflowFolderSearchPaths: mock(() => ['.archon/workflows']),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands', '.archon/commands/defaults']),
-  getDefaultCommandsPath: mock(() => '/tmp/.archon-test-nonexistent/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/tmp/.archon-test-nonexistent/workflows/defaults'),
+  getWorkflowFolderSearchPaths: mock(() => ['.harneeslab/workflows']),
+  getCommandFolderSearchPaths: mock(() => [
+    '.harneeslab/commands',
+    '.harneeslab/commands/defaults',
+  ]),
+  getDefaultCommandsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/workflows/defaults'),
   cloneRepository: mock(async () => {}),
   registerRepository: mock(async () => ({ success: true })),
   removeWorktree: mock(async () => ({ success: true })),
@@ -40,7 +43,7 @@ mock.module('@harneeslab/core', () => ({
     }
   },
   generateAndSetTitle: mockGenerateAndSetTitle,
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
   createLogger: () => ({
     fatal: mock(() => undefined),
     error: mock(() => undefined),
@@ -409,7 +412,7 @@ describe('POST /api/conversations with message (atomic create+send)', () => {
 // Platform conversation IDs from forge adapters contain slashes and # characters:
 // e.g. "CyberFitz-LLC/devops-platform#24" — these must be URL-encoded by the client
 // and correctly decoded by the server route params.
-// Ref: https://github.com/coleam00/Archon/issues/476
+// Ref: https://github.com/coleam00/HarneesLab/issues/476
 describe('GET /api/conversations/:id — forge platform IDs with encoded slashes', () => {
   const GITEA_CONV = {
     id: 'gitea-internal-uuid',

@@ -23,7 +23,7 @@ export interface ContinueOptions {
   noContext?: boolean;
 }
 
-const DEFAULT_WORKFLOW = 'archon-assist';
+const DEFAULT_WORKFLOW = 'harneeslab-assist';
 
 /**
  * Continue work on an existing worktree with prior run context injected.
@@ -224,7 +224,7 @@ async function resolveArtifactsDir(
   }
 
   // Fallback: cwd-based path
-  const fallback = join(workingPath, '.archon', 'artifacts', 'runs', runId);
+  const fallback = join(workingPath, '.harneeslab', 'artifacts', 'runs', runId);
   try {
     await stat(fallback);
     return fallback;

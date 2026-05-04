@@ -9,8 +9,8 @@ import type { IsolationEnvironmentRow } from '@harneeslab/isolation';
 const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorkspacesPath: mock(() => '/home/test/.archon/workspaces'),
-  getArchonHome: mock(() => '/home/test/.archon'),
+  getHarneesLabWorkspacesPath: mock(() => '/home/test/.harneeslab/workspaces'),
+  getHarneesLabHome: mock(() => '/home/test/.harneeslab'),
 }));
 
 // DB mocks
@@ -68,7 +68,7 @@ mock.module('../config/config-loader', () => ({
 }));
 
 mock.module('../utils/worktree-sync', () => ({
-  syncArchonToWorktree: mock(() => Promise.resolve(false)),
+  syncHarneesLabToWorktree: mock(() => Promise.resolve(false)),
 }));
 
 mock.module('../services/cleanup-service', () => ({

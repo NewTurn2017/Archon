@@ -67,7 +67,7 @@ Evidence: `node_modules/@anthropic-ai/claude-agent-sdk/sdk.d.ts:1556` — `struc
 ### Git History
 
 - **DAG engine introduced**: `a315617` — feat: DAG workflow engine with parallel execution and conditional branching (#450)
-- **output_format wiring**: `4204e1f` — Archon orchestrator (#452)
+- **output_format wiring**: `4204e1f` — HarneesLab orchestrator (#452)
 - **Implication**: `structured_output` was never read from the start — the bug existed from initial implementation
 
 ---
@@ -288,7 +288,7 @@ bun run validate
 
 ### Manual Verification
 
-1. Run the `archon-smart-pr-review` workflow with a test PR — verify the `classify` node produces clean JSON in its output and downstream `when:` conditions evaluate correctly
+1. Run the `harneeslab-smart-pr-review` workflow with a test PR — verify the `classify` node produces clean JSON in its output and downstream `when:` conditions evaluate correctly
 2. Run a DAG workflow WITHOUT `output_format` — verify no regression in normal text output
 3. Check logs for absence of `condition_json_parse_failed` warnings
 

@@ -44,7 +44,7 @@ NOT for: Feature requests, enhancements, or non-bug work. Only for bugs/problems
     expect(result.constraints).toContain('Feature requests');
   });
 
-  test('handles "Handles:" and "Capability:" fallbacks (archon-assist style)', () => {
+  test('handles "Handles:" and "Capability:" fallbacks (harneeslab-assist style)', () => {
     const description = `Use when: No other workflow matches the request.
 Handles: Questions, debugging, exploration, one-off tasks, explanations, CI failures, general help.
 Capability: Full Claude Code agent with all tools available.
@@ -168,51 +168,57 @@ NOT for: Creating plans (plans should be created separately), bug fixes, code re
 });
 
 describe('getWorkflowDisplayName', () => {
-  test('strips archon- prefix and converts to title case', () => {
-    expect(getWorkflowDisplayName('archon-create-issue')).toBe('Create Issue');
-    expect(getWorkflowDisplayName('archon-feature-development')).toBe('Feature Development');
+  test('strips harneeslab- prefix and converts to title case', () => {
+    expect(getWorkflowDisplayName('harneeslab-create-issue')).toBe('Create Issue');
+    expect(getWorkflowDisplayName('harneeslab-feature-development')).toBe('Feature Development');
   });
 
   test('preserves known acronyms (PR, CI, DAG)', () => {
-    expect(getWorkflowDisplayName('archon-comprehensive-pr-review')).toBe(
+    expect(getWorkflowDisplayName('harneeslab-comprehensive-pr-review')).toBe(
       'Comprehensive PR Review'
     );
-    expect(getWorkflowDisplayName('archon-ralph-dag')).toBe('Ralph DAG');
-    expect(getWorkflowDisplayName('archon-interactive-prd')).toBe('Interactive PRD');
+    expect(getWorkflowDisplayName('harneeslab-ralph-dag')).toBe('Ralph DAG');
+    expect(getWorkflowDisplayName('harneeslab-interactive-prd')).toBe('Interactive PRD');
   });
 
-  test('handles names without archon- prefix', () => {
+  test('handles names without harneeslab- prefix', () => {
     expect(getWorkflowDisplayName('my-custom-workflow')).toBe('My Custom Workflow');
   });
 
   test('handles single-word names', () => {
-    expect(getWorkflowDisplayName('archon-assist')).toBe('Assist');
+    expect(getWorkflowDisplayName('harneeslab-assist')).toBe('Assist');
   });
 });
 
 describe('getWorkflowCategory', () => {
   test('categorizes review workflows', () => {
-    expect(getWorkflowCategory('archon-comprehensive-pr-review', 'Review a PR')).toBe(
+    expect(getWorkflowCategory('harneeslab-comprehensive-pr-review', 'Review a PR')).toBe(
       'Code Review'
     );
-    expect(getWorkflowCategory('archon-smart-pr-review', 'Smart PR review')).toBe('Code Review');
+    expect(getWorkflowCategory('harneeslab-smart-pr-review', 'Smart PR review')).toBe(
+      'Code Review'
+    );
   });
 
   test('categorizes automation workflows', () => {
-    expect(getWorkflowCategory('archon-create-issue', 'Create GitHub issue')).toBe('Automation');
-    expect(getWorkflowCategory('archon-ralph-dag', 'Ralph implementation loop')).toBe('Automation');
-    expect(getWorkflowCategory('archon-refactor-safely', 'Refactor code safely')).toBe(
+    expect(getWorkflowCategory('harneeslab-create-issue', 'Create GitHub issue')).toBe(
+      'Automation'
+    );
+    expect(getWorkflowCategory('harneeslab-ralph-dag', 'Ralph implementation loop')).toBe(
+      'Automation'
+    );
+    expect(getWorkflowCategory('harneeslab-refactor-safely', 'Refactor code safely')).toBe(
       'Automation'
     );
   });
 
   test('categorizes CI/CD workflows', () => {
-    expect(getWorkflowCategory('archon-validate-pr', 'Validate PR checks')).toBe('CI/CD');
-    expect(getWorkflowCategory('archon-test-loop-dag', 'Run test loop')).toBe('CI/CD');
+    expect(getWorkflowCategory('harneeslab-validate-pr', 'Validate PR checks')).toBe('CI/CD');
+    expect(getWorkflowCategory('harneeslab-test-loop-dag', 'Run test loop')).toBe('CI/CD');
   });
 
   test('does not miscategorize workflows with "ci" as substring', () => {
-    expect(getWorkflowCategory('archon-decision-tree', 'Routes decisions')).toBe('Development');
+    expect(getWorkflowCategory('harneeslab-decision-tree', 'Routes decisions')).toBe('Development');
     expect(getWorkflowCategory('special-analyzer', 'Classifies problem area')).toBe('Development');
   });
 
@@ -221,11 +227,11 @@ describe('getWorkflowCategory', () => {
   });
 
   test('categorizes development workflows', () => {
-    expect(getWorkflowCategory('archon-feature-development', 'Implement a feature')).toBe(
+    expect(getWorkflowCategory('harneeslab-feature-development', 'Implement a feature')).toBe(
       'Development'
     );
-    expect(getWorkflowCategory('archon-assist', 'General help')).toBe('Development');
-    expect(getWorkflowCategory('archon-idea-to-pr', 'From idea to PR')).toBe('Development');
+    expect(getWorkflowCategory('harneeslab-assist', 'General help')).toBe('Development');
+    expect(getWorkflowCategory('harneeslab-idea-to-pr', 'From idea to PR')).toBe('Development');
   });
 });
 
@@ -234,7 +240,7 @@ describe('getWorkflowTags', () => {
     const parsed = parseWorkflowDescription(
       'Use when: Reviewing a GitHub PR.\nDoes: Runs parallel agents to review.'
     );
-    const tags = getWorkflowTags('archon-comprehensive-pr-review', parsed);
+    const tags = getWorkflowTags('harneeslab-comprehensive-pr-review', parsed);
 
     expect(tags).toContain('GitHub');
     expect(tags).toContain('Review');
@@ -249,7 +255,7 @@ describe('getWorkflowTags', () => {
 
   test('deduplicates tags', () => {
     const parsed = parseWorkflowDescription('Does: review PR on GitHub for GitHub issues');
-    const tags = getWorkflowTags('archon-pr-review', parsed);
+    const tags = getWorkflowTags('harneeslab-pr-review', parsed);
     const githubCount = tags.filter(t => t === 'GitHub').length;
     expect(githubCount).toBeLessThanOrEqual(1);
   });
@@ -257,24 +263,24 @@ describe('getWorkflowTags', () => {
 
 describe('getWorkflowIconName', () => {
   test('maps issue/bug workflows to Bug icon', () => {
-    expect(getWorkflowIconName('archon-create-issue', 'Automation')).toBe('Bug');
-    expect(getWorkflowIconName('archon-fix-github-issue', 'Automation')).toBe('Bug');
+    expect(getWorkflowIconName('harneeslab-create-issue', 'Automation')).toBe('Bug');
+    expect(getWorkflowIconName('harneeslab-fix-github-issue', 'Automation')).toBe('Bug');
   });
 
   test('maps review workflows to Eye icon', () => {
-    expect(getWorkflowIconName('archon-comprehensive-pr-review', 'Code Review')).toBe('Eye');
+    expect(getWorkflowIconName('harneeslab-comprehensive-pr-review', 'Code Review')).toBe('Eye');
   });
 
   test('maps conflict workflows to GitMerge icon', () => {
-    expect(getWorkflowIconName('archon-resolve-conflicts', 'Automation')).toBe('GitMerge');
+    expect(getWorkflowIconName('harneeslab-resolve-conflicts', 'Automation')).toBe('GitMerge');
   });
 
   test('maps feature workflows to Rocket icon', () => {
-    expect(getWorkflowIconName('archon-feature-development', 'Development')).toBe('Rocket');
+    expect(getWorkflowIconName('harneeslab-feature-development', 'Development')).toBe('Rocket');
   });
 
   test('maps ralph to Bot icon', () => {
-    expect(getWorkflowIconName('archon-ralph-dag', 'Automation')).toBe('Bot');
+    expect(getWorkflowIconName('harneeslab-ralph-dag', 'Automation')).toBe('Bot');
   });
 
   test('falls back to category-based icon', () => {

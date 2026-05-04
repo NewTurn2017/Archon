@@ -1,6 +1,6 @@
 ---
 title: DX 특이사항
-description: Archon 코드베이스에서 작업할 때 알아둘 개발 경험 특이사항과 우회 방법.
+description: HarneesLab 코드베이스에서 작업할 때 알아둘 개발 경험 특이사항과 우회 방법.
 category: contributing
 audience: [developer]
 status: current

@@ -22,10 +22,10 @@ sidebar:
 hlab workflow list
 
 # HarneesLab에 codebase 설명 요청
-hlab workflow run archon-assist "What does this codebase do?"
+hlab workflow run harneeslab-assist "What does this codebase do?"
 
 # PR/code review workflow 실행
-hlab workflow run archon-smart-pr-review
+hlab workflow run harneeslab-smart-pr-review
 ```
 
 ## 다음 단계

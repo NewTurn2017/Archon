@@ -5,11 +5,11 @@ Commands are plain Markdown files containing AI prompt templates. They are the a
 ## File Location
 
 ```
-.archon/commands/
+.harneeslab/commands/
 ├── my-command.md           # Custom command
 ├── review-code.md          # Another custom command
 └── defaults/               # Optional: override bundled defaults
-    └── archon-assist.md    # Overrides the bundled archon-assist
+    └── harneeslab-assist.md    # Overrides the bundled harneeslab-assist
 ```
 
 Commands are referenced by name (without `.md`) in workflow YAML files.
@@ -78,8 +78,8 @@ Command names must:
 ## Discovery and Priority
 
 When a workflow references `command: my-command`, HarneesLab searches in this order:
-1. `.archon/commands/my-command.md` (repo custom)
-2. `.archon/commands/defaults/my-command.md` (repo default overrides)
+1. `.harneeslab/commands/my-command.md` (repo custom)
+2. `.harneeslab/commands/defaults/my-command.md` (repo default overrides)
 3. Bundled defaults (shipped with HarneesLab)
 
 First match wins. To override a bundled command, create a file with the same name in your repo.
@@ -90,7 +90,7 @@ In workflow YAML, use the `command:` field on a node:
 ```yaml
 nodes:
   - id: review
-    command: my-command       # Loads .archon/commands/my-command.md
+    command: my-command       # Loads .harneeslab/commands/my-command.md
     depends_on: [implement]
 ```
 

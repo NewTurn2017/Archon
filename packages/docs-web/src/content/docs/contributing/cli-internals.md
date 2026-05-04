@@ -26,20 +26,20 @@ packages/cli/
 │   │   └── version.ts      # version command
 │   └── adapters/
 │       └── cli-adapter.ts  # IPlatformAdapter for stdout
-└── package.json            # Defines "archon" binary
+└── package.json            # Defines "harneeslab" binary
 ```
 
 ## Entry Point 흐름
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│ archon <command> [subcommand] [options] [arguments]             │
+│ harneeslab <command> [subcommand] [options] [arguments]             │
 └─────────────────────────────────┬───────────────────────────────┘
                                   │
                                   ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ cli.ts  Load environment                                        │
-│         Loads ~/.archon/.env with override: true                │
+│         Loads ~/.harneeslab/.env with override: true                │
 └─────────────────────────────────┬───────────────────────────────┘
                                   │
                                   ▼
@@ -94,7 +94,7 @@ packages/cli/
 │ @harneeslab/workflows/workflow-discovery                              │
 │ discoverWorkflowsWithConfig(cwd, config)                          │
 │ - Loads bundled defaults                                         │
-│ - Searches .archon/workflows/ recursively                        │
+│ - Searches .harneeslab/workflows/ recursively                        │
 │ - Merges (repo overrides defaults by name)                       │
 └──────────────────────────────┬───────────────────────────────────┘
                                │
@@ -365,7 +365,7 @@ CLI conversation은 `cli-{timestamp}-{random}` 형식의 ID를 사용합니다.
 3. **Reuse:** 찾았고 healthy하면 재사용합니다. `--from`이 지정됐지만 적용되지 않았으면 warning을 냅니다.
 4. **Create:** 없거나 unhealthy하면 생성합니다. `--from`으로 지정된 경우 `fromBranch`를 provider에 전달합니다.
 
-Worktree 저장 위치: `~/.archon/workspaces/<owner>/<repo>/worktrees/<branch-slug>/`
+Worktree 저장 위치: `~/.harneeslab/workspaces/<owner>/<repo>/worktrees/<branch-slug>/`
 
 **Code:** `packages/cli/src/commands/workflow.ts:177-219`
 
@@ -384,7 +384,7 @@ Worktree 저장 위치: `~/.archon/workspaces/<owner>/<repo>/worktrees/<branch-s
 
 - 첫 database call에서 connection을 엽니다.
 - command가 완료된 뒤 `finally` block에서 항상 닫습니다.
-- **Default: SQLite**. 위치는 `~/.archon/archon.db`이며, 별도 setup 없이 자동 초기화됩니다.
+- **Default: SQLite**. 위치는 `~/.harneeslab/harneeslab.db`이며, 별도 setup 없이 자동 초기화됩니다.
 - **Optional: PostgreSQL**. `DATABASE_URL`이 설정된 경우 사용하며 cloud/advanced deployment용입니다.
 
 **Code:** `packages/cli/src/cli.ts`

@@ -2,10 +2,10 @@ import { describe, test, expect, beforeEach, afterEach, spyOn, mock, type Mock }
 import { join } from 'node:path';
 
 // Fixed test home — path assertions use this constant; no duplication of production isDocker() logic.
-const TEST_ARCHON_HOME = '/test/.archon';
+const TEST_HARNEESLAB_HOME = '/test/.harneeslab';
 
-// Mock @harneeslab/paths: provide getArchonHome + workspaces path helpers so @harneeslab/git (getWorktreeBase,
-// isProjectScopedWorktreeBase) and worktree.ts resolve paths against TEST_ARCHON_HOME consistently.
+// Mock @harneeslab/paths: provide getHarneesLabHome + workspaces path helpers so @harneeslab/git (getWorktreeBase,
+// isProjectScopedWorktreeBase) and worktree.ts resolve paths against TEST_HARNEESLAB_HOME consistently.
 mock.module('@harneeslab/paths', () => ({
   createLogger: () => ({
     fatal: () => undefined,
@@ -16,11 +16,11 @@ mock.module('@harneeslab/paths', () => ({
     trace: () => undefined,
     child: () => undefined,
   }),
-  getArchonHome: () => TEST_ARCHON_HOME,
-  getArchonWorkspacesPath: () => join(TEST_ARCHON_HOME, 'workspaces'),
-  getArchonWorktreesPath: () => join(TEST_ARCHON_HOME, 'worktrees'),
+  getHarneesLabHome: () => TEST_HARNEESLAB_HOME,
+  getHarneesLabWorkspacesPath: () => join(TEST_HARNEESLAB_HOME, 'workspaces'),
+  getHarneesLabWorktreesPath: () => join(TEST_HARNEESLAB_HOME, 'worktrees'),
   getProjectWorktreesPath: (owner: string, repo: string) =>
-    join(TEST_ARCHON_HOME, 'workspaces', owner, repo, 'worktrees'),
+    join(TEST_HARNEESLAB_HOME, 'workspaces', owner, repo, 'worktrees'),
   isDocker: () => false,
 }));
 
@@ -120,7 +120,7 @@ describe('WorktreeProvider', () => {
         workflowType: 'issue',
         identifier: '42',
       };
-      expect(provider.generateBranchName(request)).toBe('archon/issue-42');
+      expect(provider.generateBranchName(request)).toBe('harneeslab/issue-42');
     });
 
     test('generates actual branch name for same-repo PR workflows', () => {
@@ -144,7 +144,7 @@ describe('WorktreeProvider', () => {
         prBranch: 'feature/auth',
         isForkPR: true,
       };
-      expect(provider.generateBranchName(request)).toBe('archon/pr-123-review');
+      expect(provider.generateBranchName(request)).toBe('harneeslab/pr-123-review');
     });
 
     test('generates review-N for review workflows', () => {
@@ -154,7 +154,7 @@ describe('WorktreeProvider', () => {
         workflowType: 'review',
         identifier: '456',
       };
-      expect(provider.generateBranchName(request)).toBe('archon/review-456');
+      expect(provider.generateBranchName(request)).toBe('harneeslab/review-456');
     });
 
     test('generates thread-{hash} for thread workflows', () => {
@@ -165,7 +165,7 @@ describe('WorktreeProvider', () => {
         identifier: 'C123:1234567890.123456',
       };
       const name = provider.generateBranchName(request);
-      expect(name).toMatch(/^archon\/thread-[a-f0-9]{8}$/);
+      expect(name).toMatch(/^harneeslab\/thread-[a-f0-9]{8}$/);
     });
 
     test('generates consistent hash for same identifier', () => {
@@ -203,7 +203,7 @@ describe('WorktreeProvider', () => {
         workflowType: 'task',
         identifier: 'add-dark-mode',
       };
-      expect(provider.generateBranchName(request)).toBe('archon/task-add-dark-mode');
+      expect(provider.generateBranchName(request)).toBe('harneeslab/task-add-dark-mode');
     });
 
     test('slugifies task identifiers properly', () => {
@@ -213,7 +213,7 @@ describe('WorktreeProvider', () => {
         workflowType: 'task',
         identifier: 'Add Dark Mode!!!',
       };
-      expect(provider.generateBranchName(request)).toBe('archon/task-add-dark-mode');
+      expect(provider.generateBranchName(request)).toBe('harneeslab/task-add-dark-mode');
     });
   });
 
@@ -229,7 +229,7 @@ describe('WorktreeProvider', () => {
       const env = await provider.create(baseRequest);
 
       expect(env.provider).toBe('worktree');
-      expect(env.branchName).toBe('archon/issue-42');
+      expect(env.branchName).toBe('harneeslab/issue-42');
       expect(env.workingPath).toContain('issue-42');
       expect(env.status).toBe('active');
 
@@ -243,7 +243,7 @@ describe('WorktreeProvider', () => {
           'add',
           expect.any(String),
           '-b',
-          'archon/issue-42',
+          'harneeslab/issue-42',
           'origin/main',
         ]),
         expect.any(Object)
@@ -286,7 +286,7 @@ describe('WorktreeProvider', () => {
           'add',
           expect.any(String),
           '-b',
-          'archon/task-test-adapters',
+          'harneeslab/task-test-adapters',
           'feature/extract-adapters',
         ]),
         expect.any(Object)
@@ -298,7 +298,7 @@ describe('WorktreeProvider', () => {
         stderr: string;
       };
       alreadyExistsError.stderr =
-        "fatal: a branch named 'archon/task-test-adapters' already exists";
+        "fatal: a branch named 'harneeslab/task-test-adapters' already exists";
 
       // First call (worktree add -b) fails with "already exists"
       execSpy.mockRejectedValueOnce(alreadyExistsError);
@@ -311,7 +311,7 @@ describe('WorktreeProvider', () => {
       };
 
       await expect(provider.create(request)).rejects.toThrow(
-        'Branch "archon/task-test-adapters" already exists. Cannot create it from "feature/extract-adapters".'
+        'Branch "harneeslab/task-test-adapters" already exists. Cannot create it from "feature/extract-adapters".'
       );
     });
 
@@ -320,7 +320,7 @@ describe('WorktreeProvider', () => {
         stderr: string;
       };
       alreadyExistsError.stderr =
-        "fatal: a branch named 'archon/task-test-adapters' already exists";
+        "fatal: a branch named 'harneeslab/task-test-adapters' already exists";
 
       // First call fails (worktree add -b), second succeeds (branch -f), third succeeds (worktree add)
       execSpy.mockRejectedValueOnce(alreadyExistsError);
@@ -338,7 +338,7 @@ describe('WorktreeProvider', () => {
       // Verify branch was reset to start-point
       expect(execSpy).toHaveBeenCalledWith(
         'git',
-        ['-C', '/workspace/repo', 'branch', '-f', 'archon/task-test-adapters', 'origin/main'],
+        ['-C', '/workspace/repo', 'branch', '-f', 'harneeslab/task-test-adapters', 'origin/main'],
         expect.any(Object)
       );
 
@@ -351,7 +351,7 @@ describe('WorktreeProvider', () => {
           'worktree',
           'add',
           expect.any(String),
-          'archon/task-test-adapters',
+          'harneeslab/task-test-adapters',
         ],
         expect.any(Object)
       );
@@ -521,7 +521,9 @@ describe('WorktreeProvider', () => {
     test('adopts existing worktree when repo ownership matches', async () => {
       worktreeExistsSpy.mockResolvedValue(true);
       // .git file points to the same repo root as the request
-      mockReadFile.mockResolvedValue('gitdir: /workspace/repo/.git/worktrees/archon/issue-42\n');
+      mockReadFile.mockResolvedValue(
+        'gitdir: /workspace/repo/.git/worktrees/harneeslab/issue-42\n'
+      );
 
       const env = await provider.create(baseRequest);
 
@@ -538,7 +540,9 @@ describe('WorktreeProvider', () => {
 
     test('throws when worktree belongs to different repo root (cross-checkout)', async () => {
       worktreeExistsSpy.mockResolvedValue(true);
-      mockReadFile.mockResolvedValue('gitdir: /different/repo/.git/worktrees/archon/issue-42\n');
+      mockReadFile.mockResolvedValue(
+        'gitdir: /different/repo/.git/worktrees/harneeslab/issue-42\n'
+      );
 
       await expect(provider.create(baseRequest)).rejects.toThrow(/belongs to a different clone/);
     });
@@ -579,7 +583,9 @@ describe('WorktreeProvider', () => {
       };
       worktreeExistsSpy.mockResolvedValue(true);
       // .git file has no trailing slash — resolve() should normalize
-      mockReadFile.mockResolvedValue('gitdir: /workspace/repo/.git/worktrees/archon/issue-42\n');
+      mockReadFile.mockResolvedValue(
+        'gitdir: /workspace/repo/.git/worktrees/harneeslab/issue-42\n'
+      );
 
       const env = await provider.create(request);
 
@@ -643,11 +649,11 @@ describe('WorktreeProvider', () => {
         // First worktree add call fails (branch exists)
         if (callCount === 1 && args.includes('-b')) {
           const error = new Error(
-            'fatal: A branch named archon/issue-42 already exists.'
+            'fatal: A branch named harneeslab/issue-42 already exists.'
           ) as Error & {
             stderr?: string;
           };
-          error.stderr = 'fatal: A branch named archon/issue-42 already exists.';
+          error.stderr = 'fatal: A branch named harneeslab/issue-42 already exists.';
           throw error;
         }
         return { stdout: '', stderr: '' };
@@ -665,7 +671,7 @@ describe('WorktreeProvider', () => {
           'add',
           expect.any(String),
           '-b',
-          'archon/issue-42',
+          'harneeslab/issue-42',
         ]),
         expect.any(Object)
       );
@@ -673,7 +679,7 @@ describe('WorktreeProvider', () => {
       // Verify branch was reset to start-point before checkout
       expect(execSpy).toHaveBeenCalledWith(
         'git',
-        ['-C', '/workspace/repo', 'branch', '-f', 'archon/issue-42', 'origin/main'],
+        ['-C', '/workspace/repo', 'branch', '-f', 'harneeslab/issue-42', 'origin/main'],
         expect.any(Object)
       );
 
@@ -686,7 +692,7 @@ describe('WorktreeProvider', () => {
           'worktree',
           'add',
           expect.any(String),
-          'archon/issue-42',
+          'harneeslab/issue-42',
         ]),
         expect.any(Object)
       );
@@ -697,9 +703,9 @@ describe('WorktreeProvider', () => {
         // First worktree add call fails (branch exists)
         if (args.includes('worktree') && args.includes('add') && args.includes('-b')) {
           const error = new Error(
-            'fatal: A branch named archon/issue-42 already exists.'
+            'fatal: A branch named harneeslab/issue-42 already exists.'
           ) as Error & { stderr?: string };
-          error.stderr = 'fatal: A branch named archon/issue-42 already exists.';
+          error.stderr = 'fatal: A branch named harneeslab/issue-42 already exists.';
           throw error;
         }
         // Reset call fails (e.g., branch checked out elsewhere, update hook refused)
@@ -707,7 +713,7 @@ describe('WorktreeProvider', () => {
           const error = new Error('fatal: cannot force update the branch') as Error & {
             stderr?: string;
           };
-          error.stderr = "fatal: cannot force update the current branch 'archon/issue-42'";
+          error.stderr = "fatal: cannot force update the current branch 'harneeslab/issue-42'";
           throw error;
         }
         return { stdout: '', stderr: '' };
@@ -722,7 +728,7 @@ describe('WorktreeProvider', () => {
           args.includes('worktree') &&
           args.includes('add') &&
           !args.includes('-b') &&
-          args.includes('archon/issue-42')
+          args.includes('harneeslab/issue-42')
         );
       });
       expect(secondWorktreeAdd).toHaveLength(0);
@@ -943,7 +949,7 @@ describe('WorktreeProvider', () => {
       // workingPath should use project-scoped path, not legacy global worktrees
       expect(env.workingPath).toBe(
         join(
-          TEST_ARCHON_HOME,
+          TEST_HARNEESLAB_HOME,
           'workspaces',
           'Widinglabs',
           'sasha-demo',
@@ -954,7 +960,7 @@ describe('WorktreeProvider', () => {
 
       // mkdir should be called with the project-scoped base (no owner/repo appended)
       expect(mkdirSpy).toHaveBeenCalledWith(
-        join(TEST_ARCHON_HOME, 'workspaces', 'Widinglabs', 'sasha-demo', 'worktrees'),
+        join(TEST_HARNEESLAB_HOME, 'workspaces', 'Widinglabs', 'sasha-demo', 'worktrees'),
         { recursive: true }
       );
     });
@@ -1667,7 +1673,7 @@ describe('WorktreeProvider', () => {
 
     const baseRequest: IsolationRequest = {
       codebaseId: 'cb-123',
-      canonicalRepoPath: '/.archon/workspaces/owner/repo',
+      canonicalRepoPath: '/.harneeslab/workspaces/owner/repo',
       workflowType: 'issue',
       identifier: '42',
     };
@@ -1691,35 +1697,35 @@ describe('WorktreeProvider', () => {
       provider = new WorktreeProvider(configLoader);
 
       copyWorktreeFilesSpy.mockResolvedValue([
-        { source: '.archon', destination: '.archon' },
+        { source: '.harneeslab', destination: '.harneeslab' },
         { source: '.env.example', destination: '.env' },
         { source: '.vscode/settings.json', destination: '.vscode/settings.json' },
       ]);
 
       await provider.create(baseRequest);
 
-      // Should include default .archon plus user config
+      // Should include default .harneeslab plus user config
       expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
-        '/.archon/workspaces/owner/repo',
+        '/.harneeslab/workspaces/owner/repo',
         expect.stringContaining('issue-42'),
-        expect.arrayContaining(['.archon', '.env.example -> .env', '.vscode/settings.json'])
+        expect.arrayContaining(['.harneeslab', '.env.example -> .env', '.vscode/settings.json'])
       );
     });
 
-    test('calls copyWorktreeFiles with default .archon when no copyFiles configured', async () => {
+    test('calls copyWorktreeFiles with default .harneeslab when no copyFiles configured', async () => {
       copyWorktreeFilesSpy.mockResolvedValue([]);
 
       await provider.create(baseRequest);
 
-      // Should still be called with default .archon
+      // Should still be called with default .harneeslab
       expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
-        '/.archon/workspaces/owner/repo',
+        '/.harneeslab/workspaces/owner/repo',
         expect.stringContaining('issue-42'),
-        ['.archon']
+        ['.harneeslab']
       );
     });
 
-    test('calls copyWorktreeFiles with default .archon when copyFiles is empty', async () => {
+    test('calls copyWorktreeFiles with default .harneeslab when copyFiles is empty', async () => {
       const configLoader: RepoConfigLoader = async () => ({
         baseBranch: 'main',
         copyFiles: [],
@@ -1730,11 +1736,11 @@ describe('WorktreeProvider', () => {
 
       await provider.create(baseRequest);
 
-      // Should still be called with default .archon
+      // Should still be called with default .harneeslab
       expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
-        '/.archon/workspaces/owner/repo',
+        '/.harneeslab/workspaces/owner/repo',
         expect.stringContaining('issue-42'),
-        ['.archon']
+        ['.harneeslab']
       );
     });
 
@@ -1769,7 +1775,7 @@ describe('WorktreeProvider', () => {
     test('does not copy files when adopting existing worktree', async () => {
       worktreeExistsSpy.mockResolvedValue(true);
       mockReadFile.mockResolvedValue(
-        'gitdir: /.archon/workspaces/owner/repo/.git/worktrees/archon/issue-42\n'
+        'gitdir: /.harneeslab/workspaces/owner/repo/.git/worktrees/harneeslab/issue-42\n'
       );
       const configLoader: RepoConfigLoader = async () => ({
         copyFiles: ['.env.example -> .env'],
@@ -1782,24 +1788,26 @@ describe('WorktreeProvider', () => {
       expect(copyWorktreeFilesSpy).not.toHaveBeenCalled();
     });
 
-    test('should copy .archon directory by default (without config)', async () => {
+    test('should copy .harneeslab directory by default (without config)', async () => {
       // Mock: copyWorktreeFiles succeeds
-      copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+      copyWorktreeFilesSpy.mockResolvedValue([
+        { source: '.harneeslab', destination: '.harneeslab' },
+      ]);
 
       // Create worktree
       const result = await provider.create(baseRequest);
 
-      // Verify .archon was copied even without config
+      // Verify .harneeslab was copied even without config
       expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
-        '/.archon/workspaces/owner/repo',
+        '/.harneeslab/workspaces/owner/repo',
         expect.stringContaining('issue-42'),
-        ['.archon'] // Default only
+        ['.harneeslab'] // Default only
       );
 
       expect(result.workingPath).toContain('issue-42');
     });
 
-    test('should merge .archon default with user copyFiles config', async () => {
+    test('should merge .harneeslab default with user copyFiles config', async () => {
       // Mock: User config with additional files
       const configLoader: RepoConfigLoader = async () => ({
         baseBranch: 'main',
@@ -1809,7 +1817,7 @@ describe('WorktreeProvider', () => {
 
       // Mock: copyWorktreeFiles succeeds
       copyWorktreeFilesSpy.mockResolvedValue([
-        { source: '.archon', destination: '.archon' },
+        { source: '.harneeslab', destination: '.harneeslab' },
         { source: '.env', destination: '.env' },
         { source: '.vscode', destination: '.vscode' },
       ]);
@@ -1817,33 +1825,33 @@ describe('WorktreeProvider', () => {
       // Create worktree
       await provider.create(baseRequest);
 
-      // Verify .archon + user files were copied
+      // Verify .harneeslab + user files were copied
       expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
-        '/.archon/workspaces/owner/repo',
+        '/.harneeslab/workspaces/owner/repo',
         expect.stringContaining('issue-42'),
-        expect.arrayContaining(['.archon', '.env', '.vscode'])
+        expect.arrayContaining(['.harneeslab', '.env', '.vscode'])
       );
     });
 
-    test('should deduplicate .archon if user explicitly includes it', async () => {
-      // Mock: User config explicitly includes .archon
+    test('should deduplicate .harneeslab if user explicitly includes it', async () => {
+      // Mock: User config explicitly includes .harneeslab
       const configLoader: RepoConfigLoader = async () => ({
         baseBranch: 'main',
-        copyFiles: ['.archon', '.env'],
+        copyFiles: ['.harneeslab', '.env'],
       });
       provider = new WorktreeProvider(configLoader);
 
       copyWorktreeFilesSpy.mockResolvedValue([
-        { source: '.archon', destination: '.archon' },
+        { source: '.harneeslab', destination: '.harneeslab' },
         { source: '.env', destination: '.env' },
       ]);
 
       await provider.create(baseRequest);
 
-      // Verify .archon appears only once (deduplicated by Set)
+      // Verify .harneeslab appears only once (deduplicated by Set)
       const copyFilesArg = copyWorktreeFilesSpy.mock.calls[0][2];
-      const archonCount = copyFilesArg.filter((f: string) => f === '.archon').length;
-      expect(archonCount).toBe(1);
+      const harneeslabCount = copyFilesArg.filter((f: string) => f === '.harneeslab').length;
+      expect(harneeslabCount).toBe(1);
     });
 
     test('throws with config error details when config loading fails and no fromBranch', async () => {
@@ -1853,7 +1861,9 @@ describe('WorktreeProvider', () => {
       };
       provider = new WorktreeProvider(configLoader);
 
-      copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+      copyWorktreeFilesSpy.mockResolvedValue([
+        { source: '.harneeslab', destination: '.harneeslab' },
+      ]);
 
       // Should throw with the actual config error, not generic "no base branch"
       await expect(provider.create(baseRequest)).rejects.toThrow(
@@ -1920,7 +1930,9 @@ describe('WorktreeProvider', () => {
       // Simulate valid worktree: directory exists and IS a valid worktree
       accessSpy.mockResolvedValue(undefined); // Directory exists
       worktreeExistsSpy.mockResolvedValue(true); // And IS a valid worktree (will be adopted)
-      mockReadFile.mockResolvedValue('gitdir: /workspace/repo/.git/worktrees/archon/issue-999\n');
+      mockReadFile.mockResolvedValue(
+        'gitdir: /workspace/repo/.git/worktrees/harneeslab/issue-999\n'
+      );
 
       await provider.create(request);
 
@@ -2217,7 +2229,7 @@ describe('WorktreeProvider', () => {
       // Worktree exists - triggers adoption path (skips createWorktree)
       worktreeExistsSpy.mockResolvedValue(true);
       mockReadFile.mockResolvedValue(
-        'gitdir: /workspace/owner/repo/.git/worktrees/archon/issue-42\n'
+        'gitdir: /workspace/owner/repo/.git/worktrees/harneeslab/issue-42\n'
       );
 
       await provider.create(baseRequest);
@@ -2243,7 +2255,7 @@ describe('WorktreeProvider', () => {
           'add',
           expect.any(String),
           '-b',
-          'archon/issue-42',
+          'harneeslab/issue-42',
           'origin/develop',
         ]),
         expect.any(Object)
@@ -2258,7 +2270,7 @@ describe('WorktreeProvider', () => {
       await provider.create(baseRequest);
 
       // syncWorkspace called with undefined → triggers auto-detect via getDefaultBranch
-      // resetAfterFetch: false because test path is not a managed clone under ~/.archon/workspaces
+      // resetAfterFetch: false because test path is not a managed clone under ~/.harneeslab/workspaces
       expect(syncWorkspaceSpy).toHaveBeenCalledWith('/workspace/owner/repo', undefined, {
         resetAfterFetch: false,
       });
@@ -2369,7 +2381,7 @@ describe('WorktreeProvider', () => {
       syncWorkspaceSpy.mockRejectedValue(
         new Error(
           "Configured base branch 'does-not-exist' not found on remote. " +
-            'Either create the branch, update worktree.baseBranch in .archon/config.yaml, ' +
+            'Either create the branch, update worktree.baseBranch in .harneeslab/config.yaml, ' +
             'or remove the setting to use the auto-detected default branch.'
         )
       );
@@ -2394,7 +2406,7 @@ describe('WorktreeProvider', () => {
     test('getWorktreePath handles Unix-style paths', () => {
       const request: IsolationRequest = {
         codebaseId: 'cb-123',
-        canonicalRepoPath: '/home/dev/.archon/workspaces/owner/repo',
+        canonicalRepoPath: '/home/dev/.harneeslab/workspaces/owner/repo',
         workflowType: 'issue',
         identifier: '42',
       };
@@ -2408,7 +2420,7 @@ describe('WorktreeProvider', () => {
     test('getWorktreePath handles Windows-style paths', () => {
       const request: IsolationRequest = {
         codebaseId: 'cb-123',
-        canonicalRepoPath: 'C:\\Users\\dev\\.archon\\workspaces\\owner\\repo',
+        canonicalRepoPath: 'C:\\Users\\dev\\.harneeslab\\workspaces\\owner\\repo',
         workflowType: 'issue',
         identifier: '42',
       };
@@ -2422,7 +2434,7 @@ describe('WorktreeProvider', () => {
     test('getWorktreePath handles mixed separator paths', () => {
       const request: IsolationRequest = {
         codebaseId: 'cb-123',
-        canonicalRepoPath: 'C:/Users/dev\\.archon/workspaces\\owner/repo',
+        canonicalRepoPath: 'C:/Users/dev\\.harneeslab/workspaces\\owner/repo',
         workflowType: 'issue',
         identifier: '42',
       };
@@ -2457,7 +2469,14 @@ describe('WorktreeProvider', () => {
       const branchName = provider.generateBranchName(request);
       const path = provider.getWorktreePath(request, branchName);
       expect(path).toBe(
-        join(TEST_ARCHON_HOME, 'workspaces', 'Widinglabs', 'sasha-demo', 'worktrees', branchName)
+        join(
+          TEST_HARNEESLAB_HOME,
+          'workspaces',
+          'Widinglabs',
+          'sasha-demo',
+          'worktrees',
+          branchName
+        )
       );
     });
   });

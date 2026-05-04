@@ -4,6 +4,12 @@
 const assert = require('node:assert/strict');
 const { createHmac, timingSafeEqual } = require('node:crypto');
 
+process.env.AUTH_USERNAME = process.env.AUTH_USERNAME || 'tester';
+process.env.AUTH_PASSWORD_HASH =
+  process.env.AUTH_PASSWORD_HASH || '$2a$10$7EqJtq98hPqEX7fNZaFWoO7r6k7bGZ9QiZ8K5XaF1QG7uQjR2XqZ2';
+process.env.COOKIE_SECRET =
+  process.env.COOKIE_SECRET || '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef';
+
 // ── isSafeRedirect ─────────────────────────────────────────────────────────
 const { isSafeRedirect } = require('./server.js');
 

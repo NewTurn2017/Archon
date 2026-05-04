@@ -68,9 +68,9 @@ async function registerRepoAtPath(
   // Check if a codebase with this name already exists (dedup by project identity)
   const existing = await codebaseDb.findCodebaseByName(name);
   if (existing) {
-    // Determine if the new path is "better" (local > archon-managed clone)
-    const isNewPathLocal = !targetPath.includes('/.archon/workspaces/');
-    const isExistingPathManaged = existing.default_cwd.includes('/.archon/workspaces/');
+    // Determine if the new path is "better" (local > harneeslab-managed clone)
+    const isNewPathLocal = !targetPath.includes('/.harneeslab/workspaces/');
+    const isExistingPathManaged = existing.default_cwd.includes('/.harneeslab/workspaces/');
     const shouldUpdateCwd = isNewPathLocal && isExistingPathManaged;
 
     const updates: { default_cwd?: string; repository_url?: string | null } = {};

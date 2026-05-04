@@ -16,7 +16,7 @@ import {
   cleanupStaleWorktrees,
   getWorktreeStatusBreakdown,
 } from '../services/cleanup-service';
-import { getArchonWorkspacesPath } from '@harneeslab/paths';
+import { getHarneesLabWorkspacesPath } from '@harneeslab/paths';
 import { loadConfig } from '../config/config-loader';
 import { discoverWorkflowsWithConfig } from '@harneeslab/workflows/workflow-discovery';
 import { resolveWorkflowName } from '@harneeslab/workflows/router';
@@ -105,7 +105,7 @@ function shortenPath(absolutePath: string, repoRoot?: string): string {
   }
 
   // Fallback: show relative to workspace
-  const workspacePath = getArchonWorkspacesPath();
+  const workspacePath = getHarneesLabWorkspacesPath();
   const relPath = relative(workspacePath, absolutePath);
   if (!relPath.startsWith('..')) {
     return relPath;
@@ -555,7 +555,7 @@ async function handleWorkflowCommand(
 
   const workflowCwd = codebase
     ? (conversation.cwd ?? codebase.default_cwd)
-    : getArchonWorkspacesPath();
+    : getHarneesLabWorkspacesPath();
 
   switch (subcommand) {
     case 'list':
@@ -571,14 +571,15 @@ async function handleWorkflowCommand(
         getLog().error({ err, cwd: workflowCwd }, 'cmd.workflow_list_failed');
         return {
           success: false,
-          message: `Failed to load workflows: ${err.message}\n\nCheck .archon/workflows/ for YAML syntax issues.`,
+          message: `Failed to load workflows: ${err.message}\n\nCheck .harneeslab/workflows/ for YAML syntax issues.`,
         };
       }
 
       if (workflowEntries.length === 0 && errors.length === 0) {
         return {
           success: true,
-          message: 'No workflows found.\n\nCreate workflows in `.archon/workflows/` as YAML files.',
+          message:
+            'No workflows found.\n\nCreate workflows in `.harneeslab/workflows/` as YAML files.',
         };
       }
 
@@ -623,7 +624,7 @@ async function handleWorkflowCommand(
         getLog().error({ err, cwd: workflowCwd }, 'cmd.workflow_reload_failed');
         return {
           success: false,
-          message: `Failed to reload workflows: ${err.message}\n\nCheck .archon/workflows/ for YAML syntax issues.`,
+          message: `Failed to reload workflows: ${err.message}\n\nCheck .harneeslab/workflows/ for YAML syntax issues.`,
         };
       }
     }
@@ -812,7 +813,7 @@ async function handleWorkflowCommand(
         getLog().error({ err, cwd: workflowCwd }, 'cmd.workflow_discovery_failed');
         return {
           success: false,
-          message: `Failed to load workflows: ${err.message}\n\nCheck .archon/workflows/ for YAML syntax issues.`,
+          message: `Failed to load workflows: ${err.message}\n\nCheck .harneeslab/workflows/ for YAML syntax issues.`,
         };
       }
 
@@ -1032,7 +1033,8 @@ Talk naturally — the orchestrator routes your requests to the right workflow a
       if (!Object.keys(commands).length) {
         return {
           success: true,
-          message: 'No commands registered.\n\nAdd .md files to .archon/commands/ in your project.',
+          message:
+            'No commands registered.\n\nAdd .md files to .harneeslab/commands/ in your project.',
         };
       }
 
@@ -1066,7 +1068,7 @@ Talk naturally — the orchestrator routes your requests to the right workflow a
       return handleWorkflowCommand(conversation, args);
 
     case 'init': {
-      // Create .archon structure in current repo
+      // Create .harneeslab structure in current repo
       if (!conversation.cwd) {
         return {
           success: false,
@@ -1074,17 +1076,17 @@ Talk naturally — the orchestrator routes your requests to the right workflow a
         };
       }
 
-      const archonDir = join(conversation.cwd, '.archon');
-      const commandsDir = join(archonDir, 'commands');
-      const configPath = join(archonDir, 'config.yaml');
+      const harneeslabDir = join(conversation.cwd, '.harneeslab');
+      const commandsDir = join(harneeslabDir, 'commands');
+      const configPath = join(harneeslabDir, 'config.yaml');
 
       try {
-        // Check if .archon already exists
+        // Check if .harneeslab already exists
         try {
-          await access(archonDir);
+          await access(harneeslabDir);
           return {
             success: false,
-            message: '.archon directory already exists. Nothing to do.',
+            message: '.harneeslab directory already exists. Nothing to do.',
           };
         } catch {
           // Directory doesn't exist, we can create it
@@ -1102,7 +1104,7 @@ Talk naturally — the orchestrator routes your requests to the right workflow a
 
 # Commands configuration (optional)
 # commands:
-#   folder: .archon/commands
+#   folder: .harneeslab/commands
 #   autoLoad: true
 `;
         await writeFile(configPath, defaultConfig);
@@ -1126,13 +1128,13 @@ Task: $ARGUMENTS
 
         return {
           success: true,
-          message: `Created .archon structure:
-  .archon/
+          message: `Created .harneeslab structure:
+  .harneeslab/
   ├── config.yaml
   └── commands/
       └── example.md
 
-Commands are auto-discovered from .archon/commands/ — no registration needed.`,
+Commands are auto-discovered from .harneeslab/commands/ — no registration needed.`,
         };
       } catch (error) {
         const err = error as Error;

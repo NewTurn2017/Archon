@@ -16,17 +16,17 @@ function normPath(p: string): string {
 const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonHome: mock(() => '/home/test/.archon'),
-  getArchonConfigPath: mock(() => '/home/test/.archon/config.yaml'),
-  getArchonWorkspacesPath: mock(() => '/home/test/.archon/workspaces'),
-  getArchonWorktreesPath: mock(() => '/home/test/.archon/worktrees'),
-  getDefaultCommandsPath: mock(() => '/app/.archon/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/app/.archon/workflows/defaults'),
+  getHarneesLabHome: mock(() => '/home/test/.harneeslab'),
+  getHarneesLabConfigPath: mock(() => '/home/test/.harneeslab/config.yaml'),
+  getHarneesLabWorkspacesPath: mock(() => '/home/test/.harneeslab/workspaces'),
+  getHarneesLabWorktreesPath: mock(() => '/home/test/.harneeslab/worktrees'),
+  getDefaultCommandsPath: mock(() => '/app/.harneeslab/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/app/.harneeslab/workflows/defaults'),
 }));
 
-import { syncArchonToWorktree } from './worktree-sync';
+import { syncHarneesLabToWorktree } from './worktree-sync';
 
-describe('syncArchonToWorktree', () => {
+describe('syncHarneesLabToWorktree', () => {
   let isWorktreePathSpy: Mock<(path: string) => Promise<boolean>>;
   let getCanonicalRepoPathSpy: Mock<(path: string) => Promise<string>>;
   let statSpy: Mock<(path: string) => Promise<Stats>>;
@@ -58,22 +58,22 @@ describe('syncArchonToWorktree', () => {
   test('returns false for non-worktree paths', async () => {
     isWorktreePathSpy.mockResolvedValue(false);
 
-    const result = await syncArchonToWorktree('/regular/repo');
+    const result = await syncHarneesLabToWorktree('/regular/repo');
 
     expect(result).toBe(false);
     expect(isWorktreePathSpy).toHaveBeenCalledWith('/regular/repo');
     expect(getCanonicalRepoPathSpy).not.toHaveBeenCalled();
   });
 
-  test('returns false when canonical repo has no .archon', async () => {
+  test('returns false when canonical repo has no .harneeslab', async () => {
     isWorktreePathSpy.mockResolvedValue(true);
     getCanonicalRepoPathSpy.mockResolvedValue('/canonical/repo');
     statSpy.mockRejectedValue(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }));
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(false);
-    expect(normPath(statSpy.mock.calls[0][0] as string)).toBe('/canonical/repo/.archon');
+    expect(normPath(statSpy.mock.calls[0][0] as string)).toBe('/canonical/repo/.harneeslab');
     expect(copyWorktreeFilesSpy).not.toHaveBeenCalled();
     // Should not log warning for ENOENT (expected case)
     expect(mockLogger.warn).not.toHaveBeenCalled();
@@ -84,21 +84,21 @@ describe('syncArchonToWorktree', () => {
     getCanonicalRepoPathSpy.mockResolvedValue('/canonical/repo');
     statSpy.mockRejectedValue(Object.assign(new Error('Permission denied'), { code: 'EACCES' }));
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(false);
     expect(copyWorktreeFilesSpy).not.toHaveBeenCalled();
     expect(mockLogger.warn).toHaveBeenCalledWith(
       expect.objectContaining({
         context: 'canonical',
-        path: expect.stringMatching(/canonical[/\\]repo[/\\]\.archon/),
+        path: expect.stringMatching(/canonical[/\\]repo[/\\]\.harneeslab/),
         code: 'EACCES',
       }),
       'stat_failed'
     );
   });
 
-  test('returns false when worktree .archon is up-to-date', async () => {
+  test('returns false when worktree .harneeslab is up-to-date', async () => {
     const canonicalMtime = new Date('2024-01-01T10:00:00Z');
     const worktreeMtime = new Date('2024-01-01T12:00:00Z'); // Newer
 
@@ -107,22 +107,22 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.resolve({ mtime: worktreeMtime } as Stats);
       }
       return Promise.reject(new Error('Unexpected path'));
     });
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(false);
     expect(copyWorktreeFilesSpy).not.toHaveBeenCalled();
   });
 
-  test('syncs when canonical .archon is newer', async () => {
+  test('syncs when canonical .harneeslab is newer', async () => {
     const canonicalMtime = new Date('2024-01-01T12:00:00Z'); // Newer
     const worktreeMtime = new Date('2024-01-01T10:00:00Z');
 
@@ -131,28 +131,28 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.resolve({ mtime: worktreeMtime } as Stats);
       }
       return Promise.reject(new Error('Unexpected path'));
     });
 
     loadRepoConfigSpy.mockResolvedValue({
-      worktree: { copyFiles: ['.archon', '.env'] },
+      worktree: { copyFiles: ['.harneeslab', '.env'] },
     });
 
-    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.harneeslab', destination: '.harneeslab' }]);
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(true);
     expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
       expect.stringMatching(/canonical[/\\]repo$/),
       expect.stringMatching(/worktree[/\\]path$/),
-      ['.archon', '.env']
+      ['.harneeslab', '.env']
     );
     expect(mockLogger.info).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -160,11 +160,11 @@ describe('syncArchonToWorktree', () => {
         worktree: '/worktree/path',
         filesCopied: 1,
       }),
-      'archon_synced_to_worktree'
+      'harneeslab_synced_to_worktree'
     );
   });
 
-  test('syncs when worktree has no .archon yet', async () => {
+  test('syncs when worktree has no .harneeslab yet', async () => {
     const canonicalMtime = new Date('2024-01-01T12:00:00Z');
 
     isWorktreePathSpy.mockResolvedValue(true);
@@ -172,28 +172,28 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.reject(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }));
       }
       return Promise.reject(new Error('Unexpected path'));
     });
 
     loadRepoConfigSpy.mockResolvedValue({
-      worktree: { copyFiles: ['.archon'] },
+      worktree: { copyFiles: ['.harneeslab'] },
     });
 
-    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.harneeslab', destination: '.harneeslab' }]);
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(true);
     expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
       expect.stringMatching(/canonical[/\\]repo$/),
       '/worktree/path',
-      ['.archon']
+      ['.harneeslab']
     );
   });
 
@@ -205,23 +205,23 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.reject(Object.assign(new Error('Permission denied'), { code: 'EACCES' }));
       }
       return Promise.reject(new Error('Unexpected path'));
     });
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(false);
     expect(copyWorktreeFilesSpy).not.toHaveBeenCalled();
     expect(mockLogger.warn).toHaveBeenCalledWith(
       expect.objectContaining({
         context: 'worktree',
-        path: expect.stringMatching(/worktree[/\\]path[/\\]\.archon/),
+        path: expect.stringMatching(/worktree[/\\]path[/\\]\.harneeslab/),
         code: 'EACCES',
       }),
       'stat_failed'
@@ -232,11 +232,11 @@ describe('syncArchonToWorktree', () => {
         worktreePath: '/worktree/path',
         code: 'EACCES',
       }),
-      'archon_sync_failed'
+      'harneeslab_sync_failed'
     );
   });
 
-  test('defaults to [".archon"] when config has no copyFiles', async () => {
+  test('defaults to [".harneeslab"] when config has no copyFiles', async () => {
     const canonicalMtime = new Date('2024-01-01T12:00:00Z');
     const worktreeMtime = new Date('2024-01-01T10:00:00Z');
 
@@ -245,10 +245,10 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.resolve({ mtime: worktreeMtime } as Stats);
       }
       return Promise.reject(new Error('Unexpected path'));
@@ -258,19 +258,19 @@ describe('syncArchonToWorktree', () => {
       worktree: {}, // No copyFiles
     });
 
-    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.harneeslab', destination: '.harneeslab' }]);
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(true);
     expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
       expect.stringMatching(/canonical[/\\]repo$/),
       '/worktree/path',
-      ['.archon']
+      ['.harneeslab']
     );
   });
 
-  test('defaults to [".archon"] when config loading fails and logs warning', async () => {
+  test('defaults to [".harneeslab"] when config loading fails and logs warning', async () => {
     const canonicalMtime = new Date('2024-01-01T12:00:00Z');
     const worktreeMtime = new Date('2024-01-01T10:00:00Z');
 
@@ -279,10 +279,10 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.resolve({ mtime: worktreeMtime } as Stats);
       }
       return Promise.reject(new Error('Unexpected path'));
@@ -290,15 +290,15 @@ describe('syncArchonToWorktree', () => {
 
     loadRepoConfigSpy.mockRejectedValue(new Error('Config not found'));
 
-    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.harneeslab', destination: '.harneeslab' }]);
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(true);
     expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
       expect.stringMatching(/canonical[/\\]repo$/),
       '/worktree/path',
-      ['.archon']
+      ['.harneeslab']
     );
     expect(mockLogger.warn).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -308,7 +308,7 @@ describe('syncArchonToWorktree', () => {
     );
   });
 
-  test('adds .archon to copyFiles list when not specified', async () => {
+  test('adds .harneeslab to copyFiles list when not specified', async () => {
     const canonicalMtime = new Date('2024-01-01T12:00:00Z');
     const worktreeMtime = new Date('2024-01-01T10:00:00Z');
 
@@ -317,29 +317,29 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.resolve({ mtime: worktreeMtime } as Stats);
       }
       return Promise.reject(new Error('Unexpected path'));
     });
 
     loadRepoConfigSpy.mockResolvedValue({
-      worktree: { copyFiles: ['.env', '.vscode'] }, // No .archon
+      worktree: { copyFiles: ['.env', '.vscode'] }, // No .harneeslab
     });
 
-    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.archon', destination: '.archon' }]);
+    copyWorktreeFilesSpy.mockResolvedValue([{ source: '.harneeslab', destination: '.harneeslab' }]);
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(true);
-    // .archon is prepended to preserve user's copyFiles while ensuring .archon is synced
+    // .harneeslab is prepended to preserve user's copyFiles while ensuring .harneeslab is synced
     expect(copyWorktreeFilesSpy).toHaveBeenCalledWith(
       expect.stringMatching(/canonical[/\\]repo$/),
       '/worktree/path',
-      ['.archon', '.env', '.vscode']
+      ['.harneeslab', '.env', '.vscode']
     );
   });
 
@@ -352,22 +352,22 @@ describe('syncArchonToWorktree', () => {
 
     statSpy.mockImplementation((path: string) => {
       const p = normPath(path);
-      if (p === '/canonical/repo/.archon') {
+      if (p === '/canonical/repo/.harneeslab') {
         return Promise.resolve({ mtime: canonicalMtime } as Stats);
       }
-      if (p === '/worktree/path/.archon') {
+      if (p === '/worktree/path/.harneeslab') {
         return Promise.resolve({ mtime: worktreeMtime } as Stats);
       }
       return Promise.reject(new Error('Unexpected path'));
     });
 
     loadRepoConfigSpy.mockResolvedValue({
-      worktree: { copyFiles: ['.archon'] },
+      worktree: { copyFiles: ['.harneeslab'] },
     });
 
     copyWorktreeFilesSpy.mockRejectedValue(new Error('Permission denied'));
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(false);
     expect(mockLogger.error).toHaveBeenCalledWith(
@@ -376,7 +376,7 @@ describe('syncArchonToWorktree', () => {
         errorName: 'Error',
         code: 'UNKNOWN',
       }),
-      'archon_sync_failed'
+      'harneeslab_sync_failed'
     );
   });
 
@@ -384,7 +384,7 @@ describe('syncArchonToWorktree', () => {
     isWorktreePathSpy.mockResolvedValue(true);
     getCanonicalRepoPathSpy.mockRejectedValue(new Error('Failed to read .git file'));
 
-    const result = await syncArchonToWorktree('/worktree/path');
+    const result = await syncHarneesLabToWorktree('/worktree/path');
 
     expect(result).toBe(false);
     expect(mockLogger.error).toHaveBeenCalledWith(
@@ -393,7 +393,7 @@ describe('syncArchonToWorktree', () => {
         errorName: 'Error',
         code: 'UNKNOWN',
       }),
-      'archon_sync_failed'
+      'harneeslab_sync_failed'
     );
   });
 });

@@ -23,7 +23,7 @@ All variables are available in all workflows. The only exception is `$nodeId.out
 
 ## Where Variables Are Substituted
 
-- **Command files** (`.archon/commands/*.md`) — all variables except `$nodeId.output`
+- **Command files** (`.harneeslab/commands/*.md`) — all variables except `$nodeId.output`
 - **Inline `prompt:` fields** — in DAG prompt nodes and loop node prompts
 - **`bash:` scripts in DAG nodes** — `$nodeId.output` references are automatically shell-quoted (single-quoted with `'` escaped)
 

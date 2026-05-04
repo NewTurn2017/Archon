@@ -117,7 +117,7 @@ jobs:
             exit 1
           fi
           echo "$OUTPUT"
-          if echo "$OUTPUT" | grep -q "archon-assist"; then
+          if echo "$OUTPUT" | grep -q "harneeslab-assist"; then
             echo "::notice::Bundled workflows loaded correctly"
           else
             echo "::error::Bundled workflows did not load — embedded JSON may be missing from the binary"
@@ -139,7 +139,7 @@ jobs:
           # Run without CLAUDE_BIN_PATH set. Expect a clean resolver error.
           # Capture both stdout and stderr; we only care that the resolver message is present.
           set +e
-          OUTPUT=$(env -u CLAUDE_BIN_PATH "$BIN" workflow run archon-assist "hello" 2>&1)
+          OUTPUT=$(env -u CLAUDE_BIN_PATH "$BIN" workflow run harneeslab-assist "hello" 2>&1)
           EXIT_CODE=$?
           set -e
           echo "$OUTPUT"
@@ -182,7 +182,7 @@ jobs:
           git -c user.email=ci@example.com -c user.name=ci commit --allow-empty -q -m init
 
           set +e
-          OUTPUT=$(CLAUDE_BIN_PATH="$CLI_PATH" "$BIN" workflow run archon-assist "hello" 2>&1)
+          OUTPUT=$(CLAUDE_BIN_PATH="$CLI_PATH" "$BIN" workflow run harneeslab-assist "hello" 2>&1)
           EXIT_CODE=$?
           set -e
           echo "$OUTPUT"

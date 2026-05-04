@@ -319,7 +319,7 @@ async function resolveNodeProviderAndModel(
   }
 
   // Surface agents + skills ID collision — user-defined 'dag-node-skills'
-  // silently overrides Archon's skills wrapper. User wins (by design) but
+  // silently overrides HarneesLab's skills wrapper. User wins (by design) but
   // the operator should know they've neutered the wrapper.
   if (
     node.agents?.['dag-node-skills'] !== undefined &&
@@ -330,7 +330,7 @@ async function resolveNodeProviderAndModel(
     await safeSendMessage(
       platform,
       conversationId,
-      `Warning: Node '${node.id}' defines an agent with reserved ID 'dag-node-skills' AND uses 'skills:'. Your inline agent overrides Archon's automatic skills wrapper — the 'skills:' field will NOT take effect. Rename the agent or remove 'skills:' to fix.`,
+      `Warning: Node '${node.id}' defines an agent with reserved ID 'dag-node-skills' AND uses 'skills:'. Your inline agent overrides HarneesLab's automatic skills wrapper — the 'skills:' field will NOT take effect. Rename the agent or remove 'skills:' to fix.`,
       { workflowId: workflowRunId, nodeName: node.id }
     );
   }
@@ -1221,7 +1221,7 @@ async function executeBashNode(
 
 /**
  * Execute a script (TypeScript via bun or Python via uv) DAG node.
- * Supports both inline code snippets and named scripts discovered from .archon/scripts/.
+ * Supports both inline code snippets and named scripts discovered from .harneeslab/scripts/.
  * stdout is captured and trimmed as the node output; stderr is logged as a warning.
  */
 async function executeScriptNode(
@@ -1296,7 +1296,7 @@ async function executeScriptNode(
         cmd = 'bun';
         // --no-env-file prevents Bun from auto-loading .env from the execution
         // cwd (the target repo). Without this, repo .env leaks into the script
-        // subprocess despite Archon's parent process cleanup.
+        // subprocess despite HarneesLab's parent process cleanup.
         args = ['--no-env-file', '-e', finalScript];
       } else {
         // uv run --with dep1 --with dep2 python -c <code>
@@ -1305,13 +1305,13 @@ async function executeScriptNode(
         args = ['run', ...withFlags, 'python', '-c', finalScript];
       }
     } else {
-      // Named script — look up in .archon/scripts/ directory
-      const scriptsDir = resolve(cwd, '.archon', 'scripts');
+      // Named script — look up in .harneeslab/scripts/ directory
+      const scriptsDir = resolve(cwd, '.harneeslab', 'scripts');
       const scripts = await discoverScripts(scriptsDir);
       const scriptDef = scripts.get(finalScript);
 
       if (!scriptDef) {
-        const errorMsg = `Script node '${node.id}': named script '${finalScript}' not found in .archon/scripts/`;
+        const errorMsg = `Script node '${node.id}': named script '${finalScript}' not found in .harneeslab/scripts/`;
         getLog().error({ nodeId: node.id, scriptName: finalScript }, 'script_not_found');
         await safeSendMessage(platform, conversationId, errorMsg, nodeContext);
         await logNodeError(logDir, workflowRun.id, node.id, errorMsg);
@@ -1505,7 +1505,7 @@ async function executeLoopNode(
     aiClient = deps.getAgentProvider(workflowProvider);
   } catch (error) {
     const err = error as Error;
-    const errorMsg = `Invalid provider '${workflowProvider}' for loop node '${node.id}'. Check workflow YAML or .archon/config.yaml. Original: ${err.message}`;
+    const errorMsg = `Invalid provider '${workflowProvider}' for loop node '${node.id}'. Check workflow YAML or .harneeslab/config.yaml. Original: ${err.message}`;
     getLog().error(
       { err, nodeId: node.id, provider: workflowProvider },
       'loop_node.provider_failed'

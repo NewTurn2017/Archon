@@ -120,11 +120,11 @@ describe('title-generator', () => {
   });
 
   test('includes workflow name in prompt when provided', async () => {
-    await generateAndSetTitle('conv-6', 'Add dark mode', 'claude', '/tmp', 'archon-plan');
+    await generateAndSetTitle('conv-6', 'Add dark mode', 'claude', '/tmp', 'harneeslab-plan');
 
     // Verify the prompt passed to sendQuery includes the workflow name
     const promptArg = mockSendQuery.mock.calls[0][0] as string;
-    expect(promptArg).toContain('Workflow: archon-plan');
+    expect(promptArg).toContain('Workflow: harneeslab-plan');
   });
 
   test('does not include workflow context when workflowName not provided', async () => {

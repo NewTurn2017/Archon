@@ -1,15 +1,15 @@
 ---
-description: Execute an Archon implementation plan file
+description: Execute an HarneesLab implementation plan file
 argument-hint: <path-to-plan.md>
 ---
 
-# Execute: Implement an Archon Plan
+# Execute: Implement an HarneesLab Plan
 
 ## Objective
 
 Read and execute every task in the plan file: **$ARGUMENTS**
 
-Implement all tasks faithfully, following Archon monorepo conventions, and report results.
+Implement all tasks faithfully, following HarneesLab monorepo conventions, and report results.
 
 ---
 
@@ -59,16 +59,16 @@ Work through each task in the plan sequentially (respecting `Depends on:` orderi
    ```
    Fix type errors immediately — do not accumulate them.
 
-### Archon conventions to follow:
+### HarneesLab conventions to follow:
 
 **Imports:**
 ```typescript
 // Type-only imports
-import type { IPlatformAdapter, Conversation } from '@archon/core';
+import type { IPlatformAdapter, Conversation } from '@harneeslab/core';
 // Value imports — named, not namespace
-import { handleMessage, pool } from '@archon/core';
+import { handleMessage, pool } from '@harneeslab/core';
 // Submodule namespace imports (acceptable)
-import * as git from '@archon/git';
+import * as git from '@harneeslab/git';
 ```
 
 **Functions:**
@@ -80,7 +80,7 @@ async function createSession(id: string): Promise<Session> { ... }
 
 **Logging:**
 ```typescript
-import { createLogger } from '@archon/paths';
+import { createLogger } from '@harneeslab/paths';
 // Lazy logger pattern (test mocks work correctly)
 let cachedLog: ReturnType<typeof createLogger> | undefined;
 function getLog(): ReturnType<typeof createLogger> {
@@ -109,9 +109,9 @@ try {
 - Use branded types: `toRepoPath()`, `toBranchName()`, `toWorktreePath()`
 
 **Package boundaries:**
-- `@archon/workflows` must NOT import from `@archon/core`
-- `@archon/git` must NOT import from `@archon/core` or `@archon/workflows`
-- `@archon/paths` has zero `@archon/*` dependencies
+- `@harneeslab/workflows` must NOT import from `@harneeslab/core`
+- `@harneeslab/git` must NOT import from `@harneeslab/core` or `@harneeslab/workflows`
+- `@harneeslab/paths` has zero `@harneeslab/*` dependencies
 
 **Testing (if adding tests):**
 - Check which test batch the new file belongs to in the package's `package.json`

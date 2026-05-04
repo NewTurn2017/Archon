@@ -75,7 +75,7 @@ export function parseWorkflowDescription(description: string): ParsedDescription
 
   result.whenToUse = readSection(text, ['Use when', '사용할 때']);
 
-  // Fallback: "Handles:" / "처리 범위:" (e.g., archon-assist)
+  // Fallback: "Handles:" / "처리 범위:" (e.g., harneeslab-assist)
   if (!result.whenToUse) {
     result.whenToUse = readSection(text, ['Handles', '처리 범위']);
   }
@@ -95,7 +95,7 @@ export function parseWorkflowDescription(description: string): ParsedDescription
 
   result.does = readSection(text, ['Does', '하는 일']);
 
-  // Fallback: "Capability:" / "역량:" (e.g., archon-assist)
+  // Fallback: "Capability:" / "역량:" (e.g., harneeslab-assist)
   if (!result.does) {
     result.does = readSection(text, ['Capability', '역량']);
   }
@@ -115,11 +115,11 @@ const ACRONYMS = new Set(['pr', 'ci', 'dag', 'prd', 'api', 'ai']);
 
 /**
  * Convert a workflow name to a display-friendly title.
- * Strips `archon-` prefix, converts kebab-case to Title Case,
+ * Strips `harneeslab-` prefix, converts kebab-case to Title Case,
  * preserves known acronyms (PR, CI, DAG, etc.).
  */
 export function getWorkflowDisplayName(name: string): string {
-  const stripped = name.replace(/^archon-/, '');
+  const stripped = name.replace(/^harneeslab-/, '');
   return stripped
     .split('-')
     .map(word =>

@@ -2,7 +2,7 @@
  * Bundled default commands and workflows for binary distribution.
  *
  * Content lives in `bundled-defaults.generated.ts`, which is regenerated from
- * `.archon/{commands,workflows}/defaults/` by `scripts/generate-bundled-defaults.ts`.
+ * `.harneeslab/{commands,workflows}/defaults/` by `scripts/generate-bundled-defaults.ts`.
  * This file is the hand-written facade: it re-exports the records and defines
  * the binary-detection helper.
  *
