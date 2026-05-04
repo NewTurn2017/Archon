@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="HarneesLab" width="160" />
+  <img src="assets/logo.png" alt="HarneesLab neon shield logo" title="HarneesLab neon shield logo" width="160" />
 </p>
 
 <h1 align="center">HarneesLab</h1>
@@ -18,7 +18,7 @@
 
 HarneesLab은 AI 코딩 agent를 위한 workflow engine입니다. 계획, 구현, 검증, 코드 리뷰, PR 생성 같은 개발 절차를 YAML workflow로 정의하고, 여러 프로젝트에서 같은 방식으로 반복 실행할 수 있습니다.
 
-HarneesLab은 NewTurn2017의 HarneesLab fork입니다. 저장소, 릴리스, 문서, 한국어 우선 제품 경험은 HarneesLab으로 가져가되, 기존 HarneesLab workflow와 CLI 사용 흐름은 호환성을 위해 유지합니다.
+HarneesLab은 AI coding workflow를 한국어 우선 제품 경험과 독립 네임스페이스로 다듬은 local-first developer tool입니다. 저장소, 릴리스, 문서, CLI, runtime directory, logo와 favicon까지 HarneesLab brand surface를 기준으로 유지합니다.
 
 Dockerfile이 인프라를, GitHub Actions가 CI/CD를 반복 가능하게 만든 것처럼 HarneesLab은 AI 코딩 workflow를 반복 가능하게 만듭니다. 소프트웨어 개발을 위한 n8n에 가깝게 생각하면 됩니다.
 
