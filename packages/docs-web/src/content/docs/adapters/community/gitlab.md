@@ -27,7 +27,7 @@ HarneesLab을 GitLab instance(gitlab.com 또는 self-hosted)에 연결하면 이
 
 1. **GitLab → User Settings → Access Tokens**로 이동합니다.
 2. 다음 설정으로 token을 만듭니다.
-   - **Name**: `archon`
+   - **Name**: `harneeslab`
    - **Scopes**: `api`
    - **Expiration**: 필요에 맞게 설정
 3. token을 복사합니다(`glpat-`로 시작).
@@ -92,7 +92,7 @@ Optional:
 
 ```ini
 GITLAB_ALLOWED_USERS=alice,bob
-GITLAB_BOT_MENTION=archon
+GITLAB_BOT_MENTION=harneeslab
 ```
 
 자세한 내용은 [전체 환경 변수 reference](/reference/configuration/)를 참고하세요.
@@ -107,7 +107,7 @@ issue 또는 MR 댓글에서 bot을 mention합니다.
 @harneeslab review this implementation
 ```
 
-**첫 mention**은 repository를 `~/.archon/workspaces/<group>/<project>`로 자동 clone하고, `.archon/commands/`가 있으면 감지하며, 전체 issue/MR context를 주입합니다.
+**첫 mention**은 repository를 `~/.harneeslab/workspaces/<group>/<project>`로 자동 clone하고, `.harneeslab/commands/`가 있으면 감지하며, 전체 issue/MR context를 주입합니다.
 
 **이후 mention**은 전체 context와 함께 기존 conversation을 재개합니다.
 

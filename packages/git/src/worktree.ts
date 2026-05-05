@@ -2,8 +2,8 @@ import { readFile, access } from 'fs/promises';
 import { join, resolve } from 'path';
 import {
   createLogger,
-  getArchonWorktreesPath,
-  getArchonWorkspacesPath,
+  getHarneesLabWorktreesPath,
+  getHarneesLabWorkspacesPath,
   getProjectWorktreesPath,
 } from '@harneeslab/paths';
 import { execFileAsync } from './exec';
@@ -22,10 +22,10 @@ function getLog(): ReturnType<typeof createLogger> {
  *
  * Resolution order:
  * 1. If `codebaseName` is provided in "owner/repo" format, returns the project-scoped
- *    path directly: ~/.archon/workspaces/owner/repo/worktrees/
- * 2. For paths under ~/.archon/workspaces/owner/repo/..., extracts owner/repo from path
+ *    path directly: ~/.harneeslab/workspaces/owner/repo/worktrees/
+ * 2. For paths under ~/.harneeslab/workspaces/owner/repo/..., extracts owner/repo from path
  *    and returns the project-scoped path.
- * 3. Otherwise, returns the legacy global path: ~/.archon/worktrees/
+ * 3. Otherwise, returns the legacy global path: ~/.harneeslab/worktrees/
  */
 export function getWorktreeBase(repoPath: RepoPath, codebaseName?: string): string {
   // If codebase name is known, use project-scoped path directly
@@ -39,7 +39,7 @@ export function getWorktreeBase(repoPath: RepoPath, codebaseName?: string): stri
     getLog().warn({ codebaseName }, 'worktree.invalid_codebase_name_format');
   }
   // Existing path-prefix detection (cloned repos under workspaces/)
-  const workspacesPath = getArchonWorkspacesPath();
+  const workspacesPath = getHarneesLabWorkspacesPath();
   if (repoPath.startsWith(workspacesPath)) {
     const relative = repoPath.substring(workspacesPath.length + 1);
     const parts = relative.split(/[/\\]/).filter(p => p.length > 0);
@@ -48,12 +48,12 @@ export function getWorktreeBase(repoPath: RepoPath, codebaseName?: string): stri
     }
   }
   // Legacy global fallback (no codebase name, no workspace path match)
-  return getArchonWorktreesPath();
+  return getHarneesLabWorktreesPath();
 }
 
 /**
  * Check if the worktree base for a given repo path is project-scoped
- * (under ~/.archon/workspaces/owner/repo/worktrees/) vs legacy global.
+ * (under ~/.harneeslab/workspaces/owner/repo/worktrees/) vs legacy global.
  *
  * When project-scoped, the worktree base already includes the owner/repo context,
  * so callers should NOT append owner/repo again.
@@ -67,7 +67,7 @@ export function isProjectScopedWorktreeBase(repoPath: RepoPath, codebaseName?: s
     if (parts.length === 2 && parts[0] && parts[1]) return true;
     // Invalid format — fall through to path detection (same safe degradation as getWorktreeBase).
   }
-  const workspacesPath = getArchonWorkspacesPath();
+  const workspacesPath = getHarneesLabWorkspacesPath();
   if (!repoPath.startsWith(workspacesPath)) return false;
   const relative = repoPath.substring(workspacesPath.length + 1);
   const parts = relative.split(/[/\\]/).filter(p => p.length > 0);

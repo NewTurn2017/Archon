@@ -35,24 +35,24 @@ function createMockLogger(): MockLogger {
 
 const mockLogger = createMockLogger();
 
-/** Mirror of @harneeslab/paths getArchonHome (reads env at call-time) */
-function getArchonHome(): string {
+/** Mirror of @harneeslab/paths getHarneesLabHome (reads env at call-time) */
+function getHarneesLabHome(): string {
   if (
     process.env.WORKSPACE_PATH === '/workspace' ||
     (process.env.HOME === '/root' && Boolean(process.env.WORKSPACE_PATH)) ||
-    process.env.ARCHON_DOCKER === 'true'
+    process.env.HARNEESLAB_DOCKER === 'true'
   ) {
-    return '/.archon';
+    return '/.harneeslab';
   }
-  return process.env.ARCHON_HOME ?? join(homedir(), '.archon');
+  return process.env.HARNEESLAB_HOME ?? join(homedir(), '.harneeslab');
 }
 
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorktreesPath: () => join(getArchonHome(), 'worktrees'),
-  getArchonWorkspacesPath: () => join(getArchonHome(), 'workspaces'),
+  getHarneesLabWorktreesPath: () => join(getHarneesLabHome(), 'worktrees'),
+  getHarneesLabWorkspacesPath: () => join(getHarneesLabHome(), 'workspaces'),
   getProjectWorktreesPath: (owner: string, repo: string) =>
-    join(getArchonHome(), 'workspaces', owner, repo, 'worktrees'),
+    join(getHarneesLabHome(), 'workspaces', owner, repo, 'worktrees'),
 }));
 
 // ---------------------------------------------------------------------------
@@ -163,8 +163,8 @@ describe('git utilities', () => {
     const originalEnv = process.env.WORKTREE_BASE;
     const originalWorkspacePath = process.env.WORKSPACE_PATH;
     const originalHome = process.env.HOME;
-    const originalArchonHome = process.env.ARCHON_HOME;
-    const originalArchonDocker = process.env.ARCHON_DOCKER;
+    const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
+    const originalHarneesLabDocker = process.env.HARNEESLAB_DOCKER;
 
     afterEach(() => {
       if (originalEnv === undefined) {
@@ -182,98 +182,98 @@ describe('git utilities', () => {
       } else {
         process.env.HOME = originalHome;
       }
-      if (originalArchonHome === undefined) {
-        delete process.env.ARCHON_HOME;
+      if (originalHarneesLabHome === undefined) {
+        delete process.env.HARNEESLAB_HOME;
       } else {
-        process.env.ARCHON_HOME = originalArchonHome;
+        process.env.HARNEESLAB_HOME = originalHarneesLabHome;
       }
-      if (originalArchonDocker === undefined) {
-        delete process.env.ARCHON_DOCKER;
+      if (originalHarneesLabDocker === undefined) {
+        delete process.env.HARNEESLAB_DOCKER;
       } else {
-        process.env.ARCHON_DOCKER = originalArchonDocker;
+        process.env.HARNEESLAB_DOCKER = originalHarneesLabDocker;
       }
     });
 
-    test('returns ~/.archon/worktrees by default for local (non-Docker)', () => {
+    test('returns ~/.harneeslab/worktrees by default for local (non-Docker)', () => {
       delete process.env.WORKTREE_BASE;
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_HOME;
-      delete process.env.ARCHON_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
       const result = git.getWorktreeBase('/workspace/my-repo');
-      expect(result).toBe(join(homedir(), '.archon', 'worktrees'));
+      expect(result).toBe(join(homedir(), '.harneeslab', 'worktrees'));
     });
 
-    test('returns /.archon/worktrees for Docker environment', () => {
+    test('returns /.harneeslab/worktrees for Docker environment', () => {
       delete process.env.WORKTREE_BASE;
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_HOME;
       process.env.WORKSPACE_PATH = '/workspace';
       const result = git.getWorktreeBase('/workspace/my-repo');
-      expect(result).toBe(join('/', '.archon', 'worktrees'));
+      expect(result).toBe(join('/', '.harneeslab', 'worktrees'));
     });
 
     test('detects Docker by HOME=/root + WORKSPACE_PATH', () => {
       delete process.env.WORKTREE_BASE;
-      delete process.env.ARCHON_HOME;
-      delete process.env.ARCHON_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
       process.env.HOME = '/root';
       process.env.WORKSPACE_PATH = '/app/workspace';
       const result = git.getWorktreeBase('/workspace/my-repo');
-      expect(result).toBe(join('/', '.archon', 'worktrees'));
+      expect(result).toBe(join('/', '.harneeslab', 'worktrees'));
     });
 
-    test('uses ARCHON_HOME for local (non-Docker)', () => {
+    test('uses HARNEESLAB_HOME for local (non-Docker)', () => {
       delete process.env.WORKSPACE_PATH;
       delete process.env.WORKTREE_BASE;
-      delete process.env.ARCHON_DOCKER;
-      process.env.ARCHON_HOME = '/custom/archon';
+      delete process.env.HARNEESLAB_DOCKER;
+      process.env.HARNEESLAB_HOME = '/custom/harneeslab';
       const result = git.getWorktreeBase('/workspace/my-repo');
-      expect(result).toBe(join('/custom/archon', 'worktrees'));
+      expect(result).toBe(join('/custom/harneeslab', 'worktrees'));
     });
 
     test('uses fixed path in Docker', () => {
-      delete process.env.ARCHON_HOME;
-      process.env.ARCHON_DOCKER = 'true';
+      delete process.env.HARNEESLAB_HOME;
+      process.env.HARNEESLAB_DOCKER = 'true';
       const result = git.getWorktreeBase('/workspace/my-repo');
-      expect(result).toBe(join('/', '.archon', 'worktrees'));
+      expect(result).toBe(join('/', '.harneeslab', 'worktrees'));
     });
 
     test('returns project-scoped worktrees path when repo is under workspaces', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
-      const workspacesPath = join(homedir(), '.archon', 'workspaces');
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
+      const workspacesPath = join(homedir(), '.harneeslab', 'workspaces');
       const repoPath = join(workspacesPath, 'acme', 'widget', 'source');
       const result = git.getWorktreeBase(repoPath);
       expect(result).toBe(join(workspacesPath, 'acme', 'widget', 'worktrees'));
     });
 
-    test('returns project-scoped path with ARCHON_HOME override', () => {
+    test('returns project-scoped path with HARNEESLAB_HOME override', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      process.env.ARCHON_HOME = join('/', 'custom', 'archon');
-      const repoPath = join('/', 'custom', 'archon', 'workspaces', 'acme', 'widget', 'source');
+      delete process.env.HARNEESLAB_DOCKER;
+      process.env.HARNEESLAB_HOME = join('/', 'custom', 'harneeslab');
+      const repoPath = join('/', 'custom', 'harneeslab', 'workspaces', 'acme', 'widget', 'source');
       const result = git.getWorktreeBase(repoPath);
       expect(result).toBe(
-        join('/', 'custom', 'archon', 'workspaces', 'acme', 'widget', 'worktrees')
+        join('/', 'custom', 'harneeslab', 'workspaces', 'acme', 'widget', 'worktrees')
       );
     });
 
     test('uses codebaseName to resolve project-scoped path for local repo', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
       const localRepoPath = '/Users/rasmus/Projects/sasha-demo';
       const result = git.getWorktreeBase(localRepoPath, 'Widinglabs/sasha-demo');
       expect(result).toBe(
-        join(homedir(), '.archon', 'workspaces', 'Widinglabs', 'sasha-demo', 'worktrees')
+        join(homedir(), '.harneeslab', 'workspaces', 'Widinglabs', 'sasha-demo', 'worktrees')
       );
     });
 
     test('codebaseName takes priority over workspaces path detection', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
-      const workspacesPath = join(homedir(), '.archon', 'workspaces');
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
+      const workspacesPath = join(homedir(), '.harneeslab', 'workspaces');
       const repoPath = join(workspacesPath, 'old-owner', 'old-repo', 'source');
       const result = git.getWorktreeBase(repoPath, 'new-owner/new-repo');
       expect(result).toBe(join(workspacesPath, 'new-owner', 'new-repo', 'worktrees'));
@@ -281,41 +281,41 @@ describe('git utilities', () => {
 
     test('ignores invalid codebaseName and falls back to path detection', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
       const result = git.getWorktreeBase('/local/repo', 'invalid-no-slash');
-      expect(result).toBe(join(homedir(), '.archon', 'worktrees'));
+      expect(result).toBe(join(homedir(), '.harneeslab', 'worktrees'));
     });
   });
 
   describe('isProjectScopedWorktreeBase', () => {
-    const originalArchonHome = process.env.ARCHON_HOME;
+    const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
     const originalWorkspacePath = process.env.WORKSPACE_PATH;
-    const originalArchonDocker = process.env.ARCHON_DOCKER;
+    const originalHarneesLabDocker = process.env.HARNEESLAB_DOCKER;
 
     afterEach(() => {
-      if (originalArchonHome === undefined) {
-        delete process.env.ARCHON_HOME;
+      if (originalHarneesLabHome === undefined) {
+        delete process.env.HARNEESLAB_HOME;
       } else {
-        process.env.ARCHON_HOME = originalArchonHome;
+        process.env.HARNEESLAB_HOME = originalHarneesLabHome;
       }
       if (originalWorkspacePath === undefined) {
         delete process.env.WORKSPACE_PATH;
       } else {
         process.env.WORKSPACE_PATH = originalWorkspacePath;
       }
-      if (originalArchonDocker === undefined) {
-        delete process.env.ARCHON_DOCKER;
+      if (originalHarneesLabDocker === undefined) {
+        delete process.env.HARNEESLAB_DOCKER;
       } else {
-        process.env.ARCHON_DOCKER = originalArchonDocker;
+        process.env.HARNEESLAB_DOCKER = originalHarneesLabDocker;
       }
     });
 
     test('returns true for path under workspaces with owner/repo', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
-      const workspacesPath = join(homedir(), '.archon', 'workspaces');
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
+      const workspacesPath = join(homedir(), '.harneeslab', 'workspaces');
       expect(
         git.isProjectScopedWorktreeBase(join(workspacesPath, 'acme', 'widget', 'source'))
       ).toBe(true);
@@ -323,23 +323,23 @@ describe('git utilities', () => {
 
     test('returns false for path outside workspaces', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
       expect(git.isProjectScopedWorktreeBase('/workspace/my-repo')).toBe(false);
     });
 
     test('returns false for path under workspaces with only owner (no repo)', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
-      const workspacesPath = join(homedir(), '.archon', 'workspaces');
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
+      const workspacesPath = join(homedir(), '.harneeslab', 'workspaces');
       expect(git.isProjectScopedWorktreeBase(join(workspacesPath, 'acme'))).toBe(false);
     });
 
     test('returns true when codebaseName is provided (local repo)', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
       expect(git.isProjectScopedWorktreeBase('/Users/rasmus/Projects/repo', 'owner/repo')).toBe(
         true
       );
@@ -347,8 +347,8 @@ describe('git utilities', () => {
 
     test('returns false when codebaseName is invalid', () => {
       delete process.env.WORKSPACE_PATH;
-      delete process.env.ARCHON_DOCKER;
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_DOCKER;
+      delete process.env.HARNEESLAB_HOME;
       expect(git.isProjectScopedWorktreeBase('/local/repo', 'invalid')).toBe(false);
     });
   });

@@ -16,14 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Server startup no longer marks actively-running workflows as failed.** The `failOrphanedRuns()` call has been removed from `packages/server/src/index.ts` to match the CLI precedent (`packages/cli/src/cli.ts:256-258`). Per the new CLAUDE.md principle "No Autonomous Lifecycle Mutation Across Process Boundaries", a stuck `running` row is now transitioned explicitly by the user: via the per-row Cancel/Abandon buttons on the dashboard workflow card, or `archon workflow abandon <run-id>` from the CLI. (`archon workflow cleanup` is a separate command that deletes OLD terminal runs for disk hygiene — it does not handle stuck `running` rows.) Closes #1216.
+- **Server startup no longer marks actively-running workflows as failed.** The `failOrphanedRuns()` call has been removed from `packages/server/src/index.ts` to match the CLI precedent (`packages/cli/src/cli.ts:256-258`). Per the new CLAUDE.md principle "No Autonomous Lifecycle Mutation Across Process Boundaries", a stuck `running` row is now transitioned explicitly by the user: via the per-row Cancel/Abandon buttons on the dashboard workflow card, or `harneeslab workflow abandon <run-id>` from the CLI. (`harneeslab workflow cleanup` is a separate command that deletes OLD terminal runs for disk hygiene — it does not handle stuck `running` rows.) Closes #1216.
 
 ### Changed
 
 - **Dashboard nav tab** now shows a numeric count of running workflows instead of a binary pulse dot. Reads from the existing `/api/dashboard/runs` `counts.running` field; same 10s polling interval.
 - **Workflow run destructive actions** (Abandon, Cancel, Delete, Reject) now use a proper confirmation dialog matching the codebase-delete UX, replacing the browser's native `window.confirm()` popups. Each dialog includes context-appropriate copy describing what the action does to the run record.
 
-- **Claude Code binary resolution** (breaking for compiled binary users): Archon no longer embeds the Claude Code SDK into compiled binaries. In compiled builds, you must install Claude Code separately (`curl -fsSL https://claude.ai/install.sh | bash` on macOS/Linux, `irm https://claude.ai/install.ps1 | iex` on Windows, or `npm install -g @anthropic-ai/claude-code`) and point Archon at the executable via `CLAUDE_BIN_PATH` env var or `assistants.claude.claudeBinaryPath` in `.archon/config.yaml`. The Claude Agent SDK accepts either the native compiled binary (from the curl/PowerShell installer at `~/.local/bin/claude`) or a JS `cli.js` (from the npm install). Dev mode (`bun run`) is unaffected — the SDK resolves via `node_modules` as before. The Docker image ships Claude Code pre-installed with `CLAUDE_BIN_PATH` pre-set, so `docker run` still works out of the box. Resolves silent "Module not found /Users/runner/..." failures on macOS (#1210) and Windows (#1087).
+- **Claude Code binary resolution** (breaking for compiled binary users): HarneesLab no longer embeds the Claude Code SDK into compiled binaries. In compiled builds, you must install Claude Code separately (`curl -fsSL https://claude.ai/install.sh | bash` on macOS/Linux, `irm https://claude.ai/install.ps1 | iex` on Windows, or `npm install -g @anthropic-ai/claude-code`) and point HarneesLab at the executable via `CLAUDE_BIN_PATH` env var or `assistants.claude.claudeBinaryPath` in `.harneeslab/config.yaml`. The Claude Agent SDK accepts either the native compiled binary (from the curl/PowerShell installer at `~/.local/bin/claude`) or a JS `cli.js` (from the npm install). Dev mode (`bun run`) is unaffected — the SDK resolves via `node_modules` as before. The Docker image ships Claude Code pre-installed with `CLAUDE_BIN_PATH` pre-set, so `docker run` still works out of the box. Resolves silent "Module not found /Users/runner/..." failures on macOS (#1210) and Windows (#1087).
 
 ### Added
 
@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Cross-clone worktree isolation**: prevent workflows in one local clone from silently adopting worktrees or DB state owned by another local clone of the same remote. Two clones sharing a remote previously resolved to the same `codebase_id`, causing the isolation resolver's DB-driven paths (`findReusable`, `findLinkedIssueEnv`, `tryBranchAdoption`) to return the other clone's environment. All adoption paths now verify the worktree's `.git` pointer matches the requesting clone and throw a classified error on mismatch. `archon-implement` prompt was also tightened to stop AI agents from adopting unrelated branches they see via `git branch`. Thanks to @halindrome for the three-issue root-cause mapping. (#1193, #1188, #1183, #1198, #1206)
+- **Cross-clone worktree isolation**: prevent workflows in one local clone from silently adopting worktrees or DB state owned by another local clone of the same remote. Two clones sharing a remote previously resolved to the same `codebase_id`, causing the isolation resolver's DB-driven paths (`findReusable`, `findLinkedIssueEnv`, `tryBranchAdoption`) to return the other clone's environment. All adoption paths now verify the worktree's `.git` pointer matches the requesting clone and throw a classified error on mismatch. `harneeslab-implement` prompt was also tightened to stop AI agents from adopting unrelated branches they see via `git branch`. Thanks to @halindrome for the three-issue root-cause mapping. (#1193, #1188, #1183, #1198, #1206)
 
 ## [0.3.6] - 2026-04-12
 
@@ -65,11 +65,11 @@ Web UI workflow experience improvements, CWD environment leak protection, and bu
 
 ## [0.3.5] - 2026-04-10
 
-Fixes for `archon serve` process lifecycle and static file serving.
+Fixes for `harneeslab serve` process lifecycle and static file serving.
 
 ### Fixed
 
-- **`archon serve` process exits immediately**: the CLI called `process.exit(0)` after `startServer()` returned, killing the server. Now blocks on SIGINT/SIGTERM so the server stays running (#1047)
+- **`harneeslab serve` process exits immediately**: the CLI called `process.exit(0)` after `startServer()` returned, killing the server. Now blocks on SIGINT/SIGTERM so the server stays running (#1047)
 - **Web dist path existence check**: server logs a warning at startup if the web dist directory is missing, instead of silently serving 404s
 - **Favicon route**: added explicit `/favicon.png` route for the web UI
 
@@ -83,12 +83,12 @@ Binary env loading fix and release infrastructure improvements.
 
 ### Changed
 
-- **Server env loading for binary support**: removed redundant CWD `.env` stripping — `SUBPROCESS_ENV_ALLOWLIST` and the env-leak gate already prevent target repo credentials from reaching AI subprocesses. Server now loads `~/.archon/.env` with `override: true` for all keys (not just `DATABASE_URL`), skips the `import.meta.dir` `.env` path in binary mode, and defaults `CLAUDE_USE_GLOBAL_AUTH=true` when no explicit credentials are set (#1045)
+- **Server env loading for binary support**: removed redundant CWD `.env` stripping — `SUBPROCESS_ENV_ALLOWLIST` and the env-leak gate already prevent target repo credentials from reaching AI subprocesses. Server now loads `~/.harneeslab/.env` with `override: true` for all keys (not just `DATABASE_URL`), skips the `import.meta.dir` `.env` path in binary mode, and defaults `CLAUDE_USE_GLOBAL_AUTH=true` when no explicit credentials are set (#1045)
 - **Workspace version sync**: all `packages/*/package.json` versions now sync from the root `package.json` during releases via `scripts/sync-versions.sh`
 
 ### Fixed
 
-- **`archon serve` crash in compiled binaries**: the CWD env stripping + baked `import.meta.dir` path caused all credentials to be lost, triggering `no_ai_credentials` exit on every startup
+- **`harneeslab serve` crash in compiled binaries**: the CWD env stripping + baked `import.meta.dir` path caused all credentials to be lost, triggering `no_ai_credentials` exit on every startup
 - **CLI `version` command reading stale version**: dev mode now reads from the monorepo root `package.json` instead of the CLI package's own version field
 - **Release CI web build**: fixed `bun --filter` syntax and added missing `remark-gfm` transitive dependencies for Bun hoisting
 
@@ -98,14 +98,14 @@ Binary distribution improvements, new workflow node type, and a batch of bug fix
 
 ### Added
 
-- **`archon serve` command**: one-command way for compiled binary users to start the web UI server. Downloads a pre-built web UI tarball from GitHub releases on first run, verifies SHA-256 checksum, caches locally, then starts the full server (#1011)
+- **`harneeslab serve` command**: one-command way for compiled binary users to start the web UI server. Downloads a pre-built web UI tarball from GitHub releases on first run, verifies SHA-256 checksum, caches locally, then starts the full server (#1011)
 - **Automatic update check**: binary users see a notification when a newer version is available on GitHub. Non-blocking, cached for 24 hours (#1039)
-- **Script node type for DAG workflows**: `script:` nodes run inline TypeScript/Python or named scripts from `.archon/scripts/` via `bun` or `uv` runtimes. Supports `deps:` for dependency installation and `timeout:` in milliseconds (#999)
+- **Script node type for DAG workflows**: `script:` nodes run inline TypeScript/Python or named scripts from `.harneeslab/scripts/` via `bun` or `uv` runtimes. Supports `deps:` for dependency installation and `timeout:` in milliseconds (#999)
 - **Codex native binary auto-resolution**: compiled builds now locate the Codex CLI binary automatically instead of requiring a manual `CODEX_CLI_PATH` override (#995, #1012)
 
 ### Fixed
 
-- **Workflow reject ignores positional reason**: `archon workflow reject <id> <reason>` now correctly passes the reason argument to the rejection handler
+- **Workflow reject ignores positional reason**: `harneeslab workflow reject <id> <reason>` now correctly passes the reason argument to the rejection handler
 - **Windows script path separators**: normalize backslashes to forward slashes in script node paths for cross-platform compatibility
 - **PowerShell `Add-ToUserPath` corruption**: installer no longer corrupts `PATH` when only a single entry exists (#1000)
 - **Validator `Promise.any` race condition**: script runtime checks no longer fail intermittently due to a `Promise.any` edge case (#1007, #1010)
@@ -119,7 +119,7 @@ Critical hotfix: compiled binaries could not spawn Claude. Also fixes an env-lea
 
 ### Fixed
 
-- **Claude SDK spawn in compiled binaries**: the Claude Agent SDK was resolving its `cli.js` via `import.meta.url` of the bundled module, which `bun build --compile` freezes at build time to the build host's absolute `node_modules` path. Every binary shipped from CI carried a `/Users/runner/work/Archon/...` path that existed only on the GitHub Actions runner, and every `workflow run` hit `Module not found` after three retries. Now imports `@anthropic-ai/claude-agent-sdk/embed` so `cli.js` is embedded into the binary's `$bunfs` and extracted to a real temp path at runtime (#990).
+- **Claude SDK spawn in compiled binaries**: the Claude Agent SDK was resolving its `cli.js` via `import.meta.url` of the bundled module, which `bun build --compile` freezes at build time to the build host's absolute `node_modules` path. Every binary shipped from CI carried a `/Users/runner/work/HarneesLab/...` path that existed only on the GitHub Actions runner, and every `workflow run` hit `Module not found` after three retries. Now imports `@anthropic-ai/claude-agent-sdk/embed` so `cli.js` is embedded into the binary's `$bunfs` and extracted to a real temp path at runtime (#990).
 - **Env-leak gate false-positive for unregistered cwd**: pre-spawn scan now skips cwd paths that aren't registered as codebases instead of blocking the workflow (#991, #992).
 
 ## [0.3.1] - 2026-04-08
@@ -138,20 +138,20 @@ Env-leak gate hardening, SSE reliability fixes, isolation cleanup smarter merge 
 ### Added
 
 - **Env-leak gate (target repo `.env` keys)**: scan auto-loaded `.env` filenames for 7 sensitive keys (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.) and refuse to register or spawn into a codebase whose `.env` would silently re-inject keys into Claude/Codex subprocesses. Default is fail-closed (`allow_env_keys = false`). Includes a per-codebase consent column, registration gate, pre-spawn check in both Claude and Codex clients, and a 422 API error with web UI checkbox (#1036).
-- **CLI `--allow-env-keys` flag** for `archon workflow run` — grant env-leak-gate consent during auto-registration without needing the Web UI. Audit-logged as `env_leak_consent_granted` with `actor: 'user-cli'` (#973, #983).
-- **Global `allow_target_repo_keys` flag** in `~/.archon/config.yaml` — bypass the env-leak gate for all codebases on this machine. Per-repo `.archon/config.yaml` `allow_target_repo_keys: false` re-enables the gate for that repo. The server emits `env_leak_gate_disabled` once per process per source the first time `loadConfig` resolves the bypass as active (#973, #983).
+- **CLI `--allow-env-keys` flag** for `harneeslab workflow run` — grant env-leak-gate consent during auto-registration without needing the Web UI. Audit-logged as `env_leak_consent_granted` with `actor: 'user-cli'` (#973, #983).
+- **Global `allow_target_repo_keys` flag** in `~/.harneeslab/config.yaml` — bypass the env-leak gate for all codebases on this machine. Per-repo `.harneeslab/config.yaml` `allow_target_repo_keys: false` re-enables the gate for that repo. The server emits `env_leak_gate_disabled` once per process per source the first time `loadConfig` resolves the bypass as active (#973, #983).
 - **`PATCH /api/codebases/:id`** endpoint to flip `allow_env_keys` on existing codebases without delete/re-add. Audit-logged at `warn` level on every grant and revoke, including a `scanStatus` field that distinguishes "scanned" from "scan failed" so audit reviewers can tell empty key lists apart (#973, #983).
 - **Settings → Projects per-row toggle** to grant or revoke env-key consent retroactively, with an "env keys allowed" badge and inline error feedback if the PATCH fails (#973, #983).
 - **Startup env-leak scan**: when `allow_target_repo_keys` is not set, the server emits one `startup_env_leak_gate_will_block` warn per registered codebase whose `.env` would block the next spawn. Skipped entirely when the global bypass is active (#973, #983).
 - **Squash-merge and PR-merge detection** for `isolation cleanup --merged`. Unions three signals (ancestry via `git branch --merged`, patch equivalence via `git cherry`, and PR state via `gh`) to safely clean up worktrees whose branches were squash-merged. Adds `--include-closed` flag to also remove worktrees whose PRs were closed without merging (#1027).
-- **Git commit hash in `archon version`** output. Read at runtime via `git rev-parse` in dev or from a build-time constant in compiled binaries; falls back to `unknown` (#1035).
+- **Git commit hash in `harneeslab version`** output. Read at runtime via `git rev-parse` in dev or from a build-time constant in compiled binaries; falls back to `unknown` (#1035).
 
 ### Changed
 
 - **Env-leak gate error messages** are now context-aware: separate remediation copy for Web Add-Project, CLI auto-register, and pre-spawn-of-existing-codebase paths. Previously every error pointed at the Web UI checkbox even from the CLI (#973, #983).
 - **SSE event buffer TTL** raised from 3s to 60s and capacity from 50 to 500 events, fixing dropped `tool_result` events during the 5s reconnect grace window that left tool cards perpetually spinning. Cleanup timer now resets on each new event so the buffer is held for TTL past the most recent event, not the first one. Buffer overflow and TTL expiration now log at `warn` level for observability (#1037).
 - **Binary build detection** moved from runtime env sniffing (`import.meta.dir` / `process.execPath`) to a build-time `BUNDLED_IS_BINARY` constant in `@harneeslab/paths`. Logger uses `pino-pretty` as a destination stream on the main thread instead of a worker-thread transport, eliminating the `require.resolve('pino-pretty')` lookup that crashed inside Bun's `$bunfs` virtual filesystem in compiled binaries. Same code path runs in dev and binaries — no environment detection (#982).
-- **Cloud-init deployment script** hardened: dedicated `archon` user (docker group, no sudo) with SSH keys copied from the default cloud user, 2GB swapfile to prevent OOM during docker build on small VPSes, `ufw allow 443/tcp` and `443/udp` for HTTP/3 QUIC, fail-fast on network errors, and clearer setup-complete messaging (#981).
+- **Cloud-init deployment script** hardened: dedicated `harneeslab` user (docker group, no sudo) with SSH keys copied from the default cloud user, 2GB swapfile to prevent OOM during docker build on small VPSes, `ufw allow 443/tcp` and `443/udp` for HTTP/3 QUIC, fail-fast on network errors, and clearer setup-complete messaging (#981).
 
 ### Fixed
 
@@ -161,7 +161,7 @@ Env-leak gate hardening, SSE reliability fixes, isolation cleanup smarter merge 
 
 ### Security
 
-- The default `allow_env_keys` per codebase is `false` (fail-closed). Codebases with sensitive keys in their auto-loaded `.env` files (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.) are blocked at the next workflow run. **Remediation paths** (any one): (1) remove the key from `.env`, (2) rename to `.env.secrets`, (3) toggle "Allow env keys" in Settings → Projects, (4) `archon workflow run --allow-env-keys ...`, (5) set `allow_target_repo_keys: true` in `~/.archon/config.yaml`. See `docs/reference/security.md` for full details (#1036, #973, #983).
+- The default `allow_env_keys` per codebase is `false` (fail-closed). Codebases with sensitive keys in their auto-loaded `.env` files (`ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, etc.) are blocked at the next workflow run. **Remediation paths** (any one): (1) remove the key from `.env`, (2) rename to `.env.secrets`, (3) toggle "Allow env keys" in Settings → Projects, (4) `harneeslab workflow run --allow-env-keys ...`, (5) set `allow_target_repo_keys: true` in `~/.harneeslab/config.yaml`. See `docs/reference/security.md` for full details (#1036, #973, #983).
 
 
 ## [0.2.12] - 2026-03-20
@@ -259,9 +259,9 @@ DAG hardening, security fixes, validate-pr workflow, and worktree lifecycle mana
 
 ### Added
 
-- **`archon complete <branch>` command** for worktree lifecycle cleanup — removes worktree + local/remote branches (#601)
+- **`harneeslab complete <branch>` command** for worktree lifecycle cleanup — removes worktree + local/remote branches (#601)
 - **`--json` flag for `workflow list`** — machine-readable workflow output (#594)
-- **`archon-validate-pr` workflow** with per-node idle timeout support (#635)
+- **`harneeslab-validate-pr` workflow** with per-node idle timeout support (#635)
 - **Typed SessionMetadata** with Zod validation for safer metadata handling (#600)
 - **`persistSession: false`** in ClaudeProvider to avoid disk pollution from session transcripts (#626)
 - **DAG workflow for GitHub issue resolution** with structured node pipeline
@@ -285,7 +285,7 @@ DAG hardening, security fixes, validate-pr workflow, and worktree lifecycle mana
 - SSE gaps from ordered lock events and retract preserving tool calls (#581)
 - Sidebar delete now clears selection and guards localStorage (#582)
 - Git fetch errors classified in syncRepository (#574)
-- `DATABASE_URL` loaded from `~/.archon/.env` for CLI/server parity
+- `DATABASE_URL` loaded from `~/.harneeslab/.env` for CLI/server parity
 - API returns 400 when `conversationId` is provided in POST `/api/conversations` (#595)
 
 ## [0.2.8] - 2026-03-06
@@ -294,7 +294,7 @@ Skills system overhaul and workshop documentation.
 
 ### Added
 
-- **Archon-dev skill** with routing to 10 specialized cookbooks (research, plan, implement, review, debug, commit, PR, issue)
+- **HarneesLab-dev skill** with routing to 10 specialized cookbooks (research, plan, implement, review, debug, commit, PR, issue)
 - **Rulecheck skill** — autonomous agent that scans for CLAUDE.md rule violations, creates PRs with fixes, and notifies via Slack
 - **Triage skill** — upgraded from command to skill with custom agent for GitHub issue labeling
 - **Save-task-list skill** — upgraded from command to skill with SessionStart hook for task restoration
@@ -332,7 +332,7 @@ Monorepo deep extraction and visual workflow builder.
 - Text buffer flushed before workflow_dispatch SSE events (#491, #498)
 - SQLite adapter RETURNING test fixture (#508)
 - Mock restoration in 3 test files to prevent cross-file pollution (#509, #510)
-- Windows path fixes for Archon directories
+- Windows path fixes for HarneesLab directories
 
 ## [0.2.6] - 2026-02-21
 
@@ -368,9 +368,9 @@ Web UI launch, structured logging, and major stabilization.
 
 ### Added
 
-- **Archon Web UI** — React frontend with SSE streaming, workflow events, and conversation management
+- **HarneesLab Web UI** — React frontend with SSE streaming, workflow events, and conversation management
 - **Pino structured logging** replacing console.log across all packages (#388)
-- **Project-centric `~/.archon/` layout** — workspaces organized by `owner/repo` (#382)
+- **Project-centric `~/.harneeslab/` layout** — workspaces organized by `owner/repo` (#382)
 - **Session deactivation reasons** stored in database for audit trail (#303, #385)
 - **Remote branch cleanup** when PR is merged
 - **Workflow log duration, tokens, and validation events** (#417)
@@ -378,7 +378,7 @@ Web UI launch, structured logging, and major stabilization.
 
 ### Changed
 
-- `~/.archon/` restructured to project-centric layout (#382)
+- `~/.harneeslab/` restructured to project-centric layout (#382)
 - Database command templates deprecated in favor of filesystem commands (#425)
 - SQLite-first documentation with Postgres as optional (#418)
 - `transitionSession` wrapped in database transaction for atomicity (#408)
@@ -403,7 +403,7 @@ SQLite as default database and simplified CLI setup.
 
 ### Added
 
-- **SQLite as default database** — zero-config setup with `~/.archon/archon.db`, no PostgreSQL required
+- **SQLite as default database** — zero-config setup with `~/.harneeslab/harneeslab.db`, no PostgreSQL required
 - **Simplified CLI setup** — streamlined first-run experience on macOS/Linux
 
 ### Fixed
@@ -420,7 +420,7 @@ HarneesLab CLI skill, workflow routing improvements, and configuration fixes.
 - **HarneesLab CLI skill** for Claude Code — run workflows from within Claude Code sessions (#331, #332, #333)
 - **Interactive setup wizard** and config editor for the HarneesLab skill
 - **`/workflow run` command** for direct workflow invocation from CLI
-- **`archon-plan-to-merge` workflow** for end-to-end plan execution (#346)
+- **`harneeslab-plan-to-merge` workflow** for end-to-end plan execution (#346)
 - **Workflow error visibility** — `/workflow list` and `/workflow reload` show per-file load errors (#260, #263, #264)
 - **Case-insensitive workflow routing** — router falls back to case-insensitive match (#263)
 
@@ -489,7 +489,7 @@ Monorepo restructure introducing the CLI package for local workflow execution.
 - **Monorepo structure** with `@harneeslab/core`, `@harneeslab/server`, and `@harneeslab/cli` packages (#311)
 - **CLI entry point** with `workflow list`, `workflow run`, and `version` commands (#313)
 - **Database abstraction layer** supporting both PostgreSQL and SQLite (#314)
-- **SQLite auto-detection** - uses `~/.archon/archon.db` when `DATABASE_URL` not set (#314)
+- **SQLite auto-detection** - uses `~/.harneeslab/harneeslab.db` when `DATABASE_URL` not set (#314)
 - **Isolation commands** - `isolation list` and `isolation cleanup` for worktree management (#313)
 
 ### Fixed
@@ -536,7 +536,7 @@ Major stability release with comprehensive bug fixes and test coverage.
 
 ### Fixed
 
-- Workflows should only load from `.archon/workflows/` (#200)
+- Workflows should only load from `.harneeslab/workflows/` (#200)
 - PR worktrees use actual branch for same-repo PRs (#238)
 - GitHub adapter parameter bug causes clone failures (#209)
 - Auto-detect Claude auth when `CLAUDE_USE_GLOBAL_AUTH` not set (#236)
@@ -545,7 +545,7 @@ Major stability release with comprehensive bug fixes and test coverage.
 - Workflows ensure artifacts committed before completing (#203)
 - Worktree creation fails when orphan directory exists (#208)
 - Add logging to detect silent updateConversation failures (#235)
-- Auto-sync `.archon` folder to worktrees before workflow discovery (#219)
+- Auto-sync `.harneeslab` folder to worktrees before workflow discovery (#219)
 - Consolidate startup messages into single workflow start comment (#177)
 - Show repo identifier instead of server filesystem path (#175)
 - Check for existing PR before creating new one (#195)
@@ -567,7 +567,7 @@ Developer experience improvements and worktree stability.
 
 ### Fixed
 
-- Copy `.archon` directory to worktrees by default (#210)
+- Copy `.harneeslab` directory to worktrees by default (#210)
 - Stale workflow cleanup and defense-in-depth error handling (#237)
 - Cleanup service handles missing worktree directories gracefully (#207)
 - Worktree limit blocks workflow execution instead of falling back to main (#197)
@@ -635,7 +635,7 @@ Isolation architecture overhaul and Bun runtime migration.
 - **Scheduled cleanup service** for stale worktree environments (#94)
 - **Worktree limits** with user feedback (#98)
 - **Force-thread response model** for Discord (#93)
-- **Archon distribution config** and `~/.archon/` directory structure (#101)
+- **HarneesLab distribution config** and `~/.harneeslab/` directory structure (#101)
 - User feedback messages for GitHub worktree operations (#90)
 - Required SDK options for permissions and system prompt (#91)
 - Test coverage for PR worktree creation (#77)

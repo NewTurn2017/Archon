@@ -17,7 +17,7 @@ import {
   ConversationLockManager,
 } from '@harneeslab/core';
 import {
-  getArchonWorkspacesPath,
+  getHarneesLabWorkspacesPath,
   getCommandFolderSearchPaths,
   createLogger,
 } from '@harneeslab/paths';
@@ -45,7 +45,7 @@ function getLog(): ReturnType<typeof createLogger> {
 const MAX_LENGTH = 65000; // Practical limit for GitLab notes
 
 /** Hidden marker added to bot comments to prevent self-triggering loops */
-const BOT_RESPONSE_MARKER = '<!-- archon-bot-response -->';
+const BOT_RESPONSE_MARKER = '<!-- harneeslab-bot-response -->';
 
 export class GitLabAdapter implements IPlatformAdapter {
   private readonly gitlabUrl: string;
@@ -550,7 +550,7 @@ Use 'glab mr view ${String(mr.iid)}' for full details and 'glab mr diff ${String
     let existing = await codebaseDb.findCodebaseByRepoUrl(repoUrlNoGit);
     existing ??= await codebaseDb.findCodebaseByRepoUrl(repoUrlWithGit);
 
-    const canonicalPath = join(getArchonWorkspacesPath(), ...projectPath.split('/'));
+    const canonicalPath = join(getHarneesLabWorkspacesPath(), ...projectPath.split('/'));
 
     if (existing) {
       const looksLikeWorktreePath = existing.default_cwd.includes('/worktrees/');

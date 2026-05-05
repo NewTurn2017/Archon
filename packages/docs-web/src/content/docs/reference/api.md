@@ -1,6 +1,6 @@
 ---
 title: API 레퍼런스
-description: Archon에 프로그래밍 방식으로 접근하기 위한 REST API endpoint입니다.
+description: HarneesLab에 프로그래밍 방식으로 접근하기 위한 REST API endpoint입니다.
 category: reference
 area: server
 audience: [developer]
@@ -8,7 +8,7 @@ sidebar:
   order: 6
 ---
 
-Archon은 [Hono](https://hono.dev/) server를 통해 REST API를 제공하며 OpenAPI spec을 생성합니다. 모든 endpoint는 `/api/` prefix를 사용합니다.
+HarneesLab은 [Hono](https://hono.dev/) server를 통해 REST API를 제공하며 OpenAPI spec을 생성합니다. 모든 endpoint는 `/api/` prefix를 사용합니다.
 
 ## Base URL
 
@@ -18,7 +18,7 @@ Archon은 [Hono](https://hono.dev/) server를 통해 REST API를 제공하며 Op
 http://localhost:3090/api/
 ```
 
-`PORT` 환경 변수로 port를 override할 수 있습니다. worktree 안에서 실행하면 Archon이 자동으로 port를 할당합니다(range 3190-4089).
+`PORT` 환경 변수로 port를 override할 수 있습니다. worktree 안에서 실행하면 HarneesLab이 자동으로 port를 할당합니다(range 3190-4089).
 
 ## OpenAPI Specification
 
@@ -32,7 +32,7 @@ Swagger UI 같은 도구에 넣거나 typed API client 생성에 사용할 수 �
 
 ## 인증
 
-없습니다. Archon은 단일 개발자 도구이므로 기본 API 인증을 제공하지 않습니다. Archon을 network에 노출한다면 reverse proxy나 firewall로 접근을 제한하세요.
+없습니다. HarneesLab은 단일 개발자 도구이므로 기본 API 인증을 제공하지 않습니다. HarneesLab을 network에 노출한다면 reverse proxy나 firewall로 접근을 제한하세요.
 
 ---
 
@@ -209,7 +209,7 @@ Query parameter:
 #### Workflow 조회
 
 ```bash
-curl http://localhost:3090/api/workflows/archon-assist
+curl http://localhost:3090/api/workflows/harneeslab-assist
 ```
 
 Query parameter:
@@ -236,7 +236,7 @@ curl -X PUT http://localhost:3090/api/workflows/my-workflow \
 ```
 
 Query parameter:
-- `cwd`(optional) -- target directory(`.archon/workflows/`가 있어야 함)
+- `cwd`(optional) -- target directory(`.harneeslab/workflows/`가 있어야 함)
 
 저장 전에 definition을 검증합니다. 저장된 workflow를 반환합니다.
 
@@ -266,7 +266,7 @@ User-defined workflow만 삭제할 수 있습니다. Bundled default는 제거�
 #### Workflow 실행
 
 ```bash
-curl -X POST http://localhost:3090/api/workflows/archon-assist/run \
+curl -X POST http://localhost:3090/api/workflows/harneeslab-assist/run \
   -H "Content-Type: application/json" \
   -d '{"message": "Explain the auth module", "conversationId": "conv-123"}'
 ```
@@ -397,7 +397,7 @@ CONV_ID=$(curl -s -X POST http://localhost:3090/api/conversations \
   -d '{"codebase_id": "your-codebase-id"}' | jq -r '.platform_conversation_id')
 
 # 2. Start the workflow
-curl -X POST http://localhost:3090/api/workflows/archon-assist/run \
+curl -X POST http://localhost:3090/api/workflows/harneeslab-assist/run \
   -H "Content-Type: application/json" \
   -d "{\"message\": \"How does auth work?\", \"conversationId\": \"$CONV_ID\"}"
 

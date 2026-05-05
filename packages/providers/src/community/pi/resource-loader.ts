@@ -15,14 +15,14 @@ export interface NoopResourceLoaderOptions {
    * `noSkills: true` — Pi's loader merges additional paths regardless, per
    * its internal logic in `DefaultResourceLoader.updateSkillsFromPaths`.
    *
-   * Used by the Pi provider to thread Archon's name-based `skills:` node
+   * Used by the Pi provider to thread HarneesLab's name-based `skills:` node
    * config through to Pi after resolution — see `resolvePiSkills`.
    */
   additionalSkillPaths?: string[];
 }
 
 /**
- * Build a Pi ResourceLoader that performs no filesystem discovery. Archon is
+ * Build a Pi ResourceLoader that performs no filesystem discovery. HarneesLab is
  * the source of truth for extensions, skills, prompts, themes, and context
  * files — Pi should not walk cwd or read ~/.pi/agent/ during server-side
  * workflow execution.

@@ -20,11 +20,11 @@ JSON output includes: `{ workflows: [{ name, description, provider?, model? }], 
 Execute a workflow.
 
 ```bash
-hlab workflow run archon-assist "What does the auth module do?"
-hlab workflow run archon-fix-github-issue --branch fix/issue-42 "Fix issue #42"
+hlab workflow run harneeslab-assist "What does the auth module do?"
+hlab workflow run harneeslab-fix-github-issue --branch fix/issue-42 "Fix issue #42"
 hlab workflow run my-workflow --branch feat/dark-mode --from develop "Add dark mode"
 hlab workflow run quick-fix --no-worktree "Fix the typo in README"
-hlab workflow run archon-fix-github-issue --resume
+hlab workflow run harneeslab-fix-github-issue --resume
 ```
 
 | Flag | Description |
@@ -82,7 +82,7 @@ Exit code: 0 = all valid, 1 = errors found.
 
 ### `hlab validate commands [name]`
 
-Validate command files (.md) in `.archon/commands/`.
+Validate command files (.md) in `.harneeslab/commands/`.
 
 ```bash
 hlab validate commands                  # Validate all commands
@@ -149,6 +149,6 @@ hlab chat "/status"
 |----------|---------|
 | `CLAUDE_API_KEY` | Claude API key (explicit auth) |
 | `CLAUDE_USE_GLOBAL_AUTH` | `true` to use `claude /login` credentials |
-| `ARCHON_HOME` | Override base directory (default: `~/.archon`) |
+| `HARNEESLAB_HOME` | Override base directory (default: `~/.harneeslab`) |
 | `LOG_LEVEL` | Pino log level: `fatal\|error\|warn\|info\|debug\|trace` |
 | `DATABASE_URL` | PostgreSQL URL (omit for SQLite default) |

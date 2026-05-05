@@ -1,11 +1,11 @@
 ---
 title: HarneesLab 개요
-description: HarneesLab을 Archon 기반 한국어 학습, 운영, 연구용 모노레포로 정리하는 출발점입니다.
+description: HarneesLab을 HarneesLab 기반 한국어 학습, 운영, 연구용 모노레포로 정리하는 출발점입니다.
 ---
 
 # HarneesLab 개요
 
-HarneesLab은 **Archon fork**입니다. 원본 Archon을 그대로 따라가는 저장소가 아니라, 다음 세 가지 목적을 동시에 만족시키는 **개인용 한국어 운영 베이스**입니다.
+HarneesLab은 **HarneesLab fork**입니다. 원본 HarneesLab을 그대로 따라가는 저장소가 아니라, 다음 세 가지 목적을 동시에 만족시키는 **개인용 한국어 운영 베이스**입니다.
 
 - **학습**: 영어 원문 의존을 줄이고 한국어 설명과 예제로 전체 구조를 익힙니다.
 - **강의**: 랜딩 페이지와 문서 흐름을 한국어 개발자 관점으로 재편합니다.
@@ -16,13 +16,13 @@ HarneesLab은 **Archon fork**입니다. 원본 Archon을 그대로 따라가는 
 - **제품 코드**: `packages/*`
 - **웹 앱**: `packages/web`
 - **문서/랜딩 페이지**: `packages/docs-web`
-- **워크플로/명령**: `.archon/`
+- **워크플로/명령**: `.harneeslab/`
 
-별도 마케팅 사이트 저장소를 새로 만들기보다, 현재 Archon 포크 안에서 `packages/docs-web`을 한국어 랜딩과 문서 사이트로 키우는 방식이 가장 단순합니다.
+별도 마케팅 사이트 저장소를 새로 만들기보다, 현재 HarneesLab 포크 안에서 `packages/docs-web`을 한국어 랜딩과 문서 사이트로 키우는 방식이 가장 단순합니다.
 
 ## Git 전략
 
-- **upstream**: `coleam00/Archon`
+- **upstream**: `coleam00/HarneesLab`
 - **origin**: `NewTurn2017/HarneesLab`
 - **작업 기준 브랜치**: `dev`
 - **한국어 브랜치 권장 규칙**: `ko/*`

@@ -19,7 +19,7 @@ const mockLogger = {
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
   getCommandFolderSearchPaths: (folder?: string) => {
-    const paths = ['.archon/commands'];
+    const paths = ['.harneeslab/commands'];
     if (folder) paths.unshift(folder);
     return paths;
   },
@@ -398,7 +398,7 @@ describe('DAG Loader -- cycle detection', () => {
   });
 
   it('rejects cyclic DAG at load time', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -422,7 +422,7 @@ nodes:
   });
 
   it('rejects unknown depends_on reference', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -443,7 +443,7 @@ nodes:
   });
 
   it('rejects duplicate node IDs', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -465,7 +465,7 @@ nodes:
   });
 
   it('rejects node with both command and prompt', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -486,7 +486,7 @@ nodes:
   });
 
   it('rejects node with neither command nor prompt', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -506,7 +506,7 @@ nodes:
   });
 
   it('accepts valid DAG with fan-out, when: conditions, and trigger_rule', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -552,7 +552,7 @@ nodes:
   });
 
   it('accepts inline prompt nodes', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -580,7 +580,7 @@ nodes:
   });
 
   it('ignores unknown top-level fields when valid nodes: is present', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -605,7 +605,7 @@ prompt: "do something"
   });
 
   it('rejects node with invalid trigger_rule', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -629,7 +629,7 @@ nodes:
   });
 
   it('parses allowed_tools and denied_tools on DAG nodes', async () => {
-    const wfDir = join(testDir, '.archon', 'workflows');
+    const wfDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(wfDir, { recursive: true });
 
     await writeFile(
@@ -784,7 +784,7 @@ describe('executeDagWorkflow -- tool restrictions', () => {
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-exec-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'My command prompt for $USER_MESSAGE');
 
@@ -1068,7 +1068,7 @@ describe('executeDagWorkflow -- bash nodes', () => {
     });
 
     // Write a command file for the downstream AI node
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'Process: $stats.output');
 
@@ -1182,7 +1182,7 @@ describe('executeDagWorkflow -- bash nodes', () => {
     });
 
     // Write a command file for the AI node
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'Do something');
 
@@ -1297,7 +1297,7 @@ describe('executeDagWorkflow -- output_format structured output', () => {
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-output-fmt-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'classify.md'), 'Classify this: $USER_MESSAGE');
 
@@ -1603,7 +1603,7 @@ describe('executeDagWorkflow -- when condition parse errors (fail-closed)', () =
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-parse-err-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'Do something for $USER_MESSAGE');
 
@@ -1733,7 +1733,7 @@ describe('executeDagWorkflow -- node-level retry for transient errors', () => {
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-retry-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'Do something for $USER_MESSAGE');
 
@@ -1924,7 +1924,7 @@ describe('executeDagWorkflow -- tool_called event persistence', () => {
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-tool-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'My command prompt for $USER_MESSAGE');
 
@@ -2033,7 +2033,7 @@ describe('executeDagWorkflow -- tool_completed event emission', () => {
       tmpdir(),
       `dag-toolcomplete-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
     );
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'My command prompt for $USER_MESSAGE');
 
@@ -2295,7 +2295,7 @@ describe('executeDagWorkflow -- skills options', () => {
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-exec-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'My command prompt for $USER_MESSAGE');
 
@@ -2777,7 +2777,7 @@ describe('executeDagWorkflow -- resume with priorCompletedNodes', () => {
       tmpdir(),
       `dag-resume-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
     );
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'step1.md'), 'Step 1 prompt');
     await writeFile(join(commandsDir, 'step2.md'), 'Step 2 prompt using $step1.output');
@@ -3964,7 +3964,7 @@ describe('executeDagWorkflow -- break after result (no hang on subprocess exit)'
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-break-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'Command prompt $ARGUMENTS');
 
@@ -4088,7 +4088,7 @@ describe('executeDagWorkflow -- terminal node output selection', () => {
       tmpdir(),
       `dag-terminal-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
     );
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'Command prompt $ARGUMENTS');
 
@@ -4342,7 +4342,7 @@ describe('executeDagWorkflow -- credit exhaustion', () => {
       tmpdir(),
       `dag-credit-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
     );
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
 
     mockSendQueryDag.mockClear();
@@ -4420,7 +4420,7 @@ describe('executeDagWorkflow -- approval node', () => {
       tmpdir(),
       `dag-approval-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
     );
-    await mkdir(join(testDir, '.archon', 'commands'), { recursive: true });
+    await mkdir(join(testDir, '.harneeslab', 'commands'), { recursive: true });
     mockSendQueryDag.mockClear();
     mockGetAgentProviderDag.mockClear();
     mockGetAgentProviderDag.mockImplementation(() => ({
@@ -4725,11 +4725,11 @@ describe('executeDagWorkflow -- env var injection', () => {
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-env-test-${Date.now()}`);
     await mkdir(testDir, { recursive: true });
-    await writeFile(join(testDir, '.archon', 'commands', 'my-cmd.md'), '# Test', {
+    await writeFile(join(testDir, '.harneeslab', 'commands', 'my-cmd.md'), '# Test', {
       flag: 'w',
     }).catch(async () => {
-      await mkdir(join(testDir, '.archon', 'commands'), { recursive: true });
-      await writeFile(join(testDir, '.archon', 'commands', 'my-cmd.md'), '# Test');
+      await mkdir(join(testDir, '.harneeslab', 'commands'), { recursive: true });
+      await writeFile(join(testDir, '.harneeslab', 'commands', 'my-cmd.md'), '# Test');
     });
     mockSendQueryDag.mockClear();
     mockGetAgentProviderDag.mockImplementation(() => ({
@@ -4813,7 +4813,7 @@ describe('executeDagWorkflow -- Claude SDK advanced options', () => {
       tmpdir(),
       `dag-sdk-opts-test-${Date.now()}-${Math.random().toString(36).slice(2)}`
     );
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'My command prompt');
 
@@ -5089,7 +5089,7 @@ describe('executeDagWorkflow -- cost tracking', () => {
 
   beforeEach(async () => {
     testDir = join(tmpdir(), `dag-cost-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'my-cmd.md'), 'My command prompt');
 
@@ -5360,7 +5360,7 @@ describe('executeDagWorkflow -- script nodes', () => {
     });
 
     // Write a command file for the downstream AI node
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'use-result.md'), 'Use: $compute.output');
 
@@ -5426,7 +5426,7 @@ describe('executeDagWorkflow -- script nodes', () => {
     expect(mockSendQueryDag.mock.calls.length).toBe(0);
   });
 
-  it('named bun script executes from .archon/scripts/', async () => {
+  it('named bun script executes from .harneeslab/scripts/', async () => {
     const mockDeps = createMockDeps();
     const platform = createMockPlatform();
     const workflowRun = makeWorkflowRun('script-named-run-id', {
@@ -5436,7 +5436,7 @@ describe('executeDagWorkflow -- script nodes', () => {
     });
 
     // Create a named script
-    const scriptsDir = join(testDir, '.archon', 'scripts');
+    const scriptsDir = join(testDir, '.harneeslab', 'scripts');
     await mkdir(scriptsDir, { recursive: true });
     await writeFile(join(scriptsDir, 'greet.ts'), 'console.log("named script output")');
 
@@ -5593,7 +5593,7 @@ describe('executeDagWorkflow -- script nodes', () => {
     const artifactsDir = join(testDir, 'artifacts');
 
     // Write a downstream command so we can inspect the substituted prompt
-    const commandsDir = join(testDir, '.archon', 'commands');
+    const commandsDir = join(testDir, '.harneeslab', 'commands');
     await mkdir(commandsDir, { recursive: true });
     await writeFile(join(commandsDir, 'check-output.md'), 'Got: $script-out.output');
 
@@ -5640,7 +5640,7 @@ describe('executeDagWorkflow -- script nodes', () => {
       user_message: 'notfound test',
     });
 
-    // Do NOT create .archon/scripts/missing.ts — the script should fail to resolve
+    // Do NOT create .harneeslab/scripts/missing.ts — the script should fail to resolve
     const scriptNode: ScriptNode = {
       id: 'gone-script',
       script: 'missing',
@@ -5665,7 +5665,9 @@ describe('executeDagWorkflow -- script nodes', () => {
 
     const sendMessage = platform.sendMessage as ReturnType<typeof mock>;
     const messages = sendMessage.mock.calls.map((call: unknown[]) => call[1] as string);
-    const notFoundMsg = messages.find((m: string) => m.includes('not found in .archon/scripts/'));
+    const notFoundMsg = messages.find((m: string) =>
+      m.includes('not found in .harneeslab/scripts/')
+    );
     expect(notFoundMsg).toBeDefined();
   });
 

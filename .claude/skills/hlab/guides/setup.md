@@ -77,7 +77,7 @@ Use **AskUserQuestion** with a single question:
 Header: "Target repo"
 Question: "What is the path to the repository you want to work on using HarneesLab? (This should be your own project, not the HarneesLab repo.)"
 Options:
-  1. "Clone from GitHub" — user provides a GitHub URL; clone it to ~/.archon/workspaces/
+  1. "Clone from GitHub" — user provides a GitHub URL; clone it to ~/.harneeslab/workspaces/
 ```
 
 The user will either select "Clone from GitHub" or type a local path via "Other". **Do NOT add a second question to collect the path** — the "Other" freeform input captures it directly in one step.
@@ -86,9 +86,9 @@ Store the result as `<target-repo>`.
 
 If "Clone from GitHub": ask for the URL in plain text (not AskUserQuestion), then:
 ```bash
-archon-repo-path=$(pwd)
-mkdir -p ~/.archon/workspaces
-cd ~/.archon/workspaces && git clone <url>
+harneeslab-repo-path=$(pwd)
+mkdir -p ~/.harneeslab/workspaces
+cd ~/.harneeslab/workspaces && git clone <url>
 ```
 Set `<target-repo>` to the cloned directory.
 
@@ -119,11 +119,11 @@ If Bun was just installed in Prerequisites (macOS/Linux), use `~/.bun/bin/bun` i
 3. Verify: `hlab version`
 4. Check Claude is installed: `which claude`, then `claude /login` if needed
 
-> **Note — Claude Code binary path.** HarneesLab does not bundle Claude Code. In compiled HarneesLab binaries (quick install, Homebrew), the Claude Code SDK needs `CLAUDE_BIN_PATH` set to the absolute path of its `cli.js`. The `hlab setup` wizard in Step 4 auto-detects this via `npm root -g` and writes it to `~/.archon/.env` — no manual action needed in the typical case. Source installs (`bun run`) don't need this; the SDK finds `cli.js` via `node_modules` automatically.
+> **Note — Claude Code binary path.** HarneesLab does not bundle Claude Code. In compiled HarneesLab binaries (quick install, Homebrew), the Claude Code SDK needs `CLAUDE_BIN_PATH` set to the absolute path of its `cli.js`. The `hlab setup` wizard in Step 4 auto-detects this via `npm root -g` and writes it to `~/.harneeslab/.env` — no manual action needed in the typical case. Source installs (`bun run`) don't need this; the SDK finds `cli.js` via `node_modules` automatically.
 
 ## Step 4: Configure Credentials
 
-The CLI loads infrastructure config (database, tokens) from `~/.archon/.env` only. This prevents conflicts with project `.env` files that may contain different database URLs.
+The CLI loads infrastructure config (database, tokens) from `~/.harneeslab/.env` only. This prevents conflicts with project `.env` files that may contain different database URLs.
 
 Credential configuration runs in a separate terminal so your API keys stay private — the AI assistant won't see them.
 
@@ -146,7 +146,7 @@ Tell the user:
 > 2. AI assistant configuration (Claude and/or Codex)
 > 3. Platform tokens for any integrations you selected
 >
-> It saves configuration to both `~/.archon/.env` and the repo `.env`."
+> It saves configuration to both `~/.harneeslab/.env` and the repo `.env`."
 
 **If the terminal opened automatically**, add:
 > "Complete the wizard in the new terminal window that just opened."
@@ -185,7 +185,7 @@ test -n "$DATABASE_URL" && psql $DATABASE_URL < migrations/000_combined.sql
 **Troubleshooting**:
 | Issue | Cause | Fix |
 |-------|-------|-----|
-| Shows `sqlite` but expected `postgresql` | `~/.archon/.env` missing or no DATABASE_URL | Run `hlab setup` again in your terminal |
+| Shows `sqlite` but expected `postgresql` | `~/.harneeslab/.env` missing or no DATABASE_URL | Run `hlab setup` again in your terminal |
 | "relation does not exist" | Tables not created | Run `psql $DATABASE_URL < migrations/000_combined.sql` |
 | Connection refused | Database not running or wrong URL | Check DATABASE_URL and database server status |
 
@@ -213,8 +213,8 @@ Bundled default commands and workflows are loaded automatically at runtime from 
 
 Tell the user:
 - "Default commands and workflows are loaded automatically at runtime — no files are added to your repo."
-- "To browse defaults, look in `<harneeslab-repo>/.archon/commands/defaults/` and `<harneeslab-repo>/.archon/workflows/defaults/`."
-- "To customize a default, copy the specific file into your repo's `.archon/commands/` or `.archon/workflows/` directory with the same filename. Your repo version takes priority over the bundled default."
+- "To browse defaults, look in `<harneeslab-repo>/.harneeslab/commands/defaults/` and `<harneeslab-repo>/.harneeslab/workflows/defaults/`."
+- "To customize a default, copy the specific file into your repo's `.harneeslab/commands/` or `.harneeslab/workflows/` directory with the same filename. Your repo version takes priority over the bundled default."
 
 ## Step 7: Start the Server (non-CLI platforms only)
 
@@ -233,7 +233,7 @@ cd <target-repo> && hlab workflow list
 If the CLI is working, also run:
 
 ```bash
-cd <target-repo> && hlab workflow run archon-assist "Say hello"
+cd <target-repo> && hlab workflow run harneeslab-assist "Say hello"
 ```
 
 ### Troubleshooting
@@ -244,10 +244,10 @@ If verification fails:
 |-------|-------|-----|
 | `hlab: command not found` | CLI not linked | Re-run `cd <harneeslab-repo>/packages/cli && bun link` |
 | `Not a git repository` | Not in a git repo | `cd` to the target repo root |
-| `No workflows found` | Missing `.archon/workflows/` | Default workflows load automatically — check `hlab version` works first |
+| `No workflows found` | Missing `.harneeslab/workflows/` | Default workflows load automatically — check `hlab version` works first |
 | Auth errors | Claude not authenticated | Run `claude /login` |
-| `relation "remote_agent_*" does not exist` | DATABASE_URL missing or tables not created | Ensure `~/.archon/.env` has DATABASE_URL and run migrations |
-| `Database: sqlite` but expected PostgreSQL | `~/.archon/.env` missing DATABASE_URL | Add DATABASE_URL to `~/.archon/.env` |
+| `relation "remote_agent_*" does not exist` | DATABASE_URL missing or tables not created | Ensure `~/.harneeslab/.env` has DATABASE_URL and run migrations |
+| `Database: sqlite` but expected PostgreSQL | `~/.harneeslab/.env` missing DATABASE_URL | Add DATABASE_URL to `~/.harneeslab/.env` |
 
 ## Step 9: Copy Skill to Target Repo (Optional)
 
@@ -287,7 +287,7 @@ Example first command in the target repo:
 Tell the user:
 - Default commands and workflows load automatically at runtime — nothing was added to your repo
 - `.claude/skills/hlab/` — skill for Claude Code integration
-- To customize a default, copy the specific file from `<harneeslab-repo>/.archon/commands/defaults/` or `<harneeslab-repo>/.archon/workflows/defaults/` into your repo's `.archon/commands/` or `.archon/workflows/` with the same filename
+- To customize a default, copy the specific file from `<harneeslab-repo>/.harneeslab/commands/defaults/` or `<harneeslab-repo>/.harneeslab/workflows/defaults/` into your repo's `.harneeslab/commands/` or `.harneeslab/workflows/` with the same filename
 
 **Important**: End the summary with this message:
 
@@ -305,10 +305,10 @@ Infrastructure config (database URL, platform tokens) is stored in `.env` files:
 
 | Location | Used by | Purpose |
 |----------|---------|---------|
-| `~/.archon/.env` | **CLI** | Global infrastructure config — database, AI tokens |
+| `~/.harneeslab/.env` | **CLI** | Global infrastructure config — database, AI tokens |
 | `<harneeslab-repo>/.env` | **Server** | Platform tokens for Telegram/Slack/GitHub/Discord |
 
-**Best practice**: Use `~/.archon/.env` as the single source of truth. Symlink or copy to `<harneeslab-repo>/.env` if running the server.
+**Best practice**: Use `~/.harneeslab/.env` as the single source of truth. Symlink or copy to `<harneeslab-repo>/.env` if running the server.
 
 **Note**: The CLI does NOT load `.env` from the current working directory. This prevents conflicts when running HarneesLab from projects that have their own database configurations.
 
@@ -318,8 +318,8 @@ Project-specific settings use layered YAML configs:
 
 | Location | Scope | Purpose |
 |----------|-------|---------|
-| `~/.archon/config.yaml` | Global | Default AI assistant, streaming modes, concurrency |
-| `<repo>/.archon/config.yaml` | Per-repo | AI assistant, worktree settings, commands config |
+| `~/.harneeslab/config.yaml` | Global | Default AI assistant, streaming modes, concurrency |
+| `<repo>/.harneeslab/config.yaml` | Per-repo | AI assistant, worktree settings, commands config |
 
 Environment variables in `.env` override matching `config.yaml` values.
 
@@ -328,7 +328,7 @@ Environment variables in `.env` override matching `config.yaml` values.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `assistant` | `claude` \| `codex` | `claude` | AI assistant for this repo |
-| `commands.folder` | string | `.archon/commands` | Custom command folder path (relative to repo root) |
+| `commands.folder` | string | `.harneeslab/commands` | Custom command folder path (relative to repo root) |
 | `commands.autoLoad` | boolean | `true` | Auto-load commands on clone |
 | `worktree.baseBranch` | string | auto-detected | Base branch for worktree creation |
 | `worktree.copyFiles` | string[] | `[]` | Files to copy into new worktrees (supports `"source -> dest"` syntax) |

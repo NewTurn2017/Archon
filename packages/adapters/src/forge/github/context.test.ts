@@ -61,7 +61,7 @@ mock.module('@harneeslab/core', () => ({
   toError: (e: unknown) => (e instanceof Error ? e : new Error(String(e))),
   getLinkedIssueNumbers: mockGetLinkedIssueNumbers,
   onConversationClosed: mock(async () => {}),
-  getArchonWorkspacesPath: () => '/workspace',
+  getHarneesLabWorkspacesPath: () => '/workspace',
   getCommandFolderSearchPaths: () => [],
   ConversationLockManager: class {
     async acquireLock(_id: string, handler: () => Promise<void>): Promise<void> {

@@ -1,5 +1,5 @@
 /**
- * Claude Code CLI resolver for compiled (bun --compile) archon binaries.
+ * Claude Code CLI resolver for compiled (bun --compile) HarneesLab binaries.
  *
  * The @anthropic-ai/claude-agent-sdk spawns a subprocess using
  * `pathToClaudeCodeExecutable`. In dev mode the SDK resolves this from its
@@ -31,9 +31,9 @@ function getLog(): ReturnType<typeof createLogger> {
 }
 
 const INSTALL_INSTRUCTIONS =
-  'Claude Code not found. Archon requires the Claude Code executable to be\n' +
+  'Claude Code not found. HarneesLab requires the Claude Code executable to be\n' +
   'reachable at a configured path in compiled builds.\n\n' +
-  'To fix, install Claude Code and point Archon at it:\n\n' +
+  'To fix, install Claude Code and point HarneesLab at it:\n\n' +
   '  macOS / Linux (recommended — native installer):\n' +
   '    curl -fsSL https://claude.ai/install.sh | bash\n' +
   '    export CLAUDE_BIN_PATH="$HOME/.local/bin/claude"\n\n' +
@@ -43,7 +43,7 @@ const INSTALL_INSTRUCTIONS =
   '  Or via npm (alternative):\n' +
   '    npm install -g @anthropic-ai/claude-code\n' +
   '    export CLAUDE_BIN_PATH="$(npm root -g)/@anthropic-ai/claude-code/cli.js"\n\n' +
-  'Persist the path in ~/.archon/config.yaml instead of the env var:\n' +
+  'Persist the path in ~/.harneeslab/config.yaml instead of the env var:\n' +
   '    assistants:\n' +
   '      claude:\n' +
   '        claudeBinaryPath: /absolute/path/to/claude\n\n' +
@@ -79,7 +79,7 @@ export async function resolveClaudeBinaryPath(
     if (!fileExists(configClaudeBinaryPath)) {
       throw new Error(
         `assistants.claude.claudeBinaryPath is set to "${configClaudeBinaryPath}" but the file does not exist.\n` +
-          'Please verify the path in .archon/config.yaml points to the Claude Code executable.'
+          'Please verify the path in .harneeslab/config.yaml points to the Claude Code executable.'
       );
     }
     getLog().info(

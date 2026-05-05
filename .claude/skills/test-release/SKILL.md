@@ -1,7 +1,7 @@
 ---
 name: test-release
 description: |
-  Verify a released archon binary works end-to-end via a specific install path.
+  Verify a released harneeslab binary works end-to-end via a specific install path.
   Use when: cutting a new release, reproducing a user bug report on the released
   version, or validating that a hotfix binary actually works after a re-tag.
   Triggers: "test the release", "test 0.3.1 via brew", "verify the curl install",
@@ -15,13 +15,13 @@ argument-hint: "[brew|curl-mac|curl-vps] [optional: version to verify] [optional
 
 # Test Release
 
-Automated smoke test for a released archon binary. Covers three install paths:
+Automated smoke test for a released harneeslab binary. Covers three install paths:
 
 - `brew` — Homebrew tap on macOS (tests the formula and checksums)
 - `curl-mac` — `curl install.sh` on macOS (tests the install script, sandboxed to a temp dir)
 - `curl-vps` — `curl install.sh` on a remote Linux VPS (tests the Linux binary and full install path)
 
-Every path installs the binary, runs a fixed smoke test suite, and cleans up. The dev `bun link` binary is never touched and remains the default `archon` on PATH throughout.
+Every path installs the binary, runs a fixed smoke test suite, and cleans up. The dev `bun link` binary is never touched and remains the default `harneeslab` on PATH throughout.
 
 **When NOT to use this skill:**
 
@@ -42,14 +42,14 @@ VERSION=0.3.1 GIT_COMMIT=abc12345 bash scripts/build-binaries.sh
 VERSION=0.3.1 \
 GIT_COMMIT=abc12345 \
 TARGET=bun-darwin-arm64 \
-OUTFILE=dist/test-archon-darwin-arm64 \
+OUTFILE=dist/test-harneeslab-darwin-arm64 \
 bash scripts/build-binaries.sh
 
 # Verify the binary — use the path from the mode you built:
-#   multi-target → ./dist/binaries/archon-darwin-arm64
+#   multi-target → ./dist/binaries/harneeslab-darwin-arm64
 #   single-target → the OUTFILE you passed above
-./dist/test-archon-darwin-arm64 version
-# Expected: Archon CLI v0.3.1, Build: binary, Git commit: abc12345
+./dist/test-harneeslab-darwin-arm64 version
+# Expected: HarneesLab CLI v0.3.1, Build: binary, Git commit: abc12345
 ```
 
 Run this **before tagging a release** to catch build-time-constant issues
@@ -65,7 +65,7 @@ Parse the arguments. The skill takes up to three:
 2. **Expected version** (optional): the version tag the release should report, e.g. `0.3.1`. If not provided, fetch it:
 
 ```bash
-gh release list --repo coleam00/Archon --limit 1 --json tagName --jq '.[0].tagName'
+gh release list --repo coleam00/HarneesLab --limit 1 --json tagName --jq '.[0].tagName'
 ```
 
 3. **VPS target** (only for `curl-vps`): SSH target in the form `user@host` or `host` (uses default SSH config)
@@ -92,8 +92,8 @@ Before touching anything:
 1. Capture the current dev binary state for reference:
 
 ```bash
-which -a archon
-archon version 2>&1 | head -5
+which -a harneeslab
+harneeslab version 2>&1 | head -5
 ```
 
 Record the path and version of the dev binary so the final report can show "dev binary was untouched".
@@ -107,7 +107,7 @@ Record the path and version of the dev binary so the final report can show "dev 
 3. Confirm the release exists on GitHub:
 
 ```bash
-gh release view v<version> --repo coleam00/Archon --json tagName,assets --jq '{tag: .tagName, assetCount: (.assets | length)}'
+gh release view v<version> --repo coleam00/HarneesLab --json tagName,assets --jq '{tag: .tagName, assetCount: (.assets | length)}'
 ```
 
 If the release does not exist or has no assets, abort with a clear message. Do not proceed to install a non-existent release.
@@ -117,9 +117,9 @@ If the release does not exist or has no assets, abort with a clear message. Do n
 ### Path: brew
 
 ```bash
-brew tap coleam00/archon
-brew install coleam00/archon/archon
-BINARY="$(brew --prefix coleam00/archon/archon)/bin/archon"
+brew tap coleam00/harneeslab
+brew install coleam00/harneeslab/harneeslab
+BINARY="$(brew --prefix coleam00/harneeslab/harneeslab)/bin/harneeslab"
 ```
 
 Capture `$BINARY` for Phase 4. Verify the file exists and is executable.
@@ -129,10 +129,10 @@ Capture `$BINARY` for Phase 4. Verify the file exists and is executable.
 Install to a dedicated tmp directory so the dev `bun link` binary stays on PATH unchanged:
 
 ```bash
-INSTALL_DIR=/tmp/archon-test-release-$(date +%s)
+INSTALL_DIR=/tmp/harneeslab-test-release-$(date +%s)
 mkdir -p "$INSTALL_DIR"
-INSTALL_DIR="$INSTALL_DIR" curl -fsSL https://raw.githubusercontent.com/coleam00/Archon/main/scripts/install.sh | bash
-BINARY="$INSTALL_DIR/archon"
+INSTALL_DIR="$INSTALL_DIR" curl -fsSL https://raw.githubusercontent.com/coleam00/HarneesLab/main/scripts/install.sh | bash
+BINARY="$INSTALL_DIR/harneeslab"
 ```
 
 Verify `$BINARY` exists and is executable. Capture the install directory for cleanup.
@@ -142,13 +142,13 @@ Verify `$BINARY` exists and is executable. Capture the install directory for cle
 Run the install script on the VPS:
 
 ```bash
-ssh <target> 'curl -fsSL https://raw.githubusercontent.com/coleam00/Archon/main/scripts/install.sh | bash'
+ssh <target> 'curl -fsSL https://raw.githubusercontent.com/coleam00/HarneesLab/main/scripts/install.sh | bash'
 ```
 
-Determine where the binary landed — `install.sh` uses `/usr/local/bin/archon` by default, or falls back to `$HOME/.local/bin/archon` if `/usr/local/bin` is not writable:
+Determine where the binary landed — `install.sh` uses `/usr/local/bin/harneeslab` by default, or falls back to `$HOME/.local/bin/harneeslab` if `/usr/local/bin` is not writable:
 
 ```bash
-ssh <target> 'command -v archon'
+ssh <target> 'command -v harneeslab'
 ```
 
 Capture the remote path as `$REMOTE_BINARY`. For the rest of Phase 4, wrap every command as `ssh <target> '<cmd>'`.
@@ -171,7 +171,7 @@ Record both for the report. The SHA256 lets us confirm later that a user reporti
 
 ## Phase 4 — Smoke tests
 
-Run these in order against `$BINARY` (or `ssh <target> $REMOTE_BINARY` for curl-vps). **Always use the full binary path, never the `archon` on PATH**, so there is no ambiguity about which binary is under test.
+Run these in order against `$BINARY` (or `ssh <target> $REMOTE_BINARY` for curl-vps). **Always use the full binary path, never the `harneeslab` on PATH**, so there is no ambiguity about which binary is under test.
 
 Each test should capture the full command output for the final report. If a test fails, continue to the next test (so the report is complete) but mark the overall result as FAIL.
 
@@ -184,7 +184,7 @@ Each test should capture the full command output for the final report. If a test
 **Pass criteria:**
 
 - Exit code 0
-- Output contains `Archon CLI v<expected-version>`
+- Output contains `HarneesLab CLI v<expected-version>`
 - Output contains `Build: binary` (not `Build: source (bun)`)
 - Output contains a non-`unknown` git commit (i.e., `Git commit: <sha>`)
 
@@ -200,7 +200,7 @@ Each test should capture the full command output for the final report. If a test
 Create a temporary git repository so the CLI has something to operate on:
 
 ```bash
-TESTREPO=/tmp/archon-test-repo-$(date +%s)
+TESTREPO=/tmp/harneeslab-test-repo-$(date +%s)
 mkdir -p "$TESTREPO"
 cd "$TESTREPO"
 git init -q
@@ -211,7 +211,7 @@ git commit -q --allow-empty -m init
 **Pass criteria:**
 
 - Exit code 0
-- Output lists at least 20 bundled workflows (archon-assist, archon-fix-github-issue, archon-comprehensive-pr-review, etc.)
+- Output lists at least 20 bundled workflows (harneeslab-assist, harneeslab-fix-github-issue, harneeslab-comprehensive-pr-review, etc.)
 - No errors about missing workflow files or JSON parse failures
 
 **Common failures:**
@@ -232,7 +232,7 @@ export CLAUDE_BIN_PATH="$HOME/.local/bin/claude"
 export CLAUDE_BIN_PATH="$(npm root -g)/@anthropic-ai/claude-code/cli.js"
 
 # Option B — config file (persistent)
-#   Add to ~/.archon/config.yaml:
+#   Add to ~/.harneeslab/config.yaml:
 #   assistants:
 #     claude:
 #       claudeBinaryPath: /absolute/path/to/claude
@@ -241,7 +241,7 @@ export CLAUDE_BIN_PATH="$(npm root -g)/@anthropic-ai/claude-code/cli.js"
 Then in the same `$TESTREPO`:
 
 ```bash
-"$BINARY" workflow run assist "say hello and nothing else" 2>&1 | tee /tmp/archon-test-assist.log
+"$BINARY" workflow run assist "say hello and nothing else" 2>&1 | tee /tmp/harneeslab-test-assist.log
 ```
 
 **Pass criteria:**
@@ -255,7 +255,7 @@ Then in the same `$TESTREPO`:
 
 - `Claude Code not found` → `CLAUDE_BIN_PATH` / `claudeBinaryPath` is unset or points at a non-existent file. Fix the path and re-run.
 - `Module not found "/Users/runner/..."` → regression of #1210: the resolver was bypassed and the SDK's `import.meta.url` fallback leaked a build-host path. Investigate `packages/providers/src/claude/provider.ts` and the resolver.
-- `Credit balance is too low` → auth is pointing at an exhausted API key (check `CLAUDE_USE_GLOBAL_AUTH` and `~/.archon/.env`)
+- `Credit balance is too low` → auth is pointing at an exhausted API key (check `CLAUDE_USE_GLOBAL_AUTH` and `~/.harneeslab/.env`)
 - `unable to determine transport target for "pino-pretty"` → #960 regression, binary crashes on TTY
 - `package.json not found (bad installation?)` → #961 regression, `isBinaryBuild` detection broken
 - Process exits before producing output → generic spawn failure, capture stderr
@@ -265,29 +265,29 @@ Then in the same `$TESTREPO`:
 Quickly verify the resolver fails loud when nothing is configured:
 
 ```bash
-(unset CLAUDE_BIN_PATH; "$BINARY" workflow run assist "hello" 2>&1 | tee /tmp/archon-test-no-path.log)
+(unset CLAUDE_BIN_PATH; "$BINARY" workflow run assist "hello" 2>&1 | tee /tmp/harneeslab-test-no-path.log)
 ```
 
-**Pass criteria (when no `~/.archon/config.yaml` configures `claudeBinaryPath`):**
+**Pass criteria (when no `~/.harneeslab/config.yaml` configures `claudeBinaryPath`):**
 
 - Error message contains `Claude Code not found`
 - Error message mentions both `CLAUDE_BIN_PATH` and `claudeBinaryPath` as remediation options
 - No `Module not found` stack traces referencing the CI filesystem
 
-If you *do* have `claudeBinaryPath` set globally, skip this test or temporarily rename `~/.archon/config.yaml`.
+If you *do* have `claudeBinaryPath` set globally, skip this test or temporarily rename `~/.harneeslab/config.yaml`.
 
 ### Test 4 — Env-leak gate refuses a leaky .env (optional, for releases including #1036/#1038/#983)
 
 Create a second throwaway repo with a fake sensitive key:
 
 ```bash
-LEAKREPO=/tmp/archon-test-leak-$(date +%s)
+LEAKREPO=/tmp/harneeslab-test-leak-$(date +%s)
 mkdir -p "$LEAKREPO"
 cd "$LEAKREPO"
 git init -q
 git commit -q --allow-empty -m init
 printf 'ANTHROPIC_API_KEY=sk-ant-test-fake\n' > .env
-"$BINARY" workflow run assist "hello" 2>&1 | tee /tmp/archon-test-leak.log
+"$BINARY" workflow run assist "hello" 2>&1 | tee /tmp/harneeslab-test-leak.log
 ```
 
 **Pass criteria:**
@@ -338,17 +338,17 @@ For `curl-vps` path, also clean up any remote test repos created via SSH.
 ### Path: brew
 
 ```bash
-brew uninstall coleam00/archon/archon
-brew untap coleam00/archon
+brew uninstall coleam00/harneeslab/harneeslab
+brew untap coleam00/harneeslab
 ```
 
 Verify the dev binary is still the default:
 
 ```bash
-which -a archon
-# should show only the ~/.bun/bin/archon path, not a brew path
+which -a harneeslab
+# should show only the ~/.bun/bin/harneeslab path, not a brew path
 
-archon version | head -1
+harneeslab version | head -1
 # should match the dev version captured in Phase 2
 ```
 
@@ -361,7 +361,7 @@ rm -rf "$INSTALL_DIR"
 ### Path: curl-vps
 
 ```bash
-ssh <target> "sudo rm -f /usr/local/bin/archon || rm -f \$HOME/.local/bin/archon"
+ssh <target> "sudo rm -f /usr/local/bin/harneeslab || rm -f \$HOME/.local/bin/harneeslab"
 ```
 
 Optional: the user may want to LEAVE the VPS binary installed for ongoing QA. Ask before removing.
@@ -380,12 +380,12 @@ Produce a structured report with:
 Example PASS report:
 
 ```
-Test Release Report — archon v0.3.1 via brew
+Test Release Report — harneeslab v0.3.1 via brew
 ────────────────────────────────────────────
 Tested at:    2026-04-08 15:42 UTC
 Binary SHA:   e62eb73547b3740d56f242859b434a91d3830360a0d18f14de383da0fd7a0be6
-Binary path:  /opt/homebrew/Cellar/archon/0.3.1/bin/archon
-Dev binary:   /Users/rasmus/.bun/bin/archon → ../install/.../cli.ts (unchanged)
+Binary path:  /opt/homebrew/Cellar/harneeslab/0.3.1/bin/harneeslab
+Dev binary:   /Users/rasmus/.bun/bin/harneeslab → ../install/.../cli.ts (unchanged)
 
   [PASS]  Test 1  version reports 0.3.1, Build: binary, commit abc1234
   [PASS]  Test 2  workflow list returned 21 bundled workflows
@@ -404,20 +404,20 @@ This release is safe to announce. Next steps:
 Example FAIL report:
 
 ```
-Test Release Report — archon v0.3.1 via curl-vps
+Test Release Report — harneeslab v0.3.1 via curl-vps
 ────────────────────────────────────────────────
 Tested at:    2026-04-08 15:42 UTC
 Binary SHA:   0cf83e15e6af228e3c3473467ca30fa7525b6d7069818d85f97a115ea703d708
-Binary path:  user@vps:/usr/local/bin/archon
-Dev binary:   /Users/rasmus/.bun/bin/archon (unchanged)
+Binary path:  user@vps:/usr/local/bin/harneeslab
+Dev binary:   /Users/rasmus/.bun/bin/harneeslab (unchanged)
 
   [PASS]  Test 1  version reports 0.3.1, Build: binary
   [FAIL]  Test 2  workflow list returned 0 workflows
 
-    Command:  archon workflow list
+    Command:  harneeslab workflow list
     Exit:     0
     Output:
-      Discovering workflows in: /tmp/archon-test-repo-1712590923
+      Discovering workflows in: /tmp/harneeslab-test-repo-1712590923
       Found 0 workflow(s):
 
   [SKIP]  Test 3  SDK test skipped because Test 2 failed
@@ -451,7 +451,7 @@ Next steps:
 
 - `scripts/build-binaries.sh` — builds the binary artifacts that end up in releases
 - `.github/workflows/release.yml` — builds and publishes the binary on tag push
-- `homebrew/archon.rb` — Homebrew tap formula (updated per release)
+- `homebrew/harneeslab.rb` — Homebrew tap formula (updated per release)
 - `scripts/install.sh` — the curl install script
 - `scripts/install-local.sh` / `install-local.ps1` — local-file install harnesses (for pre-release QA of binaries built from a branch, not from GitHub releases)
 - `/release` skill — the release procedure itself (opposite side of the flow)

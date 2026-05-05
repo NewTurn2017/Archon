@@ -25,8 +25,8 @@ import { formatToolCall } from '@harneeslab/workflows/utils/tool-formatter';
 import { classifyAndFormatError } from '../utils/error-formatter';
 import { toError } from '../utils/error';
 import { getAgentProvider, getProviderCapabilities } from '@harneeslab/providers';
-import { getArchonHome, getArchonWorkspacesPath } from '@harneeslab/paths';
-import { syncArchonToWorktree } from '../utils/worktree-sync';
+import { getHarneesLabHome, getHarneesLabWorkspacesPath } from '@harneeslab/paths';
+import { syncHarneesLabToWorktree } from '../utils/worktree-sync';
 import { syncWorkspace, toRepoPath } from '@harneeslab/git';
 import type { WorkspaceSyncResult } from '@harneeslab/git';
 import { discoverWorkflowsWithConfig } from '@harneeslab/workflows/workflow-discovery';
@@ -134,7 +134,7 @@ export function parseOrchestratorCommands(
     const workflow = findWorkflow(workflowName, [...workflows]);
     if (workflow) {
       // Validate project exists (case-insensitive, supports partial name matching)
-      // e.g., "Archon" matches "coleam00/Archon"
+      // e.g., "HarneesLab" matches "coleam00/HarneesLab"
       const matchedCodebase = findCodebaseByName(codebases, projectName);
       if (matchedCodebase) {
         // Extract message before the command
@@ -388,8 +388,8 @@ async function discoverAllWorkflows(conversation: Conversation): Promise<Discove
   let config: MergedConfig | undefined;
 
   try {
-    const result = await discoverWorkflowsWithConfig(getArchonWorkspacesPath(), loadConfig, {
-      globalSearchPath: getArchonHome(),
+    const result = await discoverWorkflowsWithConfig(getHarneesLabWorkspacesPath(), loadConfig, {
+      globalSearchPath: getHarneesLabHome(),
     });
     workflows = [...result.workflows];
     allErrors.push(...result.errors);
@@ -403,13 +403,13 @@ async function discoverAllWorkflows(conversation: Conversation): Promise<Discove
       const codebase = await codebaseDb.getCodebase(conversation.codebase_id);
       if (codebase) {
         // Sync canonical source with remote before the AI reads codebase state.
-        // Only hard-reset for Archon-managed clones (under ~/.archon/workspaces/).
+        // Only hard-reset for HarneesLab-managed clones (under ~/.harneeslab/workspaces/).
         // Locally-registered repos get fetch-only to avoid destroying uncommitted work.
         // Non-fatal: if fetch fails (network, no remote), proceed with local state.
         try {
           const isManagedClone = codebase.default_cwd
             .replace(/\\/g, '/')
-            .startsWith(getArchonWorkspacesPath().replace(/\\/g, '/'));
+            .startsWith(getHarneesLabWorkspacesPath().replace(/\\/g, '/'));
           syncResult = await syncWorkspace(toRepoPath(codebase.default_cwd), undefined, {
             resetAfterFetch: isManagedClone,
           });
@@ -428,7 +428,7 @@ async function discoverAllWorkflows(conversation: Conversation): Promise<Discove
           getLog().warn({ err: error, codebaseId: codebase.id }, 'workspace.sync_failed');
         }
         const workflowCwd = conversation.cwd ?? codebase.default_cwd;
-        await syncArchonToWorktree(workflowCwd);
+        await syncHarneesLabToWorktree(workflowCwd);
         // Load config once for this codebase path; reuse below to avoid a second disk read
         const loadedConfig = await loadConfig(workflowCwd);
         config = loadedConfig;
@@ -543,7 +543,7 @@ export async function handleMessage(
         conversation.id,
         message,
         conversation.ai_assistant_type,
-        getArchonWorkspacesPath()
+        getHarneesLabWorkspacesPath()
       );
     }
 
@@ -797,7 +797,7 @@ export async function handleMessage(
       attachedFiles,
       workflowContext
     );
-    const cwd = getArchonWorkspacesPath();
+    const cwd = getHarneesLabWorkspacesPath();
 
     // 4. Update activity and get/create session
     await db.touchConversation(conversation.id);
@@ -1421,7 +1421,7 @@ async function handleWorkflowRunCommand(
     const codebase = codebases[0];
     const workflowCwd = conversation.cwd ?? codebase.default_cwd;
     try {
-      await syncArchonToWorktree(workflowCwd);
+      await syncHarneesLabToWorktree(workflowCwd);
     } catch (error) {
       getLog().debug(
         { err: error as Error, workflowCwd },
@@ -1437,7 +1437,7 @@ async function handleWorkflowRunCommand(
       getLog().error({ err, cwd: workflowCwd }, 'workflow_discovery_failed');
       await platform.sendMessage(
         conversationId,
-        `Failed to load workflows: ${err.message}\n\nCheck .archon/workflows/ for YAML syntax issues.`
+        `Failed to load workflows: ${err.message}\n\nCheck .harneeslab/workflows/ for YAML syntax issues.`
       );
       return;
     }

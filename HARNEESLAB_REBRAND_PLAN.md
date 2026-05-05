@@ -2,7 +2,7 @@
 
 ## Goal
 
-Replace the remaining Archon-branded product, CLI, package, release, path, and repository surfaces with HarneesLab branding.
+Replace the remaining HarneesLab-branded product, CLI, package, release, path, and repository surfaces with HarneesLab branding.
 
 ## Naming Decisions
 
@@ -19,7 +19,7 @@ Use these names unless the owner explicitly changes them before implementation:
 - Docker home directory: `/.harneeslab`
 - Environment variable prefix: `HARNEESLAB_`
 - GitHub bot mention default: `@HarneesLab`
-- Legacy compatibility: keep `archon` aliases only where needed for migration, then remove after a compatibility window.
+- Legacy compatibility: keep `harneeslab` aliases only where needed for migration, then remove after a compatibility window.
 
 ## Current State
 
@@ -37,15 +37,15 @@ Primary code and package surfaces:
 - `packages/*/package.json`
 - `packages/cli/package.json`
 - `packages/cli/src/**`
-- `packages/paths/src/archon-paths.ts`
-- `packages/paths/src/archon-paths.test.ts`
+- `packages/paths/src/harneeslab-paths.ts`
+- `packages/paths/src/harneeslab-paths.test.ts`
 - `packages/core/src/config/**`
 - `packages/core/src/orchestrator/**`
 - `packages/server/src/**`
 - `packages/adapters/src/**`
 - `packages/workflows/src/**`
-- `.archon/commands/defaults/**`
-- `.archon/workflows/defaults/**`
+- `.harneeslab/commands/defaults/**`
+- `.harneeslab/workflows/defaults/**`
 
 Release, install, and deployment surfaces:
 
@@ -75,37 +75,37 @@ Docs and user-facing surfaces:
 ## Implementation Phases
 
 1. Package and import rename
-   - Rename workspace package scope from `@archon/*` to `@harneeslab/*`.
+   - Rename workspace package scope from `@harneeslab/*` to `@harneeslab/*`.
    - Update all internal imports and tests.
    - Update root scripts that use `bun --filter @harneeslab/...`.
    - Run `bun install` to update `bun.lock`.
 
 2. CLI and binary rename
-   - Change `packages/cli/package.json` bin from `archon` to `hlab`.
+   - Change `packages/cli/package.json` bin from `harneeslab` to `hlab`.
    - Update CLI examples, help text, tests, install scripts, checksum scripts, release assets, and Homebrew formula.
-   - Decide whether to ship an `archon` compatibility shim for one release.
+   - Decide whether to ship an `harneeslab` compatibility shim for one release.
 
 3. Runtime path and environment rename
-   - Rename `ARCHON_HOME`, `ARCHON_DOCKER`, and `ARCHON_DATA` to `HARNEESLAB_HOME`, `HARNEESLAB_DOCKER`, and `HARNEESLAB_DATA`.
-   - Rename default directories from `.archon` to `.harneeslab`.
-   - Add migration or fallback logic so existing users with `~/.archon` are not stranded.
+   - Use `HARNEESLAB_HOME`, `HARNEESLAB_DOCKER`, and `HARNEESLAB_DATA` exclusively.
+   - Rename default directories from `.harneeslab` to `.harneeslab`.
+   - Add migration or fallback logic so existing users with `~/.harneeslab` are not stranded.
    - Update tests for local, Docker, and custom env paths.
 
 4. Workflow and command namespace rename
-   - Rename bundled command/workflow names from `archon-*` to `harneeslab-*`.
+   - Rename bundled command/workflow names from `harneeslab-*` to `harneeslab-*`.
    - Update router suffix/substring tests, default generated bundle, and workflow references.
    - Run `bun run generate:bundled` and `bun run check:bundled`.
 
 5. Release and deployment rename
-   - Rename binary assets from `archon-*` to `hlab-*`, with the installed executable named `hlab`.
+   - Rename binary assets from `harneeslab-*` to `hlab-*`, with the installed executable named `hlab`.
    - Rename Homebrew formula file from `homebrew/hlab.rb` to `homebrew/hlab.rb`.
    - Update GHCR image names, Docker service names, volumes, network names, and CI smoke container names.
    - Update GitHub release notes/install snippets.
 
 6. Repository and local folder rename
-   - Rename GitHub repository from `NewTurn2017/Archon` to `NewTurn2017/HarneesLab` after code PR is ready.
+   - Rename GitHub repository from `NewTurn2017/HarneesLab` to `NewTurn2017/HarneesLab` after code PR is ready.
    - Update local remote URLs after GitHub rename.
-   - Rename local checkout folder from `/Users/genie/dev/lab/archon` to `/Users/genie/dev/lab/harneeslab` after the active branch is pushed and no process depends on the old path.
+   - Rename local checkout folder from `/Users/genie/dev/lab/harneeslab` to `/Users/genie/dev/lab/harneeslab` after the active branch is pushed and no process depends on the old path.
 
 ## Validation Gates
 
@@ -126,7 +126,7 @@ bun run build:binaries
 Targeted checks that should be added or updated:
 
 - CLI help and command invocation for `hlab`.
-- Backward compatibility behavior for `ARCHON_HOME` and `~/.archon`, if compatibility is kept.
+- Backward compatibility behavior for `HARNEESLAB_HOME` and `~/.harneeslab`, if compatibility is kept.
 - Docker compose path/env behavior for `HARNEESLAB_DATA`.
 - Release checksum lookup for `hlab-web.tar.gz` and platform binaries.
 - Workflow discovery with `harneeslab-*` bundled workflows.
@@ -134,6 +134,6 @@ Targeted checks that should be added or updated:
 ## Risks
 
 - A blind text replace will break package imports, generated bundles, install scripts, and tests.
-- Renaming `.archon` to `.harneeslab` changes user data location; migration needs an explicit policy.
+- Renaming `.harneeslab` to `.harneeslab` changes user data location; migration needs an explicit policy.
 - Release assets and Homebrew formula names must change together or installs will break.
 - Repository rename should happen after the code PR is green so GitHub redirects do not hide broken hard-coded URLs.

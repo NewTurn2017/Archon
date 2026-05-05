@@ -12,7 +12,7 @@ description: HarneesLab에서 일관되게 사용할 핵심 용어를 정리합�
 | 원문 | 기본 번역 | 사용 메모 |
 | --- | --- | --- |
 | HarneesLab | HarneesLab | 이 포크의 사이트/브랜드 이름 |
-| Archon | Archon | 원본 프로젝트 이름. 처음 소개할 때 Archon fork라고 명시 |
+| HarneesLab | HarneesLab | 원본 프로젝트 이름. 처음 소개할 때 HarneesLab fork라고 명시 |
 | workflow | 워크플로 | 가장 기본이 되는 실행 단위. 필요할 때만 괄호로 원문 병기 |
 | worktree | 워크트리 | Git worktree 의미 그대로 유지 |
 | adapter | 어댑터 | 플랫폼 연결 계층을 설명할 때 사용 |

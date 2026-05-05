@@ -142,7 +142,7 @@ echo ""
 echo "HarneesLab Paths"
 echo "---------------"
 
-HARNEESLAB_HOME="${HARNEESLAB_HOME:-${ARCHON_HOME:-$HOME/.archon}}"
+HARNEESLAB_HOME="${HARNEESLAB_HOME:-$HOME/.harneeslab}"
 echo "  Home: $HARNEESLAB_HOME"
 echo "  Workspaces: $HARNEESLAB_HOME/workspaces"
 echo "  Worktrees: $HARNEESLAB_HOME/worktrees"

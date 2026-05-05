@@ -9,12 +9,12 @@ sidebar:
   order: 5
 ---
 
-Archon은 두 가지 데이터베이스 백엔드를 지원합니다: **SQLite**(기본값, 별도 설정 불필요)와 **PostgreSQL**(선택 사항, 클라우드/고급 배포용). 어떤 백엔드를 사용할지는 `DATABASE_URL` 환경 변수가 설정되어 있는지에 따라 자동으로 결정됩니다.
+HarneesLab은 두 가지 데이터베이스 백엔드를 지원합니다: **SQLite**(기본값, 별도 설정 불필요)와 **PostgreSQL**(선택 사항, 클라우드/고급 배포용). 어떤 백엔드를 사용할지는 `DATABASE_URL` 환경 변수가 설정되어 있는지에 따라 자동으로 결정됩니다.
 
 ## SQLite(기본값 - 설정 불필요)
 
 `.env` 파일에서 **`DATABASE_URL` 변수를 생략**하면 됩니다. 앱은 자동으로 다음 작업을 수행합니다.
-- `~/.archon/archon.db`에 SQLite 데이터베이스 생성
+- `~/.harneeslab/harneeslab.db`에 SQLite 데이터베이스 생성
 - 첫 실행 시 스키마 초기화
 - 모든 작업에 이 데이터베이스 사용
 
@@ -158,7 +158,7 @@ psql $DATABASE_URL -c "\dt"
 8. **`remote_agent_codebase_env_vars`** - workflow 실행용 프로젝트별 env var
    - codebase 범위의 key-value pair
    - 실행 시 Claude SDK subprocess 환경에 주입
-   - Web UI Settings panel에서 관리하며, CLI 사용자는 `.archon/config.yaml`의 `env:` 사용
+   - Web UI Settings panel에서 관리하며, CLI 사용자는 `.harneeslab/config.yaml`의 `env:` 사용
 
 ## 마이그레이션 목록
 

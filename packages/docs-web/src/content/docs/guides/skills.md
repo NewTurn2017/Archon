@@ -182,7 +182,7 @@ skills와 MCP는 같은 node에서 자연스럽게 조합됩니다.
     prompt: "Create a PR with the changes"
     skills:
       - pr-conventions      # Teaches HOW to write good PRs
-    mcp: .archon/mcp/github.json  # Provides the GitHub tools
+    mcp: .harneeslab/mcp/github.json  # Provides the GitHub tools
 ```
 
 skills는 **process**를 가르칩니다. MCP는 **capability**를 제공합니다. 둘을 함께 쓰면 각각을 단독으로 사용할 때보다 더 좋은 결과를 얻을 수 있습니다.

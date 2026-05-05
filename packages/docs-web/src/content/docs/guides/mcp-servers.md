@@ -15,7 +15,7 @@ DAG workflow node는 개별 node에 MCP(Model Context Protocol) servers를 연�
 
 ## 빠른 시작
 
-1. MCP config file을 만듭니다(예: `.archon/mcp/github.json`).
+1. MCP config file을 만듭니다(예: `.harneeslab/mcp/github.json`).
 
 ```json
 {
@@ -37,7 +37,7 @@ description: Triage GitHub issues using MCP
 nodes:
   - id: triage
     prompt: "List open issues and label them by priority"
-    mcp: .archon/mcp/github.json
+    mcp: .harneeslab/mcp/github.json
 ```
 
 이것으로 끝입니다. node가 실행될 때 MCP server가 시작되고, 해당 tools가 AI에 제공되며, node가 완료되면 종료됩니다.
@@ -175,7 +175,7 @@ node가 MCP servers를 로드하면 tool wildcard가 `allowedTools`에 자동으
 nodes:
   - id: query-db
     prompt: "Find all users who signed up in the last 24 hours"
-    mcp: .archon/mcp/postgres.json
+    mcp: .harneeslab/mcp/postgres.json
     allowed_tools: []
 ```
 
@@ -207,7 +207,7 @@ nodes:
       - P1: Broken core functionality
       - P2: Important but not blocking
       - P3: Nice to have
-    mcp: .archon/mcp/github.json
+    mcp: .harneeslab/mcp/github.json
 ```
 
 ### Database 기반 Code Changes
@@ -218,7 +218,7 @@ description: Build features with live database context
 nodes:
   - id: inspect-schema
     prompt: "List all tables and their columns in the database"
-    mcp: .archon/mcp/postgres.json
+    mcp: .harneeslab/mcp/postgres.json
     allowed_tools: []
 
   - id: implement
@@ -234,7 +234,7 @@ description: Fix a bug using GitHub issues, database, and code
 nodes:
   - id: fetch-context
     prompt: "Get issue details and related database schema"
-    mcp: .archon/mcp/all-services.json
+    mcp: .harneeslab/mcp/all-services.json
     allowed_tools: []
 
   - id: fix
@@ -244,7 +244,7 @@ nodes:
   - id: verify
     prompt: "Run the relevant query to verify the fix"
     depends_on: [fix]
-    mcp: .archon/mcp/postgres.json
+    mcp: .harneeslab/mcp/postgres.json
     allowed_tools: []
 ```
 
@@ -256,7 +256,7 @@ MCP와 [hooks](/guides/hooks/)를 결합하면 external services를 query할 수
 nodes:
   - id: analyze
     prompt: "Analyze our GitHub PR review patterns"
-    mcp: .archon/mcp/github.json
+    mcp: .harneeslab/mcp/github.json
     hooks:
       PreToolUse:
         - matcher: "Write|Edit|Bash"
@@ -269,13 +269,13 @@ nodes:
 
 ## Push Notifications(ntfy)
 
-일부 built-in workflow(`archon-smart-pr-review` 등)에는 workflow가 완료되면 휴대폰으로 push notification을 보내는 optional notification node가 포함되어 있습니다. 이 node는 `when:` condition 뒤에 gate되어 있습니다. ntfy를 설정하지 않았다면 node는 조용히 skip됩니다.
+일부 built-in workflow(`harneeslab-smart-pr-review` 등)에는 workflow가 완료되면 휴대폰으로 push notification을 보내는 optional notification node가 포함되어 있습니다. 이 node는 `when:` condition 뒤에 gate되어 있습니다. ntfy를 설정하지 않았다면 node는 조용히 skip됩니다.
 
 ### 설정(30초)
 
 1. 휴대폰(iOS / Android)에 [ntfy app](https://ntfy.sh/)을 설치합니다
-2. app을 열고 "+"를 탭한 뒤 topic name(예: `archon-yourname-a8f3x`)을 subscribe합니다. topic name은 password처럼 취급하세요. 이를 아는 사람은 누구나 notification을 보낼 수 있습니다.
-3. repo에 `.archon/mcp/ntfy.json`을 만듭니다.
+2. app을 열고 "+"를 탭한 뒤 topic name(예: `harneeslab-yourname-a8f3x`)을 subscribe합니다. topic name은 password처럼 취급하세요. 이를 아는 사람은 누구나 notification을 보낼 수 있습니다.
+3. repo에 `.harneeslab/mcp/ntfy.json`을 만듭니다.
 
 ```json
 {
@@ -283,13 +283,13 @@ nodes:
     "command": "npx",
     "args": ["-y", "ntfy-me-mcp"],
     "env": {
-      "NTFY_TOPIC": "archon-yourname-a8f3x"
+      "NTFY_TOPIC": "harneeslab-yourname-a8f3x"
     }
   }
 }
 ```
 
-이것으로 끝입니다. 해당 file은 gitignored됩니다(`.archon/mcp/`가 `.gitignore`에 있음). 따라서 topic은 local에만 남습니다.
+이것으로 끝입니다. 해당 file은 gitignored됩니다(`.harneeslab/mcp/`가 `.gitignore`에 있음). 따라서 topic은 local에만 남습니다.
 
 ### workflow에서 동작하는 방식
 
@@ -297,20 +297,20 @@ workflow는 bash node를 사용해 config file 존재 여부를 확인합니다.
 
 ```yaml
   - id: check-ntfy
-    bash: "test -f .archon/mcp/ntfy.json && echo 'true' || echo 'false'"
+    bash: "test -f .harneeslab/mcp/ntfy.json && echo 'true' || echo 'false'"
     depends_on: [last-work-node]
 
   - id: notify
     depends_on: [check-ntfy, last-work-node]
     when: "$check-ntfy.output == 'true'"
-    mcp: .archon/mcp/ntfy.json
+    mcp: .harneeslab/mcp/ntfy.json
     allowed_tools: []
     prompt: |
       Send a push notification summarizing what was accomplished.
       Keep it under 2 sentences. Use priority 3.
 ```
 
-`.archon/mcp/ntfy.json`이 없으면 `check-ntfy`가 `false`를 output하고, `when:` condition이 notify node를 skip하며, workflow는 이전과 동일하게 실행됩니다.
+`.harneeslab/mcp/ntfy.json`이 없으면 `check-ntfy`가 `false`를 output하고, `when:` condition이 notify node를 skip하며, workflow는 이전과 동일하게 실행됩니다.
 
 ### 내 workflow에 notification 추가하기
 
@@ -320,10 +320,10 @@ workflow는 bash node를 사용해 config file 존재 여부를 확인합니다.
 
 ```bash
 # Verify your phone receives notifications
-curl -d "Hello from Archon" ntfy.sh/YOUR_TOPIC_NAME
+curl -d "Hello from HarneesLab" ntfy.sh/YOUR_TOPIC_NAME
 
 # Run a workflow with notifications
-bun run cli workflow run archon-smart-pr-review "Review PR #123"
+bun run cli workflow run harneeslab-smart-pr-review "Review PR #123"
 ```
 
 ## MCP vs allowed_tools/denied_tools vs hooks
@@ -348,7 +348,7 @@ bun run cli workflow run archon-smart-pr-review "Review PR #123"
 | Problem | Cause | Fix |
 |---------|-------|-----|
 | `MCP config file not found` | path가 잘못됐거나 file이 없음 | repo root(cwd) 기준 path를 확인하세요 |
-| `MCP config file is not valid JSON` | JSON syntax error | `cat .archon/mcp/config.json \| python3 -m json.tool`로 검증하세요 |
+| `MCP config file is not valid JSON` | JSON syntax error | `cat .harneeslab/mcp/config.json \| python3 -m json.tool`로 검증하세요 |
 | `MCP config must be a JSON object` | top-level value가 array 또는 string | `{ "server-name": { ... } }`로 감싸세요 |
 | `undefined env vars: VAR_NAME` | environment variable 미설정 | 변수를 export하거나 `.env`에 추가하세요 |
 | `MCP server connection failed` | server process crash 또는 URL unreachable | command/URL을 확인하고 server를 standalone으로 테스트하세요 |

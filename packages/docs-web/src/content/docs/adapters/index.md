@@ -1,6 +1,6 @@
 ---
 title: 플랫폼 어댑터
-description: Archon에 연결할 수 있는 모든 플랫폼 어댑터 개요입니다.
+description: HarneesLab에 연결할 수 있는 모든 플랫폼 어댑터 개요입니다.
 category: adapters
 area: adapters
 audience: [user, operator]
@@ -9,7 +9,7 @@ sidebar:
   order: 0
 ---
 
-Archon은 여러 플랫폼 어댑터를 지원합니다. 각 어댑터는 Archon을 서로 다른 커뮤니케이션 채널에 연결해, 사용자가 일하는 곳 어디에서든 워크플로를 실행하고 AI 에이전트와 상호작용할 수 있게 합니다.
+HarneesLab은 여러 플랫폼 어댑터를 지원합니다. 각 어댑터는 HarneesLab을 서로 다른 커뮤니케이션 채널에 연결해, 사용자가 일하는 곳 어디에서든 워크플로를 실행하고 AI 에이전트와 상호작용할 수 있게 합니다.
 
 ## 핵심 어댑터
 

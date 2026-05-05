@@ -1,0 +1,93 @@
+name: harneeslab-issue-review-full
+description: |
+  사용할 때: GitHub issue에 대해 FULL, COMPREHENSIVE fix + review pipeline을 원할 때.
+  트리거 예시: "full review", "comprehensive fix", "fix with full review", "deep review", "issue review full".
+  사용하지 않을 때: 단순 issue 수정(대신 harneeslab-fix-github-issue 사용),
+           issue 관련 질문, CI 실패, PR 리뷰, 일반 탐색.
+
+  전체 workflow:
+  1. issue 조사 -> root cause analysis, implementation plan.
+  2. fix 구현 -> code changes, tests, PR 생성.
+  3. comprehensive review -> scope를 인식하는 병렬 agent 5개.
+  4. review issue 수정 -> CRITICAL/HIGH findings 대응.
+  5. 최종 요약 -> decision matrix, follow-up recommendations.
+
+nodes:
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 1: INVESTIGATE
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: investigate
+    command: harneeslab-investigate-issue
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 2: IMPLEMENT
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: implement
+    command: harneeslab-implement-issue
+    depends_on: [investigate]
+    context: fresh
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 3: CODE REVIEW
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: review-scope
+    command: harneeslab-pr-review-scope
+    depends_on: [implement]
+    context: fresh
+
+  - id: sync
+    command: harneeslab-sync-pr-with-main
+    depends_on: [review-scope]
+    context: fresh
+
+  - id: code-review
+    command: harneeslab-code-review-agent
+    depends_on: [sync]
+    context: fresh
+
+  - id: error-handling
+    command: harneeslab-error-handling-agent
+    depends_on: [sync]
+    context: fresh
+
+  - id: test-coverage
+    command: harneeslab-test-coverage-agent
+    depends_on: [sync]
+    context: fresh
+
+  - id: comment-quality
+    command: harneeslab-comment-quality-agent
+    depends_on: [sync]
+    context: fresh
+
+  - id: docs-impact
+    command: harneeslab-docs-impact-agent
+    depends_on: [sync]
+    context: fresh
+
+  - id: synthesize
+    command: harneeslab-synthesize-review
+    depends_on: [code-review, error-handling, test-coverage, comment-quality, docs-impact]
+    trigger_rule: one_success
+    context: fresh
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 4: FIX REVIEW ISSUES
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: implement-fixes
+    command: harneeslab-implement-review-fixes
+    depends_on: [synthesize]
+    context: fresh
+
+  # ═══════════════════════════════════════════════════════════════════
+  # PHASE 5: FINAL SUMMARY
+  # ═══════════════════════════════════════════════════════════════════
+
+  - id: summary
+    command: harneeslab-workflow-summary
+    depends_on: [implement-fixes]
+    context: fresh

@@ -41,7 +41,7 @@ function makeWorkflow(name: string, nodes: DagNode[], provider?: string): Workfl
 }
 
 async function createCommandFile(name: string, content = '# Do something'): Promise<void> {
-  const dir = join(tmpDir, '.archon', 'commands');
+  const dir = join(tmpDir, '.harneeslab', 'commands');
   await mkdir(dir, { recursive: true });
   await writeFile(join(dir, `${name}.md`), content);
 }
@@ -281,7 +281,7 @@ describe('validateCommand', () => {
 // =============================================================================
 
 describe('discoverAvailableCommands', () => {
-  test('finds commands in .archon/commands/', async () => {
+  test('finds commands in .harneeslab/commands/', async () => {
     await createCommandFile('my-command');
     await createCommandFile('other-command');
     const commands = await discoverAvailableCommands(tmpDir, { loadDefaultCommands: false });
@@ -336,7 +336,7 @@ describe('validateWorkflowResources — script nodes', () => {
   });
 
   test('no error when named bun script file exists', async () => {
-    const scriptsDir = join(tmpDir, '.archon', 'scripts');
+    const scriptsDir = join(tmpDir, '.harneeslab', 'scripts');
     await mkdir(scriptsDir, { recursive: true });
     await writeFile(join(scriptsDir, 'my-script.ts'), 'console.log("hi")');
     const workflow = makeWorkflow('test', [

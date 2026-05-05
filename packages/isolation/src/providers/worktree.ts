@@ -26,7 +26,7 @@ import {
   toWorktreePath,
   toBranchName,
 } from '@harneeslab/git';
-import { getArchonWorkspacesPath } from '@harneeslab/paths';
+import { getHarneesLabWorkspacesPath } from '@harneeslab/paths';
 import type { RepoPath, WorktreeInfo } from '@harneeslab/git';
 import { copyWorktreeFiles } from '../worktree-copy';
 import type {
@@ -161,7 +161,7 @@ export class WorktreeProvider implements IIsolationProvider {
         // Continue to branch deletion below - branch may still exist
       }
 
-      // Ensure directory is fully removed (git may leave untracked files like .archon/)
+      // Ensure directory is fully removed (git may leave untracked files like .harneeslab/)
       const dirExists = await this.directoryExists(worktreePath);
       if (dirExists) {
         getLog().debug({ worktreePath }, 'cleaning_remaining_directory');
@@ -471,20 +471,20 @@ export class WorktreeProvider implements IIsolationProvider {
   generateBranchName(request: IsolationRequest): string {
     switch (request.workflowType) {
       case 'issue':
-        return `archon/issue-${request.identifier}`;
+        return `harneeslab/issue-${request.identifier}`;
       case 'pr':
         // Same-repo PRs use actual branch (already exists on remote), fork PRs use synthetic
         if (!request.isForkPR) {
           return request.prBranch;
         }
-        return `archon/pr-${request.identifier}-review`;
+        return `harneeslab/pr-${request.identifier}-review`;
       case 'review':
-        return `archon/review-${request.identifier}`;
+        return `harneeslab/review-${request.identifier}`;
       case 'thread':
         // Use short hash for arbitrary thread IDs (Slack, Discord)
-        return `archon/thread-${this.shortHash(request.identifier)}`;
+        return `harneeslab/thread-${this.shortHash(request.identifier)}`;
       case 'task':
-        return `archon/task-${this.slugify(request.identifier)}`;
+        return `harneeslab/task-${this.slugify(request.identifier)}`;
     }
   }
 
@@ -500,8 +500,8 @@ export class WorktreeProvider implements IIsolationProvider {
    * Get worktree path for request.
    *
    * Path format depends on the worktree base layout:
-   * - Project-scoped: `~/.archon/workspaces/{owner}/{repo}/worktrees/{branch}`
-   * - Legacy global:  `~/.archon/worktrees/{owner}/{repo}/{branch}`
+   * - Project-scoped: `~/.harneeslab/workspaces/{owner}/{repo}/worktrees/{branch}`
+   * - Legacy global:  `~/.harneeslab/worktrees/{owner}/{repo}/{branch}`
    *
    * When the worktree base is project-scoped (under workspaces/owner/repo/worktrees/),
    * only append the branch name since the base already includes owner/repo.
@@ -668,7 +668,7 @@ export class WorktreeProvider implements IIsolationProvider {
     const warnings: string[] = [];
     if (configLoadFailed) {
       warnings.push(
-        'Config file could not be loaded — copyFiles configuration was not applied. Check your .archon/config.yaml for syntax errors.'
+        'Config file could not be loaded — copyFiles configuration was not applied. Check your .harneeslab/config.yaml for syntax errors.'
       );
     }
     return { warnings };
@@ -701,11 +701,11 @@ export class WorktreeProvider implements IIsolationProvider {
         { repoPath, branch: configuredBaseBranch ?? 'auto-detect' },
         'workspace_sync_starting'
       );
-      // Only hard-reset for Archon-managed clones (under ~/.archon/workspaces/).
+      // Only hard-reset for HarneesLab-managed clones (under ~/.harneeslab/workspaces/).
       // Locally-registered repos get fetch-only to avoid destroying uncommitted work.
       const isManagedClone = repoPath
         .replace(/\\/g, '/')
-        .startsWith(getArchonWorkspacesPath().replace(/\\/g, '/'));
+        .startsWith(getHarneesLabWorkspacesPath().replace(/\\/g, '/'));
       const { branch } = await syncWorkspace(
         repoPath,
         configuredBaseBranch ? toBranchName(configuredBaseBranch) : undefined,
@@ -753,7 +753,7 @@ export class WorktreeProvider implements IIsolationProvider {
     worktreeConfig?: { baseBranch?: string; copyFiles?: string[] } | null
   ): Promise<{ configLoadFailed: boolean }> {
     // Default files to always copy
-    const defaultCopyFiles = ['.archon'];
+    const defaultCopyFiles = ['.harneeslab'];
 
     // Load user config - log errors and set configLoadFailed, but don't fail worktree creation
     let userCopyFiles: string[] = [];
@@ -1086,7 +1086,7 @@ export class WorktreeProvider implements IIsolationProvider {
   /**
    * Clean up an orphan directory if it exists but is not a valid worktree.
    * An orphan directory can occur when git worktree remove succeeds but leaves
-   * untracked files (like .archon/) behind.
+   * untracked files (like .harneeslab/) behind.
    */
   private async cleanOrphanDirectoryIfExists(worktreePath: string): Promise<void> {
     const dirExists = await this.directoryExists(worktreePath);

@@ -152,7 +152,7 @@ describe('executeWorkflow', () => {
 사용하지 않을 때: 모든 review agent가 필요할 때.
 Use when: English metadata.
 Does: English body remains.`,
-        'archon-smart-pr-review'
+        'harneeslab-smart-pr-review'
       );
 
       expect(cleaned).toContain('하는 일: PR scope 수집');
@@ -167,10 +167,10 @@ Does: English body remains.`,
       const cleaned = cleanWorkflowDescriptionForStartup(
         `사용할 때: 다른 workflow가 맞지 않을 때.
 트리거 예시: "assist".`,
-        'archon-assist'
+        'harneeslab-assist'
       );
 
-      expect(cleaned).toBe('archon-assist');
+      expect(cleaned).toBe('harneeslab-assist');
     });
   });
 
@@ -294,7 +294,7 @@ Does: English body remains.`,
     it('uses the actionable "in use" message format with workflow name, duration, and short id', async () => {
       const otherRun = makeRun({
         id: 'abc12345-rest-of-uuid',
-        workflow_name: 'archon-implement',
+        workflow_name: 'harneeslab-implement',
         status: 'running',
         started_at: new Date(Date.now() - 125000).toISOString(), // 2m 5s ago
       });
@@ -320,7 +320,7 @@ Does: English body remains.`,
 
       expect(sendMessageSpy).toHaveBeenCalled();
       const sentMessage = (sendMessageSpy.mock.calls[0] as [string, string])[1];
-      expect(sentMessage).toContain('archon-implement');
+      expect(sentMessage).toContain('harneeslab-implement');
       expect(sentMessage).toContain('abc12345');
       expect(sentMessage).toContain('2m 5s');
       // Concrete next actions — every line tells the user something to do.
@@ -859,7 +859,7 @@ Does: English body remains.`,
     it('uses paused-specific copy when blocker is paused', async () => {
       const pausedRun = makeRun({
         id: 'paused-run-id',
-        workflow_name: 'archon-implement',
+        workflow_name: 'harneeslab-implement',
         status: 'paused',
         started_at: new Date(Date.now() - 10000).toISOString(),
       });
@@ -885,7 +885,7 @@ Does: English body remains.`,
     it('uses pending-specific copy when blocker is just starting', async () => {
       const pendingRun = makeRun({
         id: 'pending-run',
-        workflow_name: 'archon-implement',
+        workflow_name: 'harneeslab-implement',
         status: 'pending',
         started_at: new Date(Date.now() - 500).toISOString(),
       });
@@ -906,7 +906,7 @@ Does: English body remains.`,
     it('uses running copy by default', async () => {
       const runningRun = makeRun({
         id: 'running-run',
-        workflow_name: 'archon-implement',
+        workflow_name: 'harneeslab-implement',
         status: 'running',
         started_at: new Date(Date.now() - 60000).toISOString(),
       });

@@ -10,7 +10,7 @@ description: HarneesLab을 안정적으로 운영하기 전에 먼저 확인할 
 ## Git 저장소
 
 - [ ] `origin`이 개인 포크를 가리키는지 확인
-- [ ] `upstream`이 `coleam00/Archon`을 가리키는지 확인
+- [ ] `upstream`이 `coleam00/HarneesLab`을 가리키는지 확인
 - [ ] 기준 브랜치를 `dev`로 두고 문서 작업 브랜치는 `codex/ko-*` 같은 목적이 드러나는 규칙으로 분리
 - [ ] 번역 변경과 기능 변경을 같은 커밋에 섞지 않기
 
@@ -18,7 +18,7 @@ description: HarneesLab을 안정적으로 운영하기 전에 먼저 확인할 
 
 - [ ] `packages/docs-web`이 포크 기준 GitHub Pages 경로에서 빌드되는지 확인
 - [ ] `CNAME` 같은 원본 전용 배포 설정이 남아 있지 않은지 확인
-- [ ] 랜딩 페이지에서 HarneesLab이 Archon fork라는 점이 첫 화면에 드러나는지 확인
+- [ ] 랜딩 페이지에서 HarneesLab이 HarneesLab fork라는 점이 첫 화면에 드러나는지 확인
 - [ ] HarneesLab 전용 섹션이 사이드바에서 독립적으로 보이는지 확인
 
 ## 번역 작업

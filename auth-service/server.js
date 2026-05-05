@@ -10,7 +10,7 @@ const PORT = parseInt(process.env.AUTH_PORT ?? '9000', 10);
 const USERNAME = process.env.AUTH_USERNAME ?? '';
 const PASSWORD_HASH = process.env.AUTH_PASSWORD_HASH ?? '';
 const COOKIE_SECRET = process.env.COOKIE_SECRET ?? '';
-const COOKIE_NAME = 'archon_auth';
+const COOKIE_NAME = 'harneeslab_auth';
 const COOKIE_MAX_AGE = parseInt(process.env.COOKIE_MAX_AGE ?? '86400', 10);
 
 if (!USERNAME || !PASSWORD_HASH || !COOKIE_SECRET) {
@@ -81,7 +81,7 @@ function loginPage(rdEncoded, error) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Sign In · Archon</title>
+  <title>Sign In · HarneesLab</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { min-height: 100vh; display: flex; align-items: center; justify-content: center;

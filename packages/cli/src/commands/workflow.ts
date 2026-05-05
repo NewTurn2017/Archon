@@ -10,7 +10,7 @@ import {
 } from '@harneeslab/core';
 import { WORKFLOW_EVENT_TYPES, type WorkflowEventType } from '@harneeslab/workflows/store';
 import { configureIsolation, getIsolationProvider } from '@harneeslab/isolation';
-import { createLogger, getArchonHome } from '@harneeslab/paths';
+import { createLogger, getHarneesLabHome } from '@harneeslab/paths';
 import { createWorkflowDeps } from '@harneeslab/core/workflows/store-adapter';
 import { discoverWorkflowsWithConfig } from '@harneeslab/workflows/workflow-discovery';
 import { resolveWorkflowName } from '@harneeslab/workflows/router';
@@ -120,12 +120,12 @@ function renderWorkflowEvent(event: WorkflowEmitterEvent, verbose: boolean): voi
 async function loadWorkflows(cwd: string): Promise<WorkflowLoadResult> {
   try {
     return await discoverWorkflowsWithConfig(cwd, loadConfig, {
-      globalSearchPath: getArchonHome(),
+      globalSearchPath: getHarneesLabHome(),
     });
   } catch (error) {
     const err = error as Error;
     throw new Error(
-      `workflow 로드 오류: ${err.message}\n힌트: .archon/workflows/ 디렉터리 권한을 확인하세요.`
+      `workflow 로드 오류: ${err.message}\n힌트: .harneeslab/workflows/ 디렉터리 권한을 확인하세요.`
     );
   }
 }
@@ -173,7 +173,7 @@ export async function workflowListCommand(cwd: string, json?: boolean): Promise<
 
   if (workflowEntries.length === 0 && errors.length === 0) {
     console.log('\nworkflow(워크플로)를 찾지 못했습니다.');
-    console.log('workflow 파일은 .archon/workflows/ 디렉터리에 있어야 합니다.');
+    console.log('workflow 파일은 .harneeslab/workflows/ 디렉터리에 있어야 합니다.');
     return;
   }
 
@@ -211,7 +211,7 @@ export async function workflowRunCommand(
   const { workflows: workflowEntries, errors } = await loadWorkflows(cwd);
 
   if (workflowEntries.length === 0 && errors.length === 0) {
-    throw new Error('.archon/workflows/에서 workflow를 찾지 못했습니다.');
+    throw new Error('.harneeslab/workflows/에서 workflow를 찾지 못했습니다.');
   }
 
   const workflows = workflowEntries.map(ws => ws.workflow);

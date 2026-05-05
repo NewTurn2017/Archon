@@ -210,7 +210,7 @@ export class IsolationResolver {
         );
         return [
           `Worktree branch '${env.branch_name}' is not based on '${baseBranch}'. ` +
-            `Recreate with: archon complete ${env.branch_name} --force`,
+            `Recreate with: hlab complete ${env.branch_name} --force`,
         ];
       }
     } catch (err) {

@@ -153,7 +153,7 @@ test suite, lint check, build success처럼 결정적인 완료 기준에 유용
     fresh_context: true
 ```
 
-**사용 시점:** Multi-story implementation, context window exhaustion 위험이 있는 장시간 작업에 사용합니다. agent는 `.archon/ralph/*/prd.json` 또는 유사한 tracking file을 읽어 완료된 작업과 다음 작업을 파악합니다.
+**사용 시점:** Multi-story implementation, context window exhaustion 위험이 있는 장시간 작업에 사용합니다. agent는 `.harneeslab/ralph/*/prd.json` 또는 유사한 tracking file을 읽어 완료된 작업과 다음 작업을 파악합니다.
 
 ### Context 누적
 

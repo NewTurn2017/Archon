@@ -1,20 +1,20 @@
 ---
 title: 보안
-description: Archon의 보안 모델, 권한, 인가, 데이터 프라이버시를 설명합니다.
+description: HarneesLab의 보안 모델, 권한, 인가, 데이터 프라이버시를 설명합니다.
 category: reference
 audience: [user, operator]
 sidebar:
   order: 8
 ---
 
-이 문서는 Archon의 보안 모델을 다룹니다. AI 권한이 어떻게 동작하는지, 플랫폼 접근을 어떻게 제어하는지, webhook을 어떻게 검증하는지, 어떤 데이터가 로그에 남고 남지 않는지를 설명합니다.
+이 문서는 HarneesLab의 보안 모델을 다룹니다. AI 권한이 어떻게 동작하는지, 플랫폼 접근을 어떻게 제어하는지, webhook을 어떻게 검증하는지, 어떤 데이터가 로그에 남고 남지 않는지를 설명합니다.
 
 ## 권한 모델
 
-Archon은 Claude Code SDK를 `bypassPermissions` 모드로 실행합니다. 즉, AI agent는 대화형 확인 프롬프트 없이 파일을 읽고, 쓰고, 실행할 수 있습니다.
+HarneesLab은 Claude Code SDK를 `bypassPermissions` 모드로 실행합니다. 즉, AI agent는 대화형 확인 프롬프트 없이 파일을 읽고, 쓰고, 실행할 수 있습니다.
 
 **이 모드를 사용하는 이유:**
-- Archon은 Slack, Telegram, GitHub 등 터미널 앞의 사람이 매번 승인할 수 없는 플랫폼에서 자동/무인 workflow를 실행하도록 설계되었습니다.
+- HarneesLab은 Slack, Telegram, GitHub 등 터미널 앞의 사람이 매번 승인할 수 없는 플랫폼에서 자동/무인 workflow를 실행하도록 설계되었습니다.
 - 대화형 권한 프롬프트가 필요하면 모든 workflow가 멈추고 원격 운영이 불가능해집니다.
 
 **실제로 의미하는 것:**
@@ -28,7 +28,7 @@ Archon은 Claude Code SDK를 `bypassPermissions` 모드로 실행합니다. 즉,
 - 이 시스템은 단일 개발자 도구로 설계되었습니다. multi-tenant isolation은 제공하지 않습니다.
 
 :::caution
-`bypassPermissions`는 전체 파일 및 shell 접근을 부여하므로, AI agent가 repository 내용을 신뢰할 수 있는 환경에서만 Archon을 실행하세요. adapter-level authorization(아래 참고) 없이 신뢰할 수 없는 사용자에게 Archon을 노출하지 마세요.
+`bypassPermissions`는 전체 파일 및 shell 접근을 부여하므로, AI agent가 repository 내용을 신뢰할 수 있는 환경에서만 HarneesLab을 실행하세요. adapter-level authorization(아래 참고) 없이 신뢰할 수 없는 사용자에게 HarneesLab을 노출하지 마세요.
 :::
 
 ## Tool 제한
@@ -54,7 +54,7 @@ nodes:
 
 ## 데이터 프라이버시와 로깅
 
-Archon은 구조화 로깅(Pino)을 사용하며, 무엇을 기록하고 기록하지 않는지에 대한 명시적 규칙을 둡니다.
+HarneesLab은 구조화 로깅(Pino)을 사용하며, 무엇을 기록하고 기록하지 않는지에 대한 명시적 규칙을 둡니다.
 
 **절대 로그에 남기지 않는 것:**
 - API key 또는 token(참조가 필요할 때는 앞 8자 + `...` 형태로 mask)
@@ -120,23 +120,23 @@ GitHub와 Gitea adapter는 webhook signature를 검증해 payload가 설정된 �
 
 **Subprocess env isolation:**
 - 시작 시 `stripCwdEnv()`는 Bun이 CWD `.env` 파일에서 자동 로드한 **모든** key와 nested Claude Code session marker(`CLAUDECODE`, auth var를 제외한 `CLAUDE_CODE_*`), debugger var(`NODE_OPTIONS`, `VSCODE_INSPECTOR_OPTIONS`)를 제거합니다. 이 작업은 어떤 module도 `process.env`를 읽기 전에 실행됩니다.
-- 그 다음 `~/.archon/.env`를 신뢰할 수 있는 HarneesLab 설정 source로 로드합니다. 사용자가 이 파일에 설정한 모든 key는 subprocess로 그대로 전달됩니다. allowlist filtering은 없습니다. 이 파일은 사용자가 관리하며 모든 key는 의도적으로 넣은 값입니다.
-- `codebase_env_vars` 또는 `.archon/config.yaml`의 `env:`로 설정한 codebase별 env var는 workflow 실행 시점에 위에 병합됩니다.
-- CWD `.env` key만 **신뢰하지 않는 source**입니다. 이는 target project에 속하며 Archon에 속하지 않습니다.
+- 그 다음 `~/.harneeslab/.env`를 신뢰할 수 있는 HarneesLab 설정 source로 로드합니다. 사용자가 이 파일에 설정한 모든 key는 subprocess로 그대로 전달됩니다. allowlist filtering은 없습니다. 이 파일은 사용자가 관리하며 모든 key는 의도적으로 넣은 값입니다.
+- `codebase_env_vars` 또는 `.harneeslab/config.yaml`의 `env:`로 설정한 codebase별 env var는 workflow 실행 시점에 위에 병합됩니다.
+- CWD `.env` key만 **신뢰하지 않는 source**입니다. 이는 target project에 속하며 HarneesLab에 속하지 않습니다.
 
 ### Target repo `.env` 격리
 
-Archon은 구조적 보호를 통해 target repo `.env`가 subprocess로 새는 일을 막습니다.
+HarneesLab은 구조적 보호를 통해 target repo `.env`가 subprocess로 새는 일을 막습니다.
 
 1. **Boot cleanup:** `stripCwdEnv()`가 application code 실행 전에 Bun이 자동 로드한 CWD `.env` key를 `process.env`에서 제거합니다.
 2. **Claude Code subprocess:** `executableArgs: ['--no-env-file']`로 Claude Code subprocess CWD에서 Bun이 `.env`를 자동 로드하지 못하게 합니다.
 3. **Bun script node:** `bun --no-env-file`로 script node subprocess가 target repo `.env`를 로드하지 못하게 합니다.
 4. **Bash node:** 영향 없음. bash는 `.env` 파일을 자동 로드하지 않습니다.
 
-HarneesLab 자체 env source(`~/.archon/.env`, dev `.env`)는 CWD strip 이후 로드되며 subprocess로 정상 전달됩니다.
+HarneesLab 자체 env source(`~/.harneeslab/.env`, dev `.env`)는 CWD strip 이후 로드되며 subprocess로 정상 전달됩니다.
 
 **Workflow 실행 중 env var가 필요하면** managed env injection을 사용하세요.
-- `.archon/config.yaml`의 `env:` section(repo별, version control 포함)
+- `.harneeslab/config.yaml`의 `env:` section(repo별, version control 포함)
 - Web UI: Settings → Projects → Env Vars(codebase별, HarneesLab DB에 저장)
 
 **CORS:**

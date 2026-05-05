@@ -107,8 +107,8 @@ GitHub adapter는 항상 `batch` 모드를 사용합니다(하드코딩). GitHub
 
 **첫 mention 동작:**
 
-- Repository를 `~/.archon/workspaces/`로 자동 clone합니다.
-- `.archon/commands/`가 있으면 감지하고 로드합니다.
+- Repository를 `~/.harneeslab/workspaces/`로 자동 clone합니다.
+- `.harneeslab/commands/`가 있으면 감지하고 로드합니다.
 - AI 어시스턴트에 전체 issue/PR context를 주입합니다.
 
 **이후 mention:**

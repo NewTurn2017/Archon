@@ -9,13 +9,13 @@ sidebar:
   order: 2
 ---
 
-이 가이드는 HarneesLab의 AI workflow system에서 효과적인 command를 작성하는 방법을 설명합니다. HarneesLab은 Archon fork로서 반복 가능한 agent workflow를 학습하고 실험하기 쉽게 다루며, command는 그 workflow의 구성 요소입니다. 각 command는 AI agent에게 무엇을 해야 하는지 지시하는 prompt template입니다.
+이 가이드는 HarneesLab의 AI workflow system에서 효과적인 command를 작성하는 방법을 설명합니다. HarneesLab은 HarneesLab fork로서 반복 가능한 agent workflow를 학습하고 실험하기 쉽게 다루며, command는 그 workflow의 구성 요소입니다. 각 command는 AI agent에게 무엇을 해야 하는지 지시하는 prompt template입니다.
 
 ## Command란 무엇인가요?
 
 command는 AI agent를 위한 상세 instruction set 역할을 하는 **markdown file**입니다. workflow가 `- command: investigate-issue` 같은 step을 실행하면 HarneesLab은 다음을 수행합니다.
 
-1. `.archon/commands/investigate-issue.md`에서 command file을 로드합니다
+1. `.harneeslab/commands/investigate-issue.md`에서 command file을 로드합니다
 2. `$ARGUMENTS` 같은 변수를 실제 값으로 치환합니다
 3. 전체 문서를 AI에 prompt로 보냅니다
 4. AI가 instructions를 따르고 output을 생성합니다
@@ -26,9 +26,9 @@ command는 AI agent를 위한 상세 instruction set 역할을 하는 **markdown
 
 ## 파일 형식
 
-command는 working directory 기준 `.archon/commands/`에 있으며 runtime에 로드됩니다. `.archon` 디렉터리 이름은 upstream Archon과의 호환성을 위해 유지됩니다.
+command는 working directory 기준 `.harneeslab/commands/`에 있으며 runtime에 로드됩니다. `.harneeslab` 디렉터리 이름은 upstream HarneesLab과의 호환성을 위해 유지됩니다.
 
-> **CLI vs Server:** CLI는 실행한 위치에서 command를 읽습니다(uncommitted changes도 보임). server는 `~/.archon/workspaces/owner/repo/`에서 읽으며, 이 경로는 worktree creation 전에 remote에서만 sync됩니다. 따라서 server가 변경을 인식하려면 commit과 push가 필요합니다.
+> **CLI vs Server:** CLI는 실행한 위치에서 command를 읽습니다(uncommitted changes도 보임). server는 `~/.harneeslab/workspaces/owner/repo/`에서 읽으며, 이 경로는 worktree creation 전에 remote에서만 sync됩니다. 따라서 server가 변경을 인식하려면 commit과 push가 필요합니다.
 
 command는 다음 구조를 사용합니다.
 
@@ -258,10 +258,10 @@ HarneesLab은 command text를 AI에 보내기 전에 변수를 치환합니다. 
 
 ### Artifacts 위치
 
-artifacts는 HarneesLab-managed workspace directory의 **repository 밖**에 저장됩니다. 기본 경로는 compatibility 때문에 `~/.archon`을 유지합니다. 각 workflow run을 위해 미리 생성된 artifacts directory를 참조하려면 `$ARTIFACTS_DIR` 변수를 사용하세요.
+artifacts는 HarneesLab-managed workspace directory의 **repository 밖**에 저장됩니다. 기본 경로는 compatibility 때문에 `~/.harneeslab`을 유지합니다. 각 workflow run을 위해 미리 생성된 artifacts directory를 참조하려면 `$ARTIFACTS_DIR` 변수를 사용하세요.
 
 ```
-~/.archon/workspaces/owner/repo/artifacts/runs/{workflow-id}/
+~/.harneeslab/workspaces/owner/repo/artifacts/runs/{workflow-id}/
 ```
 
 이렇게 하면 artifacts가 git에 들어가지 않고 working tree를 오염시키지 않습니다.

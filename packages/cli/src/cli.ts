@@ -37,12 +37,7 @@ function getGlobalEnvPath(): string {
     return resolve(expandHomeEnv('HARNEESLAB_HOME', harneeslabHome), '.env');
   }
 
-  const legacyArchonHome = process.env.ARCHON_HOME;
-  if (legacyArchonHome) {
-    return resolve(expandHomeEnv('ARCHON_HOME', legacyArchonHome), '.env');
-  }
-
-  return resolve(process.env.HOME ?? homedir(), '.archon', '.env');
+  return resolve(process.env.HOME ?? homedir(), '.harneeslab', '.env');
 }
 
 function expandHomeEnv(name: string, value: string): string {
@@ -158,7 +153,7 @@ HarneesLab CLI - 명령줄에서 AI workflow(워크플로)를 실행합니다
   --quiet, -q                경고와 오류만 출력합니다
   --verbose, -v              디버그 수준 출력을 표시합니다
   --json                     기계가 읽을 수 있는 JSON을 출력합니다 (workflow list용)
-  --workflow <name>          'continue'에서 실행할 workflow (기본값: archon-assist)
+  --workflow <name>          'continue'에서 실행할 workflow (기본값: harneeslab-assist)
   --no-context               'continue'에서 context 주입을 건너뜁니다
   --port <port>              'serve'의 서버 port를 지정합니다 (기본값: 3090)
   --download-only            서버를 시작하지 않고 web UI만 다운로드합니다
@@ -170,7 +165,7 @@ HarneesLab CLI - 명령줄에서 AI workflow(워크플로)를 실행합니다
   hlab workflow run plan --cwd /path/to/repo "Add dark mode"
   hlab workflow run implement --branch feature-auth "Implement auth"
   hlab workflow run quick-fix --no-worktree "Fix typo"
-  hlab continue fix/issue-42 --workflow archon-smart-pr-review "Review the changes"
+  hlab continue fix/issue-42 --workflow harneeslab-smart-pr-review "Review the changes"
 `);
 }
 

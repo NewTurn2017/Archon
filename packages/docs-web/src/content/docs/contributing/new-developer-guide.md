@@ -1,6 +1,6 @@
 ---
 title: 새 개발자 가이드
-description: 새 Archon 개발자를 위한 코드베이스 안내 — 아키텍처 개요, workflow, platform, 첫 단계.
+description: 새 HarneesLab 개발자를 위한 코드베이스 안내 — 아키텍처 개요, workflow, platform, 첫 단계.
 category: contributing
 audience: [developer]
 status: current
@@ -8,7 +8,7 @@ sidebar:
   order: 1
 ---
 
-> **TL;DR**: Archon은 Telegram, Slack, Discord, GitHub를 통해 휴대폰에서 AI coding assistant(Claude Code, Codex)를 제어하게 해 줍니다. AI pair programming용 remote control이라고 보면 됩니다.
+> **TL;DR**: HarneesLab은 Telegram, Slack, Discord, GitHub를 통해 휴대폰에서 AI coding assistant(Claude Code, Codex)를 제어하게 해 줍니다. AI pair programming용 remote control이라고 보면 됩니다.
 
 ---
 
@@ -16,7 +16,7 @@ sidebar:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        WITHOUT ARCHON                               │
+│                        WITHOUT HARNEESLAB                               │
 │                                                                     │
 │   You're on the train, phone in hand...                            │
 │                                                                     │
@@ -29,10 +29,10 @@ sidebar:
 └─────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         WITH ARCHON                                 │
+│                         WITH HARNEESLAB                                 │
 │                                                                     │
 │   ┌──────────┐                       ┌──────────────────┐          │
-│   │  Phone   │ ─────Telegram────────▶│  Archon Server   │          │
+│   │  Phone   │ ─────Telegram────────▶│  HarneesLab Server   │          │
 │   │          │     "fix issue #42"   │                  │          │
 │   └──────────┘                       │  ┌────────────┐  │          │
 │        │                             │  │Claude Code │  │          │
@@ -56,7 +56,7 @@ sidebar:
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
 │                                                                          │
-│   USER                    ARCHON                         CODEBASE        │
+│   USER                    HARNEESLAB                         CODEBASE        │
 │                                                                          │
 │   ┌─────────┐            ┌─────────────────┐            ┌──────────┐    │
 │   │Telegram │            │                 │            │          │    │
@@ -73,7 +73,7 @@ sidebar:
 
 ---
 
-## Archon을 사용하는 네 가지 방식
+## HarneesLab을 사용하는 네 가지 방식
 
 ### 1. Command Line (Local Execution)
 
@@ -86,12 +86,12 @@ Server 없이 terminal에서 workflow를 직접 실행합니다.
 │                                                                 │
 │ $ bun run cli workflow list                                     │
 │                                                                 │
-│ Available workflows in .archon/workflows/:                     │
-│   - archon-assist                General help and questions     │
-│   - archon-fix-github-issue      Investigate and fix issues     │
-│   - archon-comprehensive-pr-review  Full PR review with agents  │
+│ Available workflows in .harneeslab/workflows/:                     │
+│   - harneeslab-assist                General help and questions     │
+│   - harneeslab-fix-github-issue      Investigate and fix issues     │
+│   - harneeslab-comprehensive-pr-review  Full PR review with agents  │
 │                                                                 │
-│ $ bun run cli workflow run archon-assist "What does the         │
+│ $ bun run cli workflow run harneeslab-assist "What does the         │
 │   orchestrator do?"                                             │
 │                                                                 │
 │ 🔧 READ                                                         │
@@ -118,7 +118,7 @@ Claude Code terminal에서처럼 AI와 바로 대화합니다.
 │                                                                 │
 │ You: What does the handleMessage function do?                   │
 │                                                                 │
-│ Archon: Looking at packages/core/src/orchestrator/orchestrator.ts...          │
+│ HarneesLab: Looking at packages/core/src/orchestrator/orchestrator.ts...          │
 │                                                                 │
 │         The handleMessage function is the main entry point      │
 │         that routes incoming messages. It:                      │
@@ -153,7 +153,7 @@ AI를 거치지 않는 deterministic command입니다.
 
 ### 4. Workflows (Multi-Step Automation)
 
-Archon이 가장 빛나는 부분입니다. 자동화된 multi-step AI workflow를 실행합니다.
+HarneesLab이 가장 빛나는 부분입니다. 자동화된 multi-step AI workflow를 실행합니다.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -198,7 +198,7 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                                                                         │
-│   .archon/workflows/fix-github-issue.yaml                              │
+│   .harneeslab/workflows/fix-github-issue.yaml                              │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
 │   │ name: fix-github-issue                                          │  │
@@ -237,7 +237,7 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 
 ---
 
-## Router: Archon이 Workflow를 고르는 방식
+## Router: HarneesLab이 Workflow를 고르는 방식
 
 메시지를 보내면 AI "router"가 무엇을 할지 결정합니다.
 
@@ -246,10 +246,10 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 │                                                                         │
 │   USER MESSAGE                           ROUTER DECISION                │
 │                                                                         │
-│   "fix this issue"          ───────▶     archon-fix-github-issue       │
-│   "review this PR"          ───────▶     archon-comprehensive-pr-review│
-│   "what does X do?"         ───────▶     archon-assist (catch-all)     │
-│   "resolve the conflicts"   ───────▶     archon-resolve-conflicts      │
+│   "fix this issue"          ───────▶     harneeslab-fix-github-issue       │
+│   "review this PR"          ───────▶     harneeslab-comprehensive-pr-review│
+│   "what does X do?"         ───────▶     harneeslab-assist (catch-all)     │
+│   "resolve the conflicts"   ───────▶     harneeslab-resolve-conflicts      │
 │                                                                         │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
@@ -272,7 +272,7 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 
 ## 사용 가능한 Workflow
 
-아래 표는 주요 bundled workflow를 보여줍니다. 모든 bundled workflow는 `archon-` prefix를 사용합니다. 현재 전체 목록을 보려면 `bun run cli workflow list`를 실행하세요.
+아래 표는 주요 bundled workflow를 보여줍니다. 모든 bundled workflow는 `harneeslab-` prefix를 사용합니다. 현재 전체 목록을 보려면 `bun run cli workflow list`를 실행하세요.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -280,28 +280,28 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 │   WORKFLOW                              TRIGGER PHRASES    WHAT IT DOES │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ archon-fix-github-issue    "fix this issue"        Investigate   │  │
+│   │ harneeslab-fix-github-issue    "fix this issue"        Investigate   │  │
 │   │                            "implement #42"         + Fix + PR    │  │
 │   └─────────────────────────────────────────────────────────────────┘  │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ archon-comprehensive-     "review this PR"        5 parallel     │  │
+│   │ harneeslab-comprehensive-     "review this PR"        5 parallel     │  │
 │   │   pr-review               "code review"           review agents  │  │
 │   │                                                   + auto-fix     │  │
 │   └─────────────────────────────────────────────────────────────────┘  │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ archon-resolve-conflicts  "resolve conflicts"     Auto-resolve   │  │
+│   │ harneeslab-resolve-conflicts  "resolve conflicts"     Auto-resolve   │  │
 │   │                           "fix merge conflicts"   git conflicts  │  │
 │   └─────────────────────────────────────────────────────────────────┘  │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ archon-ralph-dag          "run ralph"             PRD loop       │  │
+│   │ harneeslab-ralph-dag          "run ralph"             PRD loop       │  │
 │   │                           "ralph dag"             (autonomous)   │  │
 │   └─────────────────────────────────────────────────────────────────┘  │
 │                                                                         │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ archon-assist             (anything else)         General help    │  │
+│   │ harneeslab-assist             (anything else)         General help    │  │
 │   │                           "what does X do?"       questions,     │  │
 │   │                           "help me debug"         debugging      │  │
 │   └─────────────────────────────────────────────────────────────────┘  │
@@ -313,7 +313,7 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 
 ## Parallel Agents: PR Review 예시
 
-`archon-comprehensive-pr-review` workflow는 5개의 AI agent를 동시에 실행합니다.
+`harneeslab-comprehensive-pr-review` workflow는 5개의 AI agent를 동시에 실행합니다.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -370,12 +370,12 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 
 ## Ralph Loop: 자율 PRD 구현
 
-큰 feature에서는 Ralph가 user story를 완료될 때까지 하나씩 실행합니다. Workflow는 `archon-ralph-dag`입니다.
+큰 feature에서는 Ralph가 user story를 완료될 때까지 하나씩 실행합니다. Workflow는 `harneeslab-ralph-dag`입니다.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                                                                         │
-│   PRD FILE: .archon/ralph/my-feature/prd.json                          │
+│   PRD FILE: .harneeslab/ralph/my-feature/prd.json                          │
 │                                                                         │
 │   {                                                                     │
 │     "stories": [                                                        │
@@ -464,7 +464,7 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 │   ┌──────────────────┐              - WebSocket connection             │
 │   │  #coding-help    │              - @mention to activate             │
 │   │                  │              - Thread support                   │
-│   │  @Archon what    │              - Good for communities             │
+│   │  @HarneesLab what    │              - Good for communities             │
 │   │  does this do?   │                                                  │
 │   └──────────────────┘                                                  │
 │                                                                         │
@@ -491,7 +491,7 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                                                                         │
-│   ~/.archon/workspaces/owner/repo/worktrees/                           │
+│   ~/.harneeslab/workspaces/owner/repo/worktrees/                           │
 │   │                                                                     │
 │   ├── issue-42/              ◀── Conversation about issue #42         │
 │   │   └── (full repo)            Working on fix for mobile bug         │
@@ -529,14 +529,14 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 │                              │                                          │
 │                              ▼                                          │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ 2. GLOBAL CONFIG (~/.archon/config.yaml)                        │  │
+│   │ 2. GLOBAL CONFIG (~/.harneeslab/config.yaml)                        │  │
 │   │    botName: MyBot                                               │  │
 │   │    defaultAssistant: claude                                     │  │
 │   └─────────────────────────────────────────────────────────────────┘  │
 │                              │                                          │
 │                              ▼                                          │
 │   ┌─────────────────────────────────────────────────────────────────┐  │
-│   │ 3. REPO CONFIG (.archon/config.yaml)                            │  │
+│   │ 3. REPO CONFIG (.harneeslab/config.yaml)                            │  │
 │   │    assistant: codex          # This repo prefers Codex          │  │
 │   │    commands:                                                    │  │
 │   │      folder: .claude/commands/custom                            │  │
@@ -559,10 +559,10 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                                                                         │
-│   YOUR REPO                         ARCHON SERVER                       │
+│   YOUR REPO                         HARNEESLAB SERVER                       │
 │                                                                         │
-│   my-app/                           ~/.archon/                          │
-│   ├── .archon/                      ├── config.yaml      (global cfg)  │
+│   my-app/                           ~/.harneeslab/                          │
+│   ├── .harneeslab/                      ├── config.yaml      (global cfg)  │
 │   │   ├── config.yaml               ├── workspaces/      (cloned repos)│
 │   │   ├── commands/                 │   └── user/repo/                 │
 │   │   │   ├── investigate-issue.md  │       ├── source/    (clone)      │
@@ -616,11 +616,11 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                                                                         │
-│   ARCHON = Remote Control for AI Coding Assistants                     │
+│   HARNEESLAB = Remote Control for AI Coding Assistants                     │
 │                                                                         │
 │   ┌────────────────────────────────────────────────────────────────┐   │
 │   │                                                                │   │
-│   │   Phone/Slack/GitHub ──▶ Archon Server ──▶ AI (Claude/Codex)  │   │
+│   │   Phone/Slack/GitHub ──▶ HarneesLab Server ──▶ AI (Claude/Codex)  │   │
 │   │                              │                    │            │   │
 │   │                              ▼                    ▼            │   │
 │   │                         Workflows           Git Worktrees      │   │
@@ -653,8 +653,8 @@ Workflow는 AI prompt를 이어 붙이는 YAML file입니다.
 ## 다음 단계
 
 1. **읽기**: [Getting Started](/getting-started/) - 첫 instance 설정
-2. **탐색**: `.archon/workflows/` - 예시 workflow 확인
-3. **커스터마이즈**: `.archon/commands/` - 직접 prompt 만들기
-4. **설정**: `.archon/config.yaml` - 설정 조정
+2. **탐색**: `.harneeslab/workflows/` - 예시 workflow 확인
+3. **커스터마이즈**: `.harneeslab/commands/` - 직접 prompt 만들기
+4. **설정**: `.harneeslab/config.yaml` - 설정 조정
 
 Remote agentic coding에 오신 것을 환영합니다.

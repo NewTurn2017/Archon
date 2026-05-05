@@ -25,10 +25,10 @@ nodes:
 Each node must have exactly ONE of these fields:
 
 ### Command Node
-Runs a command file from `.archon/commands/`:
+Runs a command file from `.harneeslab/commands/`:
 ```yaml
 - id: investigate
-  command: investigate-issue         # Loads .archon/commands/investigate-issue.md
+  command: investigate-issue         # Loads .harneeslab/commands/investigate-issue.md
 ```
 
 ### Prompt Node

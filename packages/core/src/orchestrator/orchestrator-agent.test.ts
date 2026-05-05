@@ -53,8 +53,8 @@ const mockLogger = createMockLogger();
 
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorkspacesPath: mock(() => '/home/test/.archon/workspaces'),
-  getArchonHome: mock(() => '/home/test/.archon'),
+  getHarneesLabWorkspacesPath: mock(() => '/home/test/.harneeslab/workspaces'),
+  getHarneesLabHome: mock(() => '/home/test/.harneeslab'),
 }));
 
 const mockUpdateConversation = mock(() => Promise.resolve());
@@ -183,7 +183,7 @@ mock.module('@harneeslab/isolation', () => ({
 }));
 
 mock.module('../utils/worktree-sync', () => ({
-  syncArchonToWorktree: mock(() => Promise.resolve()),
+  syncHarneesLabToWorktree: mock(() => Promise.resolve()),
 }));
 
 mock.module('@harneeslab/git', () => ({
@@ -222,7 +222,7 @@ describe('parseOrchestratorCommands', () => {
   const planWorkflow = makeTestWorkflow({ name: 'plan' });
 
   const myProject = makeCodebase('my-project');
-  const orgProject = makeCodebase('coleam00/Archon');
+  const orgProject = makeCodebase('coleam00/HarneesLab');
 
   const workflows = [assistWorkflow, implementWorkflow, planWorkflow];
   const codebases = [myProject, orgProject];
@@ -417,19 +417,19 @@ describe('parseOrchestratorCommands', () => {
     });
 
     test('matches project by last path segment (partial match)', () => {
-      // "coleam00/Archon" matched by "Archon"
-      const response = '/invoke-workflow assist --project Archon';
+      // "coleam00/HarneesLab" matched by "HarneesLab"
+      const response = '/invoke-workflow assist --project HarneesLab';
       const result = parseOrchestratorCommands(response, codebases, workflows);
 
       expect(result.workflowInvocation).not.toBeNull();
-      expect(result.workflowInvocation?.projectName).toBe('coleam00/Archon');
+      expect(result.workflowInvocation?.projectName).toBe('coleam00/HarneesLab');
     });
 
     test('partial match is case-insensitive', () => {
-      const response = '/invoke-workflow assist --project archon';
+      const response = '/invoke-workflow assist --project harneeslab';
       const result = parseOrchestratorCommands(response, codebases, workflows);
 
-      expect(result.workflowInvocation?.projectName).toBe('coleam00/Archon');
+      expect(result.workflowInvocation?.projectName).toBe('coleam00/HarneesLab');
     });
 
     test('returns null workflowInvocation when project does not exist', () => {
@@ -447,11 +447,11 @@ describe('parseOrchestratorCommands', () => {
     });
 
     test('uses matched codebase name (not the input name) in result', () => {
-      // Input "Archon" should resolve to full name "coleam00/Archon"
-      const response = '/invoke-workflow assist --project Archon';
+      // Input "HarneesLab" should resolve to full name "coleam00/HarneesLab"
+      const response = '/invoke-workflow assist --project HarneesLab';
       const result = parseOrchestratorCommands(response, codebases, workflows);
 
-      expect(result.workflowInvocation?.projectName).toBe('coleam00/Archon');
+      expect(result.workflowInvocation?.projectName).toBe('coleam00/HarneesLab');
     });
   });
 
@@ -923,7 +923,7 @@ describe('discoverAllWorkflows — remote sync', () => {
     const platform = makePlatform();
     await handleMessage(platform, 'conv-1', 'What is the latest commit?');
 
-    // /repos/test-repo is NOT under ~/.archon/workspaces/ so resetAfterFetch=false
+    // /repos/test-repo is NOT under ~/.harneeslab/workspaces/ so resetAfterFetch=false
     expect(mockSyncWorkspace).toHaveBeenCalledWith('/repos/test-repo', undefined, {
       resetAfterFetch: false,
     });
@@ -933,7 +933,7 @@ describe('discoverAllWorkflows — remote sync', () => {
     const conversation = makeConversation({ codebase_id: 'codebase-1' });
     const codebase = {
       ...makeCodebaseForSync(),
-      default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+      default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
     };
     mockGetOrCreateConversation.mockReturnValueOnce(Promise.resolve(conversation));
     mockGetCodebase.mockReturnValueOnce(Promise.resolve(codebase));
@@ -942,7 +942,7 @@ describe('discoverAllWorkflows — remote sync', () => {
     await handleMessage(platform, 'conv-1', 'What is the latest commit?');
 
     expect(mockSyncWorkspace).toHaveBeenCalledWith(
-      '/home/test/.archon/workspaces/owner/repo/source',
+      '/home/test/.harneeslab/workspaces/owner/repo/source',
       undefined,
       { resetAfterFetch: true }
     );

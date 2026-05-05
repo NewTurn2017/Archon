@@ -9,7 +9,7 @@ sidebar:
   order: 9
 ---
 
-`archon-remotion-generate` workflow는 AI를 사용해 Remotion video composition을 만듭니다. React/TypeScript code를 생성하고, preview stills를 render하고, full video를 render한 뒤 output을 요약합니다. 이 모든 과정은 노드별 skills를 사용하는 DAG workflow로 실행됩니다.
+`harneeslab-remotion-generate` workflow는 AI를 사용해 Remotion video composition을 만듭니다. React/TypeScript code를 생성하고, preview stills를 render하고, full video를 render한 뒤 output을 요약합니다. 이 모든 과정은 노드별 skills를 사용하는 DAG workflow로 실행됩니다.
 
 ## 빠른 시작
 
@@ -33,7 +33,7 @@ npx skills add remotion-dev/skills
 
 ```bash
 # From your Remotion project directory:
-bun run cli workflow run archon-remotion-generate "Create a 5-second countdown from 5 to 1 with bouncy spring animations and a glowing effect"
+bun run cli workflow run harneeslab-remotion-generate "Create a 5-second countdown from 5 to 1 with bouncy spring animations and a glowing effect"
 ```
 
 output은 `out/video.mp4`에 생성됩니다.
@@ -106,13 +106,13 @@ my-video/
 
 ```bash
 # Good — describes what to see
-bun run cli workflow run archon-remotion-generate "A 10-second animated bar chart showing monthly revenue growing from $10K to $100K, with each bar sliding up with a spring animation"
+bun run cli workflow run harneeslab-remotion-generate "A 10-second animated bar chart showing monthly revenue growing from $10K to $100K, with each bar sliding up with a spring animation"
 
 # Good — specific visual style
-bun run cli workflow run archon-remotion-generate "Dark background, white text. Three slides: title card with company name, bullet points sliding in one by one, closing CTA with a pulse animation"
+bun run cli workflow run harneeslab-remotion-generate "Dark background, white text. Three slides: title card with company name, bullet points sliding in one by one, closing CTA with a pulse animation"
 
 # Less good — too vague
-bun run cli workflow run archon-remotion-generate "make a video"
+bun run cli workflow run harneeslab-remotion-generate "make a video"
 ```
 
 ## MCP Servers 추가
@@ -120,7 +120,7 @@ bun run cli workflow run archon-remotion-generate "make a video"
 더 풍부한 workflow를 위해 skills와 MCP를 결합하세요. 예를 들어 agent가 API details를 조회할 수 있도록 Remotion docs MCP server를 추가할 수 있습니다.
 
 ```json
-// .archon/mcp/remotion.json
+// .harneeslab/mcp/remotion.json
 {
   "remotion-docs": {
     "command": "npx",
@@ -139,7 +139,7 @@ nodes:
     prompt: "Create a video: $ARGUMENTS"
     skills:
       - remotion-best-practices
-    mcp: .archon/mcp/remotion.json
+    mcp: .harneeslab/mcp/remotion.json
     allowed_tools:
       - Read
       - Write

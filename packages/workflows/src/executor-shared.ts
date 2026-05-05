@@ -8,7 +8,7 @@
 import { readFile } from 'fs/promises';
 import { join } from 'path';
 import type { WorkflowDeps } from './deps';
-import * as archonPaths from '@harneeslab/paths';
+import * as harneeslabPaths from '@harneeslab/paths';
 import { BUNDLED_COMMANDS, isBinaryBuild } from './defaults/bundled-defaults';
 import { createLogger } from '@harneeslab/paths';
 import { isValidCommandName } from './command-validation';
@@ -142,7 +142,7 @@ export async function loadCommandPrompt(
       {
         err,
         cwd,
-        note: 'Default commands will be loaded. Check your .archon/config.yaml if this is unexpected.',
+        note: 'Default commands will be loaded. Check your .harneeslab/config.yaml if this is unexpected.',
       },
       'config_load_failed_using_defaults'
     );
@@ -150,7 +150,7 @@ export async function loadCommandPrompt(
   }
 
   // Use command folder paths with optional configured folder
-  const searchPaths = archonPaths.getCommandFolderSearchPaths(configuredFolder);
+  const searchPaths = harneeslabPaths.getCommandFolderSearchPaths(configuredFolder);
 
   // Search repo paths first
   for (const folder of searchPaths) {
@@ -203,7 +203,7 @@ export async function loadCommandPrompt(
       getLog().debug({ commandName }, 'command_bundled_not_found');
     } else {
       // Bun: load from filesystem
-      const appDefaultsPath = archonPaths.getDefaultCommandsPath();
+      const appDefaultsPath = harneeslabPaths.getDefaultCommandsPath();
       const filePath = join(appDefaultsPath, `${commandName}.md`);
       try {
         const content = await readFile(filePath, 'utf-8');
@@ -276,7 +276,7 @@ export function substituteWorkflowVariables(
   // Fail fast if the prompt references $BASE_BRANCH but no base branch could be resolved
   if (!baseBranch && prompt.includes('$BASE_BRANCH')) {
     throw new Error(
-      'No base branch could be resolved. Auto-detection failed and `worktree.baseBranch` is not set in .archon/config.yaml. ' +
+      'No base branch could be resolved. Auto-detection failed and `worktree.baseBranch` is not set in .harneeslab/config.yaml. ' +
         'Set the config value or use the --from flag to select a branch (e.g., --from dev).'
     );
   }

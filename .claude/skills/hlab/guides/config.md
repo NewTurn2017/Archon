@@ -10,23 +10,23 @@ Use **AskUserQuestion** to determine what the user wants to configure:
 Header: "Config scope"
 Question: "Which configuration do you want to modify?"
 Options:
-  1. "Repo config" (Recommended) — Settings for a specific repository (.archon/config.yaml in the repo)
-  2. "Global config" — User-wide settings (~/.archon/config.yaml)
+  1. "Repo config" (Recommended) — Settings for a specific repository (.harneeslab/config.yaml in the repo)
+  2. "Global config" — User-wide settings (~/.harneeslab/config.yaml)
   3. "Both" — Review and modify both configs
 ```
 
 ## Step 2: Load Current Config
 
-### For Global Config (~/.archon/config.yaml)
+### For Global Config (~/.harneeslab/config.yaml)
 
 Read the file:
 ```bash
-cat ~/.archon/config.yaml
+cat ~/.harneeslab/config.yaml
 ```
 
 If it doesn't exist, tell the user it will be auto-created on first HarneesLab run with defaults. Offer to create it now.
 
-### For Repo Config (<repo>/.archon/config.yaml)
+### For Repo Config (<repo>/.harneeslab/config.yaml)
 
 First determine the target repo. If the current working directory is a git repo (and not the HarneesLab source repo), use it. Otherwise ask:
 
@@ -40,7 +40,7 @@ Options:
 
 Then read the file:
 ```bash
-cat <target-repo>/.archon/config.yaml
+cat <target-repo>/.harneeslab/config.yaml
 ```
 
 If it doesn't exist, tell the user: "No repo config found. I can create one — or HarneesLab will use defaults." Offer to create it.
@@ -51,7 +51,7 @@ Display the current configuration in a clear format. Show both the current value
 
 Format example:
 ```
-Current repo config (.archon/config.yaml):
+Current repo config (.harneeslab/config.yaml):
   assistant: codex (default: claude)
   worktree.baseBranch: develop (default: auto-detected)
   worktree.copyFiles: [".env"] (default: none)
@@ -170,7 +170,7 @@ Loop back to Step 4 if they want more changes.
 
 ## Reference: All Configuration Options
 
-### Global Config (~/.archon/config.yaml)
+### Global Config (~/.harneeslab/config.yaml)
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
@@ -179,16 +179,16 @@ Loop back to Step 4 if they want more changes.
 | `streaming.telegram` | `stream` \| `batch` | `stream` | Telegram response delivery mode |
 | `streaming.discord` | `stream` \| `batch` | `batch` | Discord response delivery mode |
 | `streaming.slack` | `stream` \| `batch` | `batch` | Slack response delivery mode |
-| `paths.workspaces` | string | `~/.archon/workspaces` | Directory for cloned repositories |
-| `paths.worktrees` | string | `~/.archon/worktrees` | Directory for git worktrees |
+| `paths.workspaces` | string | `~/.harneeslab/workspaces` | Directory for cloned repositories |
+| `paths.worktrees` | string | `~/.harneeslab/worktrees` | Directory for git worktrees |
 | `concurrency.maxConversations` | number | `10` | Maximum concurrent AI conversations |
 
-### Repo Config (<repo>/.archon/config.yaml)
+### Repo Config (<repo>/.harneeslab/config.yaml)
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `assistant` | `claude` \| `codex` | `claude` | AI assistant for this repo (overrides global) |
-| `commands.folder` | string | `.archon/commands` | Custom command folder path (relative to repo root) |
+| `commands.folder` | string | `.harneeslab/commands` | Custom command folder path (relative to repo root) |
 | `commands.autoLoad` | boolean | `true` | Auto-load commands on clone |
 | `worktree.baseBranch` | string | auto-detected | Base branch for worktree creation |
 | `worktree.copyFiles` | string[] | `[]` | Files to copy into new worktrees (supports `"source -> dest"` renaming) |
@@ -198,8 +198,8 @@ Loop back to Step 4 if they want more changes.
 ### Precedence Order (highest wins)
 
 1. **Environment variables** (`.env` or shell) — always win
-2. **Repo config** (`.archon/config.yaml` in repo) — project-specific
-3. **Global config** (`~/.archon/config.yaml`) — user-wide preferences
+2. **Repo config** (`.harneeslab/config.yaml` in repo) — project-specific
+3. **Global config** (`~/.harneeslab/config.yaml`) — user-wide preferences
 4. **Defaults** — hardcoded sensible values
 
 ### Environment Variable Overrides
@@ -214,4 +214,4 @@ These env vars override any config file setting:
 | `DISCORD_STREAMING_MODE` | `streaming.discord` |
 | `SLACK_STREAMING_MODE` | `streaming.slack` |
 | `MAX_CONCURRENT_CONVERSATIONS` | `concurrency.maxConversations` |
-| `ARCHON_HOME` | Base directory for all HarneesLab paths |
+| `HARNEESLAB_HOME` | Base directory for all HarneesLab paths |

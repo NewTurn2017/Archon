@@ -4,15 +4,15 @@ import { join } from 'path';
 import { createMockLogger } from '../test/mocks/logger';
 
 const mockLogger = createMockLogger();
-const archonHome = join(homedir(), '.archon');
+const harneeslabHome = join(homedir(), '.harneeslab');
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonHome: mock(() => archonHome),
-  getArchonConfigPath: mock(() => join(archonHome, 'config.yaml')),
-  getArchonWorkspacesPath: mock(() => join(archonHome, 'workspaces')),
-  getArchonWorktreesPath: mock(() => join(archonHome, 'worktrees')),
-  getDefaultCommandsPath: mock(() => '/app/.archon/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/app/.archon/workflows/defaults'),
+  getHarneesLabHome: mock(() => harneeslabHome),
+  getHarneesLabConfigPath: mock(() => join(harneeslabHome, 'config.yaml')),
+  getHarneesLabWorkspacesPath: mock(() => join(harneeslabHome, 'workspaces')),
+  getHarneesLabWorktreesPath: mock(() => join(harneeslabHome, 'worktrees')),
+  getDefaultCommandsPath: mock(() => '/app/.harneeslab/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/app/.harneeslab/workflows/defaults'),
 }));
 
 // Mock for reading/writing config files (replaces fs/promises mock)
@@ -47,7 +47,7 @@ describe('config-loader', () => {
     'WORKSPACE_PATH',
     'WORKTREE_BASE',
     'HARNEESLAB_HOME',
-    'ARCHON_HOME',
+    'HARNEESLAB_HOME',
   ];
 
   beforeEach(() => {
@@ -161,7 +161,7 @@ concurrency:
   });
 
   describe('loadRepoConfig', () => {
-    test('loads from .archon/config.yaml', async () => {
+    test('loads from .harneeslab/config.yaml', async () => {
       mockReadConfigFile.mockResolvedValue('assistant: codex');
 
       const config = await loadRepoConfig('/test/repo');
@@ -266,7 +266,7 @@ streaming:
     test('throws on unknown assistant in repo config', async () => {
       mockReadConfigFile.mockImplementation(async (path: string) => {
         const normalized = path.replace(/\\/g, '/');
-        if (normalized.includes('/tmp/test-repo/.archon/config.yaml')) {
+        if (normalized.includes('/tmp/test-repo/.harneeslab/config.yaml')) {
           return 'assistant: nonexistent-provider';
         }
         return '';
@@ -284,12 +284,12 @@ streaming:
 
       let globalConfigRead = false;
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        // First check for repo-specific config path (contains /repo/.archon/)
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        // First check for repo-specific config path (contains /repo/.harneeslab/)
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return 'assistant: codex';
         }
-        // Then check for global config (just .archon/config.yaml but not under /repo/)
-        if (pathMatches(path, '.archon/config.yaml') && !globalConfigRead) {
+        // Then check for global config (just .harneeslab/config.yaml but not under /repo/)
+        if (pathMatches(path, '.harneeslab/config.yaml') && !globalConfigRead) {
           globalConfigRead = true;
           return 'defaultAssistant: claude';
         }
@@ -310,10 +310,10 @@ streaming:
 
       let globalConfigRead = false;
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `assistants:\n  codex:\n    webSearchMode: live\n    additionalDirectories:\n      - /repo\n`;
         }
-        if (pathMatches(path, '.archon/config.yaml') && !globalConfigRead) {
+        if (pathMatches(path, '.harneeslab/config.yaml') && !globalConfigRead) {
           globalConfigRead = true;
           return `assistants:\n  claude:\n    model: sonnet\n  codex:\n    model: gpt-5.2-codex\n    modelReasoningEffort: medium\n`;
         }
@@ -337,7 +337,7 @@ streaming:
       };
 
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `
 worktree:
   baseBranch: develop
@@ -359,7 +359,7 @@ worktree:
       };
 
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `
 worktree:
   baseBranch: "  staging  "
@@ -390,7 +390,7 @@ worktree:
       };
 
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `
 docs:
   path: packages/docs-web/src/content/docs
@@ -412,7 +412,7 @@ docs:
       };
 
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `
 docs:
   path: "  custom/docs/  "
@@ -441,7 +441,7 @@ docs:
         path.replace(/\\/g, '/').includes(pattern);
 
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `
 env:
   MY_TOKEN: abc123
@@ -466,15 +466,15 @@ env:
       expect(config.envVars).toBeUndefined();
     });
 
-    test('paths use archon defaults', async () => {
+    test('paths use harneeslab defaults', async () => {
       const error = new Error('ENOENT') as NodeJS.ErrnoException;
       error.code = 'ENOENT';
       mockReadConfigFile.mockRejectedValue(error);
 
       const config = await loadConfig();
 
-      expect(config.paths.workspaces).toBe(join(homedir(), '.archon', 'workspaces'));
-      expect(config.paths.worktrees).toBe(join(homedir(), '.archon', 'worktrees'));
+      expect(config.paths.workspaces).toBe(join(homedir(), '.harneeslab', 'workspaces'));
+      expect(config.paths.worktrees).toBe(join(homedir(), '.harneeslab', 'worktrees'));
     });
   });
 
@@ -505,10 +505,10 @@ assistants:
 
       let globalConfigRead = false;
       mockReadConfigFile.mockImplementation(async (path: string) => {
-        if (pathMatches(path, '/repo/.archon/config.yaml')) {
+        if (pathMatches(path, '/repo/.harneeslab/config.yaml')) {
           return `assistants:\n  claude:\n    settingSources:\n      - project\n`;
         }
-        if (pathMatches(path, '.archon/config.yaml') && !globalConfigRead) {
+        if (pathMatches(path, '.harneeslab/config.yaml') && !globalConfigRead) {
           globalConfigRead = true;
           return `assistants:\n  claude:\n    settingSources:\n      - project\n      - user\n`;
         }

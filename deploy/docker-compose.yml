@@ -20,7 +20,7 @@ services:
     ports:
       - "${PORT:-3000}:${PORT:-3000}"
     volumes:
-      - ${HARNEESLAB_DATA:-${ARCHON_DATA:-archon_data}}:/.harneeslab
+      - ${HARNEESLAB_DATA:-harneeslab_data}:/.harneeslab
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${PORT:-3000}/api/health"]
       interval: 30s
@@ -46,5 +46,4 @@ services:
 
 volumes:
   harneeslab_data:
-  archon_data:
   # postgres_data:

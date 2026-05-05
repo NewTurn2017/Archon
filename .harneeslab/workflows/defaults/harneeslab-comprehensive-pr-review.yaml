@@ -1,0 +1,48 @@
+name: harneeslab-comprehensive-pr-review
+description: |
+  사용할 때: pull request를 포괄적으로 code review하고 자동 수정까지 원할 때.
+  트리거 예시: "PR 리뷰해줘", "review PR #123", "comprehensive review", "full PR review",
+            "review and fix", "이 PR 확인해줘", "code review".
+  하는 일: PR을 main과 동기화(필요 시 rebase) -> 전문 review agent 5개를 병렬 실행 ->
+        findings 종합 -> CRITICAL/HIGH issue 자동 수정 -> 남은 issue 보고.
+  사용하지 않을 때: PR에 대한 짧은 질문, CI 상태 확인, 단순한 "무엇이 바뀌었나" 확인.
+
+  이 workflow는 $ARTIFACTS_DIR/../reviews/pr-{number}/ 에 artifacts를 만들고
+  GitHub PR에 comprehensive review comment를 게시한다.
+
+nodes:
+  - id: scope
+    command: harneeslab-pr-review-scope
+
+  - id: sync
+    command: harneeslab-sync-pr-with-main
+    depends_on: [scope]
+
+  - id: code-review
+    command: harneeslab-code-review-agent
+    depends_on: [sync]
+
+  - id: error-handling
+    command: harneeslab-error-handling-agent
+    depends_on: [sync]
+
+  - id: test-coverage
+    command: harneeslab-test-coverage-agent
+    depends_on: [sync]
+
+  - id: comment-quality
+    command: harneeslab-comment-quality-agent
+    depends_on: [sync]
+
+  - id: docs-impact
+    command: harneeslab-docs-impact-agent
+    depends_on: [sync]
+
+  - id: synthesize
+    command: harneeslab-synthesize-review
+    depends_on: [code-review, error-handling, test-coverage, comment-quality, docs-impact]
+    trigger_rule: one_success
+
+  - id: implement-fixes
+    command: harneeslab-implement-review-fixes
+    depends_on: [synthesize]

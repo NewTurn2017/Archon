@@ -15,7 +15,7 @@ import { t } from '@/lib/i18n';
 const PANEL_MIN = 220;
 const PANEL_MAX = 420;
 const PANEL_DEFAULT = 260;
-const STORAGE_KEY = 'archon-chat-panel-width';
+const STORAGE_KEY = 'harneeslab-chat-panel-width';
 
 function getInitialWidth(): number {
   const stored = localStorage.getItem(STORAGE_KEY);

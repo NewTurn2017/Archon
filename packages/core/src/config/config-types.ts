@@ -2,13 +2,13 @@
  * Configuration types for HarneesLab YAML config files
  *
  * Two levels:
- * - Global: ~/.archon/config.yaml (user preferences)
- * - Repository: .archon/config.yaml (project settings)
+ * - Global: ~/.harneeslab/config.yaml (user preferences)
+ * - Repository: .harneeslab/config.yaml (project settings)
  */
 
 /**
  * Global configuration (non-secret user preferences)
- * Located at ~/.archon/config.yaml
+ * Located at ~/.harneeslab/config.yaml
  */
 
 // Provider config defaults — canonical definitions live in @harneeslab/providers/types.
@@ -92,13 +92,13 @@ export interface GlobalConfig {
   paths?: {
     /**
      * Override workspaces directory
-     * @default '~/.archon/workspaces'
+     * @default '~/.harneeslab/workspaces'
      */
     workspaces?: string;
 
     /**
      * Override worktrees directory
-     * @default '~/.archon/worktrees'
+     * @default '~/.harneeslab/worktrees'
      */
     worktrees?: string;
   };
@@ -117,7 +117,7 @@ export interface GlobalConfig {
 
 /**
  * Repository configuration (project-specific settings)
- * Located at .archon/config.yaml in any repository
+ * Located at .harneeslab/config.yaml in any repository
  */
 export interface RepoConfig {
   /**
@@ -137,7 +137,7 @@ export interface RepoConfig {
   commands?: {
     /**
      * Custom command folder path (relative to repo root)
-     * @default '.archon/commands'
+     * @default '.harneeslab/commands'
      */
     folder?: string;
 
@@ -161,7 +161,7 @@ export interface RepoConfig {
     /**
      * Git-ignored files/directories to copy from main repo to new worktrees.
      * Tracked files are already in worktrees — only use this for git-ignored files.
-     * @example [".env", ".archon", "data/fixtures/"]
+     * @example [".env", ".harneeslab", "data/fixtures/"]
      */
     copyFiles?: string[];
 
@@ -247,7 +247,7 @@ export interface MergedConfig {
   commands: {
     /**
      * Additional command folder to search (relative to repo root)
-     * Searched after .archon/commands/ but before .claude/commands/
+     * Searched after .harneeslab/commands/ but before .claude/commands/
      */
     folder?: string;
     autoLoad: boolean;
@@ -270,7 +270,7 @@ export interface MergedConfig {
    */
   docsPath?: string;
   /**
-   * Merged per-project env vars from .archon/config.yaml env: section.
+   * Merged per-project env vars from .harneeslab/config.yaml env: section.
    * DB env vars (from Web UI) are merged on top by executeWorkflow.
    * Undefined when no env vars are configured.
    */

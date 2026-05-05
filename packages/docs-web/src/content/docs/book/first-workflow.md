@@ -16,7 +16,7 @@ sidebar:
 
 ## Workflow 기본
 
-**workflow**는 `.archon/workflows/` 안의 YAML 파일입니다. `hlab workflow run my-workflow "do something"`을 실행하면 Archon은 파일을 찾고 node를 읽은 뒤 dependency 순서대로 실행합니다.
+**workflow**는 `.harneeslab/workflows/` 안의 YAML 파일입니다. `hlab workflow run my-workflow "do something"`을 실행하면 HarneesLab은 파일을 찾고 node를 읽은 뒤 dependency 순서대로 실행합니다.
 
 가장 작은 유효 workflow는 다음과 같습니다.
 
@@ -32,9 +32,9 @@ nodes:
     depends_on: [first]
 ```
 
-이것이 전부입니다. 위쪽에는 세 개 field, 아래쪽에는 node 목록이 있습니다. 각 node에는 고유한 `id`가 필요합니다. Archon은 `.archon/workflows/` 안의 workflow file을 재귀적으로 발견하므로 원한다면 하위 디렉터리로 정리할 수 있습니다.
+이것이 전부입니다. 위쪽에는 세 개 field, 아래쪽에는 node 목록이 있습니다. 각 node에는 고유한 `id`가 필요합니다. HarneesLab은 `.harneeslab/workflows/` 안의 workflow file을 재귀적으로 발견하므로 원한다면 하위 디렉터리로 정리할 수 있습니다.
 
-> **어디에 두나**: repository에 `.archon/workflows/my-workflow.yaml`을 만드세요. `hlab workflow list`를 실행해 Archon이 찾았는지 확인합니다.
+> **어디에 두나**: repository에 `.harneeslab/workflows/my-workflow.yaml`을 만드세요. `hlab workflow list`를 실행해 HarneesLab이 찾았는지 확인합니다.
 
 ---
 
@@ -42,7 +42,7 @@ nodes:
 
 실제에 가까운 것을 만들어 봅시다. 시나리오는 이렇습니다. feature request를 받아 implementation plan을 만들고, 그 계획을 구현하는 workflow가 필요합니다.
 
-`.archon/workflows/my-workflow.yaml`을 만듭니다.
+`.harneeslab/workflows/my-workflow.yaml`을 만듭니다.
 
 ```yaml
 name: my-workflow
@@ -50,9 +50,9 @@ description: Plan a feature and implement it
 
 nodes:
   - id: plan
-    command: archon-create-plan
+    command: harneeslab-create-plan
   - id: implement
-    command: archon-implement-tasks
+    command: harneeslab-implement-tasks
     depends_on: [plan]
 ```
 
@@ -62,7 +62,7 @@ nodes:
 hlab workflow run my-workflow --branch feature/auth-tokens "Add JWT refresh token support"
 ```
 
-Archon은 입력값으로 `archon-create-plan`을 실행하고, 완료를 기다린 뒤 `archon-implement-tasks`를 실행합니다. AI는 planning node의 전체 대화 context를 implementation node로 가져갑니다. 자신이 무엇을 계획했는지 알고 즉시 실행할 수 있습니다.
+HarneesLab은 입력값으로 `harneeslab-create-plan`을 실행하고, 완료를 기다린 뒤 `harneeslab-implement-tasks`를 실행합니다. AI는 planning node의 전체 대화 context를 implementation node로 가져갑니다. 자신이 무엇을 계획했는지 알고 즉시 실행할 수 있습니다.
 
 가장 단순하면서도 유용한 workflow입니다. 두 node, 별도 configuration 없음, 여러분의 조율도 필요 없습니다.
 
@@ -78,9 +78,9 @@ description: Plan, implement, and validate a feature
 
 nodes:
   - id: plan
-    command: archon-create-plan
+    command: harneeslab-create-plan
   - id: implement
-    command: archon-implement-tasks
+    command: harneeslab-implement-tasks
     depends_on: [plan]
   - id: validate
     command: run-tests
@@ -111,9 +111,9 @@ description: Plan, implement, validate, and review a feature
 
 nodes:
   - id: plan
-    command: archon-create-plan
+    command: harneeslab-create-plan
   - id: implement
-    command: archon-implement-tasks
+    command: harneeslab-implement-tasks
     depends_on: [plan]
   - id: validate
     command: run-tests
@@ -121,20 +121,20 @@ nodes:
     context: fresh
     prompt: "Run tests for the auth module"
   - id: code-review
-    command: archon-code-review-agent
+    command: harneeslab-code-review-agent
     depends_on: [validate]
     context: fresh
   - id: error-handling
-    command: archon-error-handling-agent
+    command: harneeslab-error-handling-agent
     depends_on: [validate]
     context: fresh
   - id: test-coverage
-    command: archon-test-coverage-agent
+    command: harneeslab-test-coverage-agent
     depends_on: [validate]
     context: fresh
 ```
 
-`code-review`, `error-handling`, `test-coverage` node는 모두 `validate`에 의존하지만 서로에게는 의존하지 않습니다. Archon은 이들을 동시에 실행합니다. 각 agent는 자기만의 fresh AI session을 갖습니다. Archon은 세 node가 모두 끝날 때까지 기다린 뒤 다음 node로 이동합니다.
+`code-review`, `error-handling`, `test-coverage` node는 모두 `validate`에 의존하지만 서로에게는 의존하지 않습니다. HarneesLab은 이들을 동시에 실행합니다. 각 agent는 자기만의 fresh AI session을 갖습니다. HarneesLab은 세 node가 모두 끝날 때까지 기다린 뒤 다음 node로 이동합니다.
 
 시간 절약 효과는 빠르게 커집니다. review agent 세 개를 병렬로 실행하면 하나를 실행하는 시간과 거의 비슷합니다. 다섯 개도 두 개 정도의 시간에 끝납니다. 병렬 실행은 workflow를 쓰는 가장 실용적인 이유 중 하나입니다.
 
@@ -150,9 +150,9 @@ description: Plan, implement, validate, review, and self-fix a feature
 
 nodes:
   - id: plan
-    command: archon-create-plan
+    command: harneeslab-create-plan
   - id: implement
-    command: archon-implement-tasks
+    command: harneeslab-implement-tasks
     depends_on: [plan]
   - id: validate
     command: run-tests
@@ -160,24 +160,24 @@ nodes:
     context: fresh
     prompt: "Run tests for the auth module"
   - id: code-review
-    command: archon-code-review-agent
+    command: harneeslab-code-review-agent
     depends_on: [validate]
     context: fresh
   - id: error-handling
-    command: archon-error-handling-agent
+    command: harneeslab-error-handling-agent
     depends_on: [validate]
     context: fresh
   - id: test-coverage
-    command: archon-test-coverage-agent
+    command: harneeslab-test-coverage-agent
     depends_on: [validate]
     context: fresh
   - id: self-fix
-    command: archon-implement-review-fixes
+    command: harneeslab-implement-review-fixes
     depends_on: [code-review, error-handling, test-coverage]
     context: fresh
 ```
 
-`archon-implement-review-fixes` command는 세 review agent가 작성한 artifact를 읽고 finding을 종합한 뒤 권장 변경을 구현합니다. `context: fresh`는 전체 implementation history가 아니라 review finding에 집중하게 합니다.
+`harneeslab-implement-review-fixes` command는 세 review agent가 작성한 artifact를 읽고 finding을 종합한 뒤 권장 변경을 구현합니다. `context: fresh`는 전체 implementation history가 아니라 review finding에 집중하게 합니다.
 
 완성된 workflow를 실행합니다.
 
@@ -185,7 +185,7 @@ nodes:
 hlab workflow run my-workflow --branch feature/auth-tokens "Add JWT refresh token support"
 ```
 
-방금 `archon-idea-to-pr`의 미니 버전을 만들었습니다. 구조는 같고 더 압축되어 있습니다. 내장 workflow는 scope confirmation, PR creation, final summary 같은 node를 몇 개 더 추가하지만 핵심 패턴은 여기서 만든 것과 동일합니다.
+방금 `harneeslab-idea-to-pr`의 미니 버전을 만들었습니다. 구조는 같고 더 압축되어 있습니다. 내장 workflow는 scope confirmation, PR creation, final summary 같은 node를 몇 개 더 추가하지만 핵심 패턴은 여기서 만든 것과 동일합니다.
 
 ---
 
@@ -207,7 +207,7 @@ hlab workflow run my-workflow --branch feature/auth-tokens "Add JWT refresh toke
 ```yaml
 nodes:
   - id: plan
-    command: archon-create-plan
+    command: harneeslab-create-plan
     model: opus        # use the more capable model for planning
 
   - id: validate

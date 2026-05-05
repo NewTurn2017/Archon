@@ -12,7 +12,7 @@ description: |
   Triggers (config): "change my hlab config", "modify hlab config", "hlab config",
             "change hlab settings", "update my config", "help me change my config",
             "edit hlab config", "hlab configuration".
-  Triggers (init): "initialize hlab", "set up .archon", "hlab init", "add hlab to repo".
+  Triggers (init): "initialize hlab", "set up .harneeslab", "hlab init", "add hlab to repo".
   Capability: Runs AI workflows in isolated git worktrees for parallel development.
   Also: Creates and manages workflow YAML files, command files, and configuration.
   NOT for: Direct Claude Code work - only for delegating to HarneesLab CLI.
@@ -35,7 +35,7 @@ Determine the user's intent and dispatch to the appropriate guide:
 |--------|--------|
 | **Setup / install / "how to use"** | Read `guides/setup.md` — interactive setup wizard |
 | **Config / settings** | Read `guides/config.md` — interactive config editor |
-| **Initialize .archon/ in a repo** | Read `references/repo-init.md` |
+| **Initialize .harneeslab/ in a repo** | Read `references/repo-init.md` |
 | **Create a workflow** | Read `references/workflow-dag.md` — the complete workflow authoring guide |
 | **Advanced features (hooks/MCP/skills)** | Read `references/dag-advanced.md` |
 | **Create a command file** | Read `references/authoring-commands.md` |
@@ -79,26 +79,26 @@ Match the user's intent to a workflow from the live list above. Common patterns:
 
 | User Intent | Typical Workflow | Branch Pattern |
 |-------------|-----------------|----------------|
-| "Fix issue #X" / "Resolve bug" | `archon-fix-github-issue` | `fix/issue-{N}` |
-| "Review PR #X" / "Full review" | `archon-comprehensive-pr-review` | `review/pr-{N}` |
-| "Quick review PR #X" | `archon-smart-pr-review` | `review/pr-{N}` |
-| "Validate PR #X" / "Check PR" | `archon-validate-pr` | `review/pr-{N}` |
-| "Implement from plan" | `archon-feature-development` | `feat/{name}` |
-| "Plan and implement feature" | `archon-idea-to-pr` | `feat/{name}` |
-| "Execute plan file" | `archon-plan-to-pr` | `feat/{name}` |
-| "Run ralph" / "Implement PRD" | `archon-ralph-dag` | `feat/{name}` |
-| "Resolve conflicts" | `archon-resolve-conflicts` | `resolve/pr-{N}` |
-| "Create issue" / "File a bug" | `archon-create-issue` | `issue/{name}` |
-| "Review issue #X fully" | `archon-issue-review-full` | `review/issue-{N}` |
-| "Refactor safely" | `archon-refactor-safely` | `refactor/{name}` |
-| "Architecture review" | `archon-architect` | `review/{name}` |
-| "PIV loop" / "guided dev" | `archon-piv-loop` ⚡ | `piv/{name}` |
-| "Create a PRD" / "interactive PRD" | `archon-interactive-prd` ⚡ | `prd/{name}` |
-| General / debugging | `archon-assist` | `assist/{description}` |
+| "Fix issue #X" / "Resolve bug" | `harneeslab-fix-github-issue` | `fix/issue-{N}` |
+| "Review PR #X" / "Full review" | `harneeslab-comprehensive-pr-review` | `review/pr-{N}` |
+| "Quick review PR #X" | `harneeslab-smart-pr-review` | `review/pr-{N}` |
+| "Validate PR #X" / "Check PR" | `harneeslab-validate-pr` | `review/pr-{N}` |
+| "Implement from plan" | `harneeslab-feature-development` | `feat/{name}` |
+| "Plan and implement feature" | `harneeslab-idea-to-pr` | `feat/{name}` |
+| "Execute plan file" | `harneeslab-plan-to-pr` | `feat/{name}` |
+| "Run ralph" / "Implement PRD" | `harneeslab-ralph-dag` | `feat/{name}` |
+| "Resolve conflicts" | `harneeslab-resolve-conflicts` | `resolve/pr-{N}` |
+| "Create issue" / "File a bug" | `harneeslab-create-issue` | `issue/{name}` |
+| "Review issue #X fully" | `harneeslab-issue-review-full` | `review/issue-{N}` |
+| "Refactor safely" | `harneeslab-refactor-safely` | `refactor/{name}` |
+| "Architecture review" | `harneeslab-architect` | `review/{name}` |
+| "PIV loop" / "guided dev" | `harneeslab-piv-loop` ⚡ | `piv/{name}` |
+| "Create a PRD" / "interactive PRD" | `harneeslab-interactive-prd` ⚡ | `prd/{name}` |
+| General / debugging | `harneeslab-assist` | `assist/{description}` |
 
 ⚡ = **Interactive workflow** — requires the transparent relay protocol. Read `references/interactive-workflows.md` before running.
 
-If no specific workflow matches, use `archon-assist` as the fallback. The live workflow list above is always authoritative — it may include workflows not in this table.
+If no specific workflow matches, use `harneeslab-assist` as the fallback. The live workflow list above is always authoritative — it may include workflows not in this table.
 
 ### Multi-Issue Invocation
 
@@ -106,9 +106,9 @@ When the user mentions multiple issues, PRs, or tasks — run each as a **separa
 
 ```bash
 # Each gets its own worktree — they won't conflict
-hlab workflow run archon-fix-github-issue --branch fix/issue-10 "Fix issue #10"
-hlab workflow run archon-fix-github-issue --branch fix/issue-11 "Fix issue #11"
-hlab workflow run archon-fix-github-issue --branch fix/issue-12 "Fix issue #12"
+hlab workflow run harneeslab-fix-github-issue --branch fix/issue-10 "Fix issue #10"
+hlab workflow run harneeslab-fix-github-issue --branch fix/issue-11 "Fix issue #11"
+hlab workflow run harneeslab-fix-github-issue --branch fix/issue-12 "Fix issue #12"
 ```
 
 Never combine multiple issues into a single command.
@@ -133,7 +133,7 @@ For the full CLI reference with all flags: Read `references/cli-commands.md`
 
 ## Authoring Quick Start
 
-HarneesLab uses a single workflow format: **nodes** (DAG). Workflows are YAML files in `.archon/workflows/`.
+HarneesLab uses a single workflow format: **nodes** (DAG). Workflows are YAML files in `.harneeslab/workflows/`.
 
 **IMPORTANT**: The examples below are starting points. Always design the workflow around what the user actually needs — the number of nodes, their types, dependencies, and configuration should match the user's requirements, not these templates.
 
@@ -146,7 +146,7 @@ provider: claude          # Optional: 'claude' or 'codex'
 model: sonnet             # Optional: model override
 nodes:
   - id: first-node
-    command: my-command    # Loads .archon/commands/my-command.md
+    command: my-command    # Loads .harneeslab/commands/my-command.md
   - id: second-node
     prompt: "Use the output: $first-node.output"
     depends_on: [first-node]
@@ -156,7 +156,7 @@ nodes:
 
 Each node has exactly ONE of: `command`, `prompt`, `bash`, or `loop`.
 
-**Command node** — runs a `.archon/commands/*.md` file:
+**Command node** — runs a `.harneeslab/commands/*.md` file:
 ```yaml
 - id: investigate
   command: investigate-issue
@@ -192,7 +192,7 @@ For the full authoring guide with all fields, conditions, trigger rules, and pat
 
 ### Creating a Command File
 
-Commands are `.md` files in `.archon/commands/` containing AI prompt templates:
+Commands are `.md` files in `.harneeslab/commands/` containing AI prompt templates:
 
 ```markdown
 ---
@@ -239,12 +239,12 @@ For details: Read `references/dag-advanced.md`
 
 **User**: "Use HarneesLab to fix issue #42"
 ```bash
-hlab workflow run archon-fix-github-issue --branch fix/issue-42 "Fix issue #42"
+hlab workflow run harneeslab-fix-github-issue --branch fix/issue-42 "Fix issue #42"
 ```
 
 **User**: "Have HarneesLab review PR #15"
 ```bash
-hlab workflow run archon-comprehensive-pr-review --branch review/pr-15 "Review PR #15"
+hlab workflow run harneeslab-comprehensive-pr-review --branch review/pr-15 "Review PR #15"
 ```
 
 **User**: "Create a workflow that reviews code and runs tests"
@@ -254,10 +254,10 @@ hlab workflow run archon-comprehensive-pr-review --branch review/pr-15 "Review P
 → Read `references/workflow-dag.md` and create nodes with `when:` conditions and `output_format`.
 
 **User**: "Write a command file for investigating bugs"
-→ Read `references/authoring-commands.md` and create an `.md` file in `.archon/commands/`.
+→ Read `references/authoring-commands.md` and create an `.md` file in `.harneeslab/commands/`.
 
 **User**: "Set up HarneesLab in this repo"
-→ Read `references/repo-init.md` to create the `.archon/` directory structure.
+→ Read `references/repo-init.md` to create the `.harneeslab/` directory structure.
 
-**User**: "Initialize .archon and create a custom workflow"
+**User**: "Initialize .harneeslab and create a custom workflow"
 → First read `references/repo-init.md`, then the appropriate workflow reference.

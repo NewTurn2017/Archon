@@ -193,12 +193,12 @@ mock.module('../services/cleanup-service', () => ({
 const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorkspacesPath: mock(() => '/home/test/.archon/workspaces'),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands']),
+  getHarneesLabWorkspacesPath: mock(() => '/home/test/.harneeslab/workspaces'),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands']),
   expandTilde: mock((p: string) => p.replace(/^~/, '/home/test')),
   ensureProjectStructure: mock(() => Promise.resolve()),
   getProjectSourcePath: mock(
-    (owner: string, repo: string) => `/home/test/.archon/workspaces/${owner}/${repo}/source`
+    (owner: string, repo: string) => `/home/test/.harneeslab/workspaces/${owner}/${repo}/source`
   ),
   createProjectSourceSymlink: mock(() => Promise.resolve()),
   parseOwnerRepo: mock((name: string) => {
@@ -1159,7 +1159,10 @@ describe('CommandHandler', () => {
       test('should match workflow name via suffix match', async () => {
         spyDiscoverWorkflows.mockResolvedValueOnce({
           workflows: [
-            makeTestWorkflowWithSource({ name: 'archon-assist', description: 'General assistant' }),
+            makeTestWorkflowWithSource({
+              name: 'harneeslab-assist',
+              description: 'General assistant',
+            }),
           ],
           errors: [],
         });
@@ -1167,14 +1170,14 @@ describe('CommandHandler', () => {
         const result = await handleCommand(conversationWithCodebase, '/workflow run assist');
 
         expect(result.success).toBe(true);
-        expect(result.workflow?.definition.name).toBe('archon-assist');
+        expect(result.workflow?.definition.name).toBe('harneeslab-assist');
       });
 
       test('should match workflow name via substring match', async () => {
         spyDiscoverWorkflows.mockResolvedValueOnce({
           workflows: [
             makeTestWorkflowWithSource({
-              name: 'archon-smart-pr-review',
+              name: 'harneeslab-smart-pr-review',
               description: 'Smart PR review',
             }),
           ],
@@ -1184,13 +1187,13 @@ describe('CommandHandler', () => {
         const result = await handleCommand(conversationWithCodebase, '/workflow run smart');
 
         expect(result.success).toBe(true);
-        expect(result.workflow?.definition.name).toBe('archon-smart-pr-review');
+        expect(result.workflow?.definition.name).toBe('harneeslab-smart-pr-review');
       });
 
       test('should return failure with candidates on ambiguous suffix match', async () => {
         spyDiscoverWorkflows.mockResolvedValueOnce({
           workflows: [
-            makeTestWorkflowWithSource({ name: 'archon-review', description: 'Review' }),
+            makeTestWorkflowWithSource({ name: 'harneeslab-review', description: 'Review' }),
             makeTestWorkflowWithSource({ name: 'custom-review', description: 'Custom review' }),
           ],
           errors: [],
@@ -1200,7 +1203,7 @@ describe('CommandHandler', () => {
 
         expect(result.success).toBe(false);
         expect(result.message).toContain('Ambiguous workflow');
-        expect(result.message).toContain('archon-review');
+        expect(result.message).toContain('harneeslab-review');
         expect(result.message).toContain('custom-review');
       });
     });

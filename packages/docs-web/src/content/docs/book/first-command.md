@@ -8,7 +8,7 @@ sidebar:
   order: 6
 ---
 
-지금까지 command가 실제 일을 하는 모습을 봤습니다. issue를 조사하고, 코드를 작성하고, 리뷰를 게시했습니다. [3장](/book/how-it-works/)에서는 `archon-fix-github-issue`가 일곱 개 command를 어떻게 이어 붙이는지 추적했습니다. 이제 직접 하나를 작성해 봅니다.
+지금까지 command가 실제 일을 하는 모습을 봤습니다. issue를 조사하고, 코드를 작성하고, 리뷰를 게시했습니다. [3장](/book/how-it-works/)에서는 `harneeslab-fix-github-issue`가 일곱 개 command를 어떻게 이어 붙이는지 추적했습니다. 이제 직접 하나를 작성해 봅니다.
 
 command는 보기보다 단순합니다. plain markdown 파일입니다. AI는 이를 지시문으로 읽습니다.
 
@@ -16,13 +16,13 @@ command는 보기보다 단순합니다. plain markdown 파일입니다. AI는 �
 
 ## Command란 무엇인가?
 
-**command**는 하나의 집중된 작업에서 AI가 정확히 무엇을 해야 하는지 알려 주는 markdown 파일입니다. Archon의 원자 단위이며, 독립적으로 실행되거나 workflow에 연결될 수 있는 가장 작은 단위입니다.
+**command**는 하나의 집중된 작업에서 AI가 정확히 무엇을 해야 하는지 알려 주는 markdown 파일입니다. HarneesLab의 원자 단위이며, 독립적으로 실행되거나 workflow에 연결될 수 있는 가장 작은 단위입니다.
 
-command는 repository의 `.archon/commands/`에 위치합니다. Archon이 `command: run-tests` 같은 단계를 실행하면 `.archon/commands/run-tests.md`를 찾고, 변수를 치환한 뒤 문서 전체를 AI에게 작업 지시로 보냅니다.
+command는 repository의 `.harneeslab/commands/`에 위치합니다. HarneesLab이 `command: run-tests` 같은 단계를 실행하면 `.harneeslab/commands/run-tests.md`를 찾고, 변수를 치환한 뒤 문서 전체를 AI에게 작업 지시로 보냅니다.
 
 핵심은 이것입니다. command는 코드가 아니라 prompt입니다. AI가 하길 원하는 일을 작성하면 AI가 실행합니다.
 
-> **어디에 두나**: 작업 중인 git repository에 `.archon/commands/` 디렉터리를 만드세요. Archon은 내장 기본 command와 함께 그곳의 command를 자동으로 찾습니다.
+> **어디에 두나**: 작업 중인 git repository에 `.harneeslab/commands/` 디렉터리를 만드세요. HarneesLab은 내장 기본 command와 함께 그곳의 command를 자동으로 찾습니다.
 
 ---
 
@@ -64,8 +64,8 @@ Run the tests for the `$ARGUMENTS` module and report what you find.
 ### 1단계: 파일 만들기
 
 ```bash
-mkdir -p .archon/commands
-touch .archon/commands/run-tests.md
+mkdir -p .harneeslab/commands
+touch .harneeslab/commands/run-tests.md
 ```
 
 ### 2단계: frontmatter 작성
@@ -121,13 +121,13 @@ If you can't find test files for `$ARGUMENTS`, say so clearly and list the files
 
 ### 4단계: 테스트하기
 
-`archon-assist`를 통해 command를 직접 호출할 수 있습니다.
+`harneeslab-assist`를 통해 command를 직접 호출할 수 있습니다.
 
 ```bash
-hlab workflow run archon-assist "/command-invoke run-tests auth"
+hlab workflow run harneeslab-assist "/command-invoke run-tests auth"
 ```
 
-Archon은 `/command-invoke run-tests` 지시를 AI로 라우팅합니다. AI는 `.archon/commands/run-tests.md`를 찾고, `$ARGUMENTS`를 `auth`로 치환한 뒤 작업을 실행합니다.
+HarneesLab은 `/command-invoke run-tests` 지시를 AI로 라우팅합니다. AI는 `.harneeslab/commands/run-tests.md`를 찾고, `$ARGUMENTS`를 `auth`로 치환한 뒤 작업을 실행합니다.
 
 AI가 auth module 테스트를 찾고 실행한 뒤 구조화된 보고서를 만드는 것을 볼 수 있어야 합니다.
 
@@ -141,7 +141,7 @@ AI가 auth module 테스트를 찾고 실행한 뒤 구조화된 보고서를 �
 | `$1` | 공백으로 나눈 첫 번째 argument | `auth` (`auth module`에서) |
 | `$2` | 공백으로 나눈 두 번째 argument | `module` (`auth module`에서) |
 | `$3` | 공백으로 나눈 세 번째 argument | — |
-| `$ARTIFACTS_DIR` | 이 실행의 artifact directory 절대 경로 | `/home/user/.archon/workspaces/owner/repo/artifacts/runs/abc123/` |
+| `$ARTIFACTS_DIR` | 이 실행의 artifact directory 절대 경로 | `/home/user/.harneeslab/workspaces/owner/repo/artifacts/runs/abc123/` |
 | `$WORKFLOW_ID` | 현재 workflow run의 고유 ID | `abc123def456` |
 | `$BASE_BRANCH` | 현재 worktree의 base branch | `main` |
 | `$DOCS_DIR` | 문서 디렉터리 경로 | `docs/` |
@@ -164,9 +164,9 @@ AI가 auth module 테스트를 찾고 실행한 뒤 구조화된 보고서를 �
 
 ## Command 호출하기
 
-**`archon-assist`에서** (interactive):
+**`harneeslab-assist`에서** (interactive):
 ```bash
-hlab workflow run archon-assist "/command-invoke run-tests auth"
+hlab workflow run harneeslab-assist "/command-invoke run-tests auth"
 ```
 
 **workflow에서** (automated):
@@ -179,10 +179,10 @@ nodes:
 
 **사용 가능한 항목 보기**:
 ```bash
-hlab workflow run archon-assist "/commands"
+hlab workflow run harneeslab-assist "/commands"
 ```
 
-이 명령은 사용 가능한 모든 command를 나열합니다. `.archon/commands/`의 custom command와 Archon의 내장 기본 command가 함께 표시됩니다. `archon-investigate-issue`, `archon-fix-issue` 같은 내장 command는 직접 command 구조를 정할 때 좋은 참고 자료입니다.
+이 명령은 사용 가능한 모든 command를 나열합니다. `.harneeslab/commands/`의 custom command와 HarneesLab의 내장 기본 command가 함께 표시됩니다. `harneeslab-investigate-issue`, `harneeslab-fix-issue` 같은 내장 command는 직접 command 구조를 정할 때 좋은 참고 자료입니다.
 
 ---
 

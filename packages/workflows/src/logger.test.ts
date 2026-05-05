@@ -106,7 +106,7 @@ describe('Workflow Logger', () => {
     });
 
     it('should create logs directory if it does not exist', async () => {
-      // testDir has no .archon/logs yet
+      // testDir has no .harneeslab/logs yet
       await logWorkflowEvent(testDir, 'new-dir-test', {
         type: 'workflow_start',
       });

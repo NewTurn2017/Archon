@@ -1,5 +1,5 @@
 ---
-description: Prime agent with Archon isolation system and git operations context
+description: Prime agent with HarneesLab isolation system and git operations context
 ---
 
 # Prime Isolation: Worktree Isolation and Git Ops Orientation

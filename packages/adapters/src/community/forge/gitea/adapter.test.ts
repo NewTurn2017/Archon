@@ -23,9 +23,9 @@ const mockLogger = {
 };
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonWorkspacesPath: mock(() => '/tmp/test-workspaces'),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands', '.claude/commands']),
-  logArchonPaths: mock(() => undefined),
+  getHarneesLabWorkspacesPath: mock(() => '/tmp/test-workspaces'),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands', '.claude/commands']),
+  logHarneesLabPaths: mock(() => undefined),
   validateAppDefaultsPaths: mock(async () => undefined),
 }));
 
@@ -276,7 +276,7 @@ describe('GiteaAdapter', () => {
       const adapter = createSelfFilterAdapter();
       // Comment has the marker but author is a real user (using PAT)
       const payload = createCommentPayload(
-        '@harneeslab fix this\n\n<!-- archon-bot-response -->',
+        '@harneeslab fix this\n\n<!-- harneeslab-bot-response -->',
         'Wirasm'
       );
 
@@ -367,8 +367,8 @@ describe('GiteaAdapter', () => {
 
       const body = JSON.parse(mockFetch.mock.calls[0][1].body as string).body as string;
       expect(body).toContain('Hello world');
-      expect(body).toContain('<!-- archon-bot-response -->');
-      expect(body).toBe('Hello world\n\n<!-- archon-bot-response -->');
+      expect(body).toContain('<!-- harneeslab-bot-response -->');
+      expect(body).toBe('Hello world\n\n<!-- harneeslab-bot-response -->');
     });
 
     test('should reject invalid conversationId format', async () => {

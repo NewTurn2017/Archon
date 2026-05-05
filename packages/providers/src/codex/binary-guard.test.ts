@@ -14,7 +14,7 @@ const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
   BUNDLED_IS_BINARY: true,
-  getArchonHome: mock(() => '/tmp/test-archon'),
+  getHarneesLabHome: mock(() => '/tmp/test-harneeslab'),
 }));
 
 // Track what path override is passed to the Codex constructor
@@ -48,7 +48,7 @@ mock.module('@openai/codex-sdk', () => ({
 // Mock resolver -- controls binary resolution behavior per test
 const mockResolveCodexBinaryPath = mock(
   (_configPath?: string): Promise<string | undefined> =>
-    Promise.resolve('/tmp/test-archon/vendor/codex/codex')
+    Promise.resolve('/tmp/test-harneeslab/vendor/codex/codex')
 );
 mock.module('./binary-resolver', () => ({
   resolveCodexBinaryPath: mockResolveCodexBinaryPath,
@@ -66,7 +66,7 @@ describe('CodexProvider binary mode resolution', () => {
 
     // Restore default mock implementations
     mockResolveCodexBinaryPath.mockImplementation(() =>
-      Promise.resolve('/tmp/test-archon/vendor/codex/codex')
+      Promise.resolve('/tmp/test-harneeslab/vendor/codex/codex')
     );
   });
 
@@ -87,7 +87,7 @@ describe('CodexProvider binary mode resolution', () => {
 
   test('propagates resolver errors as clear failures', async () => {
     mockResolveCodexBinaryPath.mockRejectedValueOnce(
-      new Error('Codex native binary not found at /tmp/test-archon/vendor/codex/codex')
+      new Error('Codex native binary not found at /tmp/test-harneeslab/vendor/codex/codex')
     );
 
     const client = new CodexProvider();
@@ -99,7 +99,7 @@ describe('CodexProvider binary mode resolution', () => {
   test('retries initialization after first failure (rejected promise not cached)', async () => {
     mockResolveCodexBinaryPath
       .mockRejectedValueOnce(new Error('Codex CLI binary not found'))
-      .mockResolvedValueOnce('/tmp/test-archon/vendor/codex/codex');
+      .mockResolvedValueOnce('/tmp/test-harneeslab/vendor/codex/codex');
 
     const client = new CodexProvider();
 

@@ -6,7 +6,7 @@
  * - Otherwise: Use SQLite in the HarneesLab home directory (standalone CLI)
  */
 import { join } from 'path';
-import { getArchonHome, isDocker } from '@harneeslab/paths';
+import { getHarneesLabHome, isDocker } from '@harneeslab/paths';
 import type { IDatabase, SqlDialect, QueryResult } from './adapters/types';
 import { PostgresAdapter, postgresDialect } from './adapters/postgres';
 import { SqliteAdapter, sqliteDialect } from './adapters/sqlite';
@@ -37,7 +37,7 @@ export function getDatabase(): IDatabase {
     database = new PostgresAdapter(process.env.DATABASE_URL);
     dialect = postgresDialect;
   } else {
-    const dbPath = join(getArchonHome(), 'archon.db');
+    const dbPath = join(getHarneesLabHome(), 'harneeslab.db');
     getLog().info({ dbPath }, 'db.connection_sqlite_selected');
     database = new SqliteAdapter(dbPath);
     dialect = sqliteDialect;

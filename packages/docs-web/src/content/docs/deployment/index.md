@@ -9,7 +9,7 @@ sidebar:
   order: 0
 ---
 
-HarneesLab은 개발용으로 로컬에서 실행하거나, 항상 켜져 있는 운영을 위해 서버에 배포할 수 있습니다. HarneesLab은 Archon fork이므로 같은 배포 방식을 그대로 사용합니다.
+HarneesLab은 개발용으로 로컬에서 실행하거나, 항상 켜져 있는 운영을 위해 서버에 배포할 수 있습니다. HarneesLab은 HarneesLab fork이므로 같은 배포 방식을 그대로 사용합니다.
 
 ## 배포 옵션
 
@@ -28,7 +28,7 @@ HarneesLab은 개발용으로 로컬에서 실행하거나, 항상 켜져 있는
 | **Remote PostgreSQL** | hosted DB로 `DATABASE_URL` 설정 | cloud 배포, shared access |
 | **Local PostgreSQL** | Docker `--profile with-db` | self-hosted, Docker 기반 setup |
 
-SQLite는 데이터를 `~/.archon/archon.db`(Docker에서는 `/.archon/archon.db`)에 저장합니다. 첫 실행 시 자동으로 초기화됩니다.
+SQLite는 데이터를 `~/.harneeslab/harneeslab.db`(Docker에서는 `/.harneeslab/harneeslab.db`)에 저장합니다. 첫 실행 시 자동으로 초기화됩니다.
 
 ## 테스트
 

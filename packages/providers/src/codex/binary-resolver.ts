@@ -1,5 +1,5 @@
 /**
- * Codex binary resolver for compiled (bun --compile) archon binaries.
+ * Codex binary resolver for compiled (bun --compile) HarneesLab binaries.
  *
  * The @openai/codex-sdk uses `createRequire(import.meta.url)` to locate the
  * native Codex CLI binary, which breaks in compiled binaries where
@@ -8,7 +8,7 @@
  * Resolution order:
  * 1. `CODEX_BIN_PATH` environment variable
  * 2. `assistants.codex.codexBinaryPath` in config
- * 3. `~/.archon/vendor/codex/<platform-binary>` (user-placed)
+ * 3. `~/.harneeslab/vendor/codex/<platform-binary>` (user-placed)
  * 4. Throw with install instructions
  *
  * In dev mode (BUNDLED_IS_BINARY=false), returns undefined so the SDK
@@ -16,7 +16,7 @@
  */
 import { existsSync as _existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { BUNDLED_IS_BINARY, getArchonHome, createLogger } from '@harneeslab/paths';
+import { BUNDLED_IS_BINARY, getHarneesLabHome, createLogger } from '@harneeslab/paths';
 
 /** Wrapper for existsSync — enables spyOn in tests (direct imports can't be spied on). */
 export function fileExists(path: string): boolean {
@@ -70,7 +70,7 @@ export async function resolveCodexBinaryPath(
     if (!fileExists(configCodexBinaryPath)) {
       throw new Error(
         `assistants.codex.codexBinaryPath is set to "${configCodexBinaryPath}" but the file does not exist.\n` +
-          'Please verify the path in .archon/config.yaml points to the Codex CLI binary.'
+          'Please verify the path in .harneeslab/config.yaml points to the Codex CLI binary.'
       );
     }
     getLog().info({ binaryPath: configCodexBinaryPath, source: 'config' }, 'codex.binary_resolved');
@@ -80,8 +80,8 @@ export async function resolveCodexBinaryPath(
   // 3. Check vendor directory (user-placed binary)
   const binaryName = getVendorBinaryName();
   if (binaryName) {
-    const archonHome = getArchonHome();
-    const vendorBinaryPath = join(archonHome, CODEX_VENDOR_DIR, binaryName);
+    const harneeslabHome = getHarneesLabHome();
+    const vendorBinaryPath = join(harneeslabHome, CODEX_VENDOR_DIR, binaryName);
 
     if (fileExists(vendorBinaryPath)) {
       getLog().info({ binaryPath: vendorBinaryPath, source: 'vendor' }, 'codex.binary_resolved');
@@ -90,16 +90,16 @@ export async function resolveCodexBinaryPath(
   }
 
   // 4. Not found — throw with install instructions
-  const vendorPath = `~/.archon/${CODEX_VENDOR_DIR}/`;
+  const vendorPath = `~/.harneeslab/${CODEX_VENDOR_DIR}/`;
   throw new Error(
     'Codex CLI binary not found. The Codex provider requires a native binary\n' +
-      'that cannot be resolved automatically in compiled Archon builds.\n\n' +
+      'that cannot be resolved automatically in compiled HarneesLab builds.\n\n' +
       'To fix, choose one of:\n' +
       '  1. Install globally: npm install -g @openai/codex\n' +
       '     Then set: CODEX_BIN_PATH=$(which codex)\n\n' +
       `  2. Place the binary at: ${vendorPath}\n\n` +
       '  3. Set the path in config:\n' +
-      '     # .archon/config.yaml\n' +
+      '     # .harneeslab/config.yaml\n' +
       '     assistants:\n' +
       '       codex:\n' +
       '         codexBinaryPath: /path/to/codex\n'

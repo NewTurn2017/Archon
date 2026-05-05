@@ -5,8 +5,8 @@ Interactive workflows use human-in-the-loop approval gates and interactive loops
 ## Identifying Interactive Workflows
 
 A workflow is interactive if it has `interactive: true` in its YAML definition. Key interactive workflows:
-- `archon-piv-loop` — Plan-Implement-Validate with iterative feedback
-- `archon-interactive-prd` — Guided PRD creation with approval gates
+- `harneeslab-piv-loop` — Plan-Implement-Validate with iterative feedback
+- `harneeslab-interactive-prd` — Guided PRD creation with approval gates
 
 When the user asks to run one of these, follow the protocol below.
 
@@ -30,7 +30,7 @@ When the workflow pauses, immediately read the log file to get the AI's output:
 
 ```bash
 # Find the log file
-find ~/.archon/workspaces -name "<run-id>.jsonl" 2>/dev/null
+find ~/.harneeslab/workspaces -name "<run-id>.jsonl" 2>/dev/null
 
 # Extract the last assistant message
 ```
@@ -102,5 +102,5 @@ hlab workflow reject <run-id> "reason for rejection"
 ## Troubleshooting
 
 - **Workflow shows `running` for a long time**: The AI is doing research/implementation. Be patient — check again in a few minutes.
-- **Log file not found**: The log is at `~/.archon/workspaces/<owner>/<repo>/logs/<run-id>.jsonl`
+- **Log file not found**: The log is at `~/.harneeslab/workspaces/<owner>/<repo>/logs/<run-id>.jsonl`
 - **User wants to cancel**: Run `hlab workflow reject <run-id>` or `hlab workflow cancel <run-id>`

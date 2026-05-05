@@ -1,6 +1,6 @@
 ---
 title: Web UI
-description: Archon과 상호작용하는 내장 웹 인터페이스입니다. 토큰이나 외부 서비스가 필요 없습니다.
+description: HarneesLab과 상호작용하는 내장 웹 인터페이스입니다. 토큰이나 외부 서비스가 필요 없습니다.
 category: adapters
 area: adapters
 audience: [user]
@@ -9,7 +9,7 @@ sidebar:
   order: 1
 ---
 
-Web UI는 Archon과 상호작용하기 위한 내장 인터페이스입니다. 토큰, API key, 외부 서비스가 필요 없습니다. 서버를 시작하고 브라우저를 열면 됩니다.
+Web UI는 HarneesLab과 상호작용하기 위한 내장 인터페이스입니다. 토큰, API key, 외부 서비스가 필요 없습니다. 서버를 시작하고 브라우저를 열면 됩니다.
 
 ## 사전 준비
 
@@ -172,7 +172,7 @@ dashboard 또는 progress card에서 workflow run을 클릭하면 `/workflows/ru
 - **Command picker** -- command node 설정 시 사용 가능한 command를 탐색합니다.
 - **Validation panel** -- 구성 중 real-time validation feedback을 제공합니다.
 - **Undo/redo** -- keyboard shortcut을 포함한 전체 undo/redo stack을 제공합니다.
-- **Save** -- workflow YAML을 project의 `.archon/workflows/` directory에 저장합니다.
+- **Save** -- workflow YAML을 project의 `.harneeslab/workflows/` directory에 저장합니다.
 
 `/workflows` page에서 기존 workflow를 탐색하고, builder에서 열어 편집할 수도 있습니다.
 
@@ -215,7 +215,7 @@ Web UI에서는 세 가지 방식으로 codebase를 등록할 수 있습니다.
 
 sidebar에서 project를 클릭하면 conversation과 workflow 범위가 해당 codebase로 제한됩니다. 선택한 project는 다음을 결정합니다.
 
-- 어떤 `.archon/commands/`와 `.archon/workflows/`가 로드되는지
+- 어떤 `.harneeslab/commands/`와 `.harneeslab/workflows/`가 로드되는지
 - AI tool execution의 working directory
 - 어떤 worktree와 isolation environment가 표시되는지
 

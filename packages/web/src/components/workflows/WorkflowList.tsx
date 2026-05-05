@@ -174,7 +174,9 @@ export function WorkflowList(): React.ReactElement {
         {!hasWorkflows ? (
           <div className="text-sm text-text-secondary">
             {t('workflows.emptyPrefix')}{' '}
-            <code className="text-xs bg-surface-inset px-1 py-0.5 rounded">.archon/workflows/</code>
+            <code className="text-xs bg-surface-inset px-1 py-0.5 rounded">
+              .harneeslab/workflows/
+            </code>
           </div>
         ) : filteredWorkflows.length === 0 ? (
           <div className="text-sm text-text-secondary py-8 text-center">

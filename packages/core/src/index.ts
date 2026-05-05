@@ -146,4 +146,4 @@ export { isPathWithinWorkspace, validateAndResolvePath } from './utils/path-vali
 export { getPort } from './utils/port-allocation';
 
 // Worktree sync
-export { syncArchonToWorktree } from './utils/worktree-sync';
+export { syncHarneesLabToWorktree } from './utils/worktree-sync';

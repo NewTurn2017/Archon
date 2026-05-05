@@ -15,7 +15,7 @@ import type {
   WorkflowLoadResult,
   WorkflowWithSource,
 } from './schemas';
-import * as archonPaths from '@harneeslab/paths';
+import * as harneeslabPaths from '@harneeslab/paths';
 import { BUNDLED_WORKFLOWS, isBinaryBuild } from './defaults/bundled-defaults';
 import { createLogger } from '@harneeslab/paths';
 import { parseWorkflow } from './loader';
@@ -155,7 +155,7 @@ export async function discoverWorkflows(
       getLog().info({ count: bundledResult.workflows.size }, 'bundled_default_workflows_loaded');
     } else {
       // Bun: load from filesystem (development mode)
-      const appDefaultsPath = archonPaths.getDefaultWorkflowsPath();
+      const appDefaultsPath = harneeslabPaths.getDefaultWorkflowsPath();
       getLog().debug({ appDefaultsPath }, 'loading_app_default_workflows');
       try {
         await access(appDefaultsPath);
@@ -182,9 +182,9 @@ export async function discoverWorkflows(
     }
   }
 
-  // 2. Load from global search path (e.g., ~/.archon/.archon/workflows/ for orchestrator)
+  // 2. Load from global search path (e.g., ~/.harneeslab/.harneeslab/workflows/ for orchestrator)
   if (options?.globalSearchPath) {
-    const [globalWorkflowFolder] = archonPaths.getWorkflowFolderSearchPaths();
+    const [globalWorkflowFolder] = harneeslabPaths.getWorkflowFolderSearchPaths();
     const globalWorkflowPath = join(options.globalSearchPath, globalWorkflowFolder);
     getLog().debug({ globalWorkflowPath }, 'searching_global_workflows');
     try {
@@ -194,7 +194,7 @@ export async function discoverWorkflows(
         if (workflowsByFile.has(filename)) {
           getLog().debug({ filename }, 'global_workflow_overrides_default');
         }
-        // NOTE: Global workflows (~/.archon/.archon/workflows/) are classified as 'project'
+        // NOTE: Global workflows (~/.harneeslab/.harneeslab/workflows/) are classified as 'project'
         // rather than a separate 'global' source. This is an intentional scope decision for
         // the initial source badge feature — a 'global' source variant can be added later.
         workflowsByFile.set(filename, { workflow, source: 'project' });
@@ -212,7 +212,7 @@ export async function discoverWorkflows(
   }
 
   // 3. Load from repo's workflow folder (overrides app defaults by exact filename)
-  const [workflowFolder] = archonPaths.getWorkflowFolderSearchPaths();
+  const [workflowFolder] = harneeslabPaths.getWorkflowFolderSearchPaths();
   const workflowPath = join(cwd, workflowFolder);
 
   getLog().debug({ workflowPath }, 'searching_repo_workflows');
@@ -248,7 +248,7 @@ export async function discoverWorkflows(
       await access(repoDefaultsPath);
       const defaultEntries = await readdir(repoDefaultsPath);
       const oldDefaults = defaultEntries.filter(
-        f => (f.endsWith('.yaml') || f.endsWith('.yml')) && !f.startsWith('archon-')
+        f => (f.endsWith('.yaml') || f.endsWith('.yml')) && !f.startsWith('harneeslab-')
       );
       if (oldDefaults.length > 0) {
         getLog().warn(

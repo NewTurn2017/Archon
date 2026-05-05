@@ -1,6 +1,6 @@
 ---
 title: 아키텍처
-description: Archon의 시스템 아키텍처, 패키지, 인터페이스, 데이터 흐름을 다루는 종합 가이드입니다.
+description: HarneesLab의 시스템 아키텍처, 패키지, 인터페이스, 데이터 흐름을 다루는 종합 가이드입니다.
 category: reference
 audience: [developer]
 status: current
@@ -8,7 +8,7 @@ sidebar:
   order: 1
 ---
 
-Archon을 이해하고 확장하기 위한 종합 가이드입니다. HarneesLab은 Archon fork를 기반으로 하므로, 이 문서는 upstream Archon의 구조를 이해하고 HarneesLab 실험과 운영에 맞게 확장할 때의 기준점으로 사용할 수 있습니다.
+HarneesLab을 이해하고 확장하기 위한 종합 가이드입니다. HarneesLab은 HarneesLab fork를 기반으로 하므로, 이 문서는 upstream HarneesLab의 구조를 이해하고 HarneesLab 실험과 운영에 맞게 확장할 때의 기준점으로 사용할 수 있습니다.
 
 **탐색:** [개요](#system-overview) | [플랫폼](#adding-platform-adapters) | [AI Providers](#adding-ai-agent-providers) | [격리](#isolation-providers) | [명령](#command-system) | [스트리밍](#streaming-modes) | [데이터베이스](#database-schema)
 
@@ -16,7 +16,7 @@ Archon을 이해하고 확장하기 위한 종합 가이드입니다. HarneesLab
 
 ## System Overview
 
-Archon은 메시징 플랫폼(Web UI, Telegram, GitHub, Slack, Discord)을 통합 인터페이스를 통해 AI coding assistant(Claude Code, Codex)에 연결하는 **플랫폼 독립적인 AI 코딩 어시스턴트 오케스트레이터**입니다. 내장 Web UI는 실시간 스트리밍, tool call 시각화, workflow 관리를 포함한 완전한 독립 실행 경험을 제공합니다.
+HarneesLab은 메시징 플랫폼(Web UI, Telegram, GitHub, Slack, Discord)을 통합 인터페이스를 통해 AI coding assistant(Claude Code, Codex)에 연결하는 **플랫폼 독립적인 AI 코딩 어시스턴트 오케스트레이터**입니다. 내장 Web UI는 실시간 스트리밍, tool call 시각화, workflow 관리를 포함한 완전한 독립 실행 경험을 제공합니다.
 
 ### Core Architecture
 
@@ -634,16 +634,16 @@ export class WorktreeProvider implements IIsolationProvider {
 ### Storage Location
 
 ```
-PRIMARY: ~/.archon/workspaces/<owner>/<repo>/worktrees/<branch>/
-LEGACY:  ~/.archon/worktrees/<owner>/<repo>/<branch>/   (fallback for repos not registered under workspaces/)
-DOCKER:  /.archon/workspaces/<owner>/<repo>/worktrees/<branch>/
+PRIMARY: ~/.harneeslab/workspaces/<owner>/<repo>/worktrees/<branch>/
+LEGACY:  ~/.harneeslab/worktrees/<owner>/<repo>/<branch>/   (fallback for repos not registered under workspaces/)
+DOCKER:  /.harneeslab/workspaces/<owner>/<repo>/worktrees/<branch>/
 ```
 
 **Path resolution:**
 
-1. 프로젝트가 `workspaces/` 아래에 등록되어 있나요? -> `~/.archon/workspaces/<owner>/<repo>/worktrees/<branch>/`
-2. Legacy fallback -> `~/.archon/worktrees/<owner>/<repo>/<branch>/`
-3. Docker 감지됨? -> `~/.archon/` 대신 `/.archon/` prefix 사용
+1. 프로젝트가 `workspaces/` 아래에 등록되어 있나요? -> `~/.harneeslab/workspaces/<owner>/<repo>/worktrees/<branch>/`
+2. Legacy fallback -> `~/.harneeslab/worktrees/<owner>/<repo>/<branch>/`
+3. Docker 감지됨? -> `~/.harneeslab/` 대신 `/.harneeslab/` prefix 사용
 
 ### Usage Pattern
 
@@ -776,7 +776,7 @@ User: "Plan adding dark mode to project X"
            |
 Orchestrator: Route to workflow via AI router
            |
-Read command file: .archon/commands/plan.md
+Read command file: .harneeslab/commands/plan.md
            |
 Variable substitution: $ARGUMENTS -> "Add dark mode"
            |
@@ -792,11 +792,11 @@ Stream responses back to platform
 ```json
 {
   "prime": {
-    "path": ".archon/commands/prime.md",
+    "path": ".harneeslab/commands/prime.md",
     "description": "Research codebase"
   },
   "plan": {
-    "path": ".archon/commands/plan-feature.md",
+    "path": ".harneeslab/commands/plan-feature.md",
     "description": "Create implementation plan"
   }
 }
@@ -809,13 +809,13 @@ Stream responses back to platform
 **수동 등록**(`/command-set`):
 
 ```bash
-/command-set analyze .archon/commands/analyze.md
+/command-set analyze .harneeslab/commands/analyze.md
 ```
 
 **일괄 로딩**(`/load-commands`):
 
 ```bash
-/load-commands .archon/commands
+/load-commands .harneeslab/commands
 # Loads all .md files: prime.md -> prime, plan.md -> plan
 ```
 
@@ -824,7 +824,7 @@ Stream responses back to platform
 ```typescript
 // Get command folders from config
 const searchPaths = getCommandFolderSearchPaths(config?.commands?.folder);
-// Returns: ['.archon/commands'] + configuredFolder if specified
+// Returns: ['.harneeslab/commands'] + configuredFolder if specified
 
 for (const folder of searchPaths) {
   if (await folderExists(join(repoPath, folder))) {
@@ -835,7 +835,7 @@ for (const folder of searchPaths) {
 
 이 과정은 repo-specific 명령을 등록합니다. Default command는 repository에 복사되지 않고, 앱에 bundle된 defaults에서 runtime에 로딩됩니다.
 
-**참고:** `packages/paths/src/archon-paths.ts`(`@harneeslab/paths`)
+**참고:** `packages/paths/src/harneeslab-paths.ts`(`@harneeslab/paths`)
 
 ### Variable Substitution
 
@@ -873,7 +873,7 @@ export function substituteVariables(
 **예시:**
 
 ```markdown
-<!-- .archon/commands/analyze.md -->
+<!-- .harneeslab/commands/analyze.md -->
 
 Analyze the following aspect of the codebase: $1
 
@@ -1024,7 +1024,7 @@ export function formatToolCall(toolName: string, toolInput?: Record<string, unkn
 
 ## Database Schema
 
-Archon은 `remote_agent_` prefix를 사용하는 7-table schema를 사용합니다. SQLite가 기본값이며 별도 설정이 필요 없습니다. PostgreSQL은 cloud/advanced deployment용 선택지입니다.
+HarneesLab은 `remote_agent_` prefix를 사용하는 7-table schema를 사용합니다. SQLite가 기본값이며 별도 설정이 필요 없습니다. PostgreSQL은 cloud/advanced deployment용 선택지입니다.
 
 ### Schema Overview
 
@@ -1195,9 +1195,9 @@ Command Handler: /clone
   - Execute git clone
   - Create codebase record
   - Update conversation.codebase_id
-  - Detect .archon/commands/
+  - Detect .harneeslab/commands/
          |
-Send response: "Repository cloned! Found: .archon/commands/"
+Send response: "Repository cloned! Found: .harneeslab/commands/"
 ```
 
 ```
@@ -1205,7 +1205,7 @@ User types: "Prime the codebase"
          |
 Orchestrator: Route via AI router
          |
-Load command file: .archon/commands/prime.md
+Load command file: .harneeslab/commands/prime.md
          |
 Variable substitution (no args in this case)
          |
@@ -1221,7 +1221,7 @@ Save session ID for next message
 ### GitHub Webhook Flow
 
 ```
-User comments: @Archon prime the codebase
+User comments: @HarneesLab prime the codebase
          |
 GitHub sends webhook to POST /webhooks/github
          |
@@ -1229,13 +1229,13 @@ GitHubAdapter.handleWebhook(payload, signature)
   - Verify HMAC signature
   - Parse event: issue_comment.created
   - Extract: owner/repo#42, comment text
-  - Check for @Archon mention
+  - Check for @HarneesLab mention
          |
 First mention on this issue?
   - Yes -> Clone repo, create codebase, detect and register commands
   - No -> Use existing codebase
          |
-Strip @Archon from comment
+Strip @HarneesLab from comment
          |
 Orchestrator.handleMessage(adapter, "user/repo#42", "prime the codebase")
          |
@@ -1298,7 +1298,7 @@ Post single comment on issue with summary
 - [ ] 새 variable type을 위해 `substituteVariables()` 업데이트
 - [ ] deterministic logic용 command를 Command Handler에 추가
 - [ ] `/help` command output 업데이트
-- [ ] `.archon/commands/`에 example command file 추가
+- [ ] `.harneeslab/commands/`에 example command file 추가
 - [ ] edge case와 함께 variable substitution 테스트
 
 ---

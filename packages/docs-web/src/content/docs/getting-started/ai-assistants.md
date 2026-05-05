@@ -11,7 +11,7 @@ sidebar:
 
 **최소 하나의** AI assistant는 반드시 설정해야 합니다. 세 가지를 모두 설정하고 workflow 안에서 섞어 사용할 수도 있습니다.
 
-HarneesLab은 Archon fork입니다. 따라서 assistant provider 이름, config key, `.archon` 경로, `archon-*` workflow 이름 같은 실행 식별자는 upstream Archon과 호환되도록 유지합니다.
+HarneesLab은 HarneesLab fork입니다. 따라서 assistant provider 이름, config key, `.harneeslab` 경로, `harneeslab-*` workflow 이름 같은 실행 식별자는 upstream HarneesLab과 호환되도록 유지합니다.
 
 ## Claude Code
 
@@ -53,7 +53,7 @@ compiled HarneesLab binary는 runtime에 Claude Code를 자동 탐색할 수 없
    ```ini
    CLAUDE_BIN_PATH=/absolute/path/to/claude
    ```
-2. **Config file** (`~/.archon/config.yaml` 또는 repo-local `.archon/config.yaml`):
+2. **Config file** (`~/.harneeslab/config.yaml` 또는 repo-local `.harneeslab/config.yaml`):
    ```yaml
    assistants:
      claude:
@@ -115,7 +115,7 @@ CLAUDE_API_KEY=sk-ant-xxxxx
 
 ### Claude 설정 옵션
 
-`.archon/config.yaml`에서 Claude 동작을 설정할 수 있습니다.
+`.harneeslab/config.yaml`에서 Claude 동작을 설정할 수 있습니다.
 
 ```yaml
 assistants:
@@ -156,7 +156,7 @@ brew install codex
 # OpenAI recommends WSL2 for the best experience.
 ```
 
-직접 binary를 선호하는 사용자를 위해 native prebuilt binaries(`.dmg`, `.tar.gz`, `.exe`)도 [Codex releases page](https://github.com/openai/codex/releases)에 publish됩니다. compiled binary mode에서는 이를 `~/.archon/vendor/codex/codex`(Windows에서는 `codex.exe`)에 넣으면 HarneesLab이 자동으로 찾습니다.
+직접 binary를 선호하는 사용자를 위해 native prebuilt binaries(`.dmg`, `.tar.gz`, `.exe`)도 [Codex releases page](https://github.com/openai/codex/releases)에 publish됩니다. compiled binary mode에서는 이를 `~/.harneeslab/vendor/codex/codex`(Windows에서는 `codex.exe`)에 넣으면 HarneesLab이 자동으로 찾습니다.
 
 전체 설치 matrix는 [OpenAI's Codex CLI docs](https://developers.openai.com/codex/cli)를 참고하세요.
 
@@ -168,13 +168,13 @@ compiled HarneesLab binary에서 `codex`가 HarneesLab이 확인하는 default P
    ```ini
    CODEX_BIN_PATH=/absolute/path/to/codex
    ```
-2. **Config file** (`~/.archon/config.yaml`):
+2. **Config file** (`~/.harneeslab/config.yaml`):
    ```yaml
    assistants:
      codex:
        codexBinaryPath: /absolute/path/to/codex
    ```
-3. **Vendor directory** (zero-config fallback): native binary를 `~/.archon/vendor/codex/codex`(Windows에서는 `codex.exe`)에 넣습니다.
+3. **Vendor directory** (zero-config fallback): native binary를 `~/.harneeslab/vendor/codex/codex`(Windows에서는 `codex.exe`)에 넣습니다.
 
 Dev mode(`bun run`)에서는 위 설정이 필요 없습니다. SDK가 `node_modules`를 통해 `codex`를 resolve합니다.
 
@@ -211,7 +211,7 @@ CODEX_ACCOUNT_ID=6a6a7ba6-...
 
 ### Codex 설정 옵션
 
-`.archon/config.yaml`에서 Codex 동작을 설정할 수 있습니다.
+`.harneeslab/config.yaml`에서 Codex 동작을 설정할 수 있습니다.
 
 ```yaml
 assistants:
@@ -233,7 +233,7 @@ DEFAULT_AI_ASSISTANT=codex
 
 ## Pi (Community Provider)
 
-**하나의 adapter로 약 20개의 LLM backend를 사용할 수 있습니다.** Pi(`@mariozechner/pi-coding-agent`)는 community-maintained coding-agent harness이며, HarneesLab은 upstream Archon에서 이어받은 community provider 경계를 유지합니다. 단일 `provider: pi` entry 아래에서 Anthropic, OpenAI, Google(Gemini + Vertex), Groq, Mistral, Cerebras, xAI, OpenRouter, Hugging Face 등을 사용할 수 있습니다.
+**하나의 adapter로 약 20개의 LLM backend를 사용할 수 있습니다.** Pi(`@mariozechner/pi-coding-agent`)는 community-maintained coding-agent harness이며, HarneesLab은 upstream HarneesLab에서 이어받은 community provider 경계를 유지합니다. 단일 `provider: pi` entry 아래에서 Anthropic, OpenAI, Google(Gemini + Vertex), Groq, Mistral, Cerebras, xAI, OpenRouter, Hugging Face 등을 사용할 수 있습니다.
 
 Pi는 `builtIn: false`로 등록되어 있습니다. core team이 유지관리하는 option이라기보다 community-provider 경계를 검증하는 역할입니다. 안정성과 가치가 입증되면 나중에 `builtIn: true`로 승격될 수 있습니다.
 
@@ -301,7 +301,7 @@ nodes:
     model: anthropic/claude-opus-4-5
     prompt: "..."
     effort: high
-    skills: [archon-dev]                   # 기존 archon-* 이름 참조도 동작합니다
+    skills: [harneeslab-dev]                   # 기존 harneeslab-* 이름 참조도 동작합니다
 ```
 
 ### Pi 기능
@@ -314,7 +314,7 @@ nodes:
 | Skills | 지원 | `skills: [name]` (`.agents/skills`, `.claude/skills`, user-global에서 검색) |
 | Inline sub-agents | 미지원 | `agents:`는 Claude 전용이며 Pi에서는 warning과 함께 무시됨 |
 | System prompt override | 지원 | `systemPrompt:` |
-| Codebase env vars (`envInjection`) | 지원 | `.archon/config.yaml` `env:` section |
+| Codebase env vars (`envInjection`) | 지원 | `.harneeslab/config.yaml` `env:` section |
 | MCP servers | 미지원 | Pi는 설계상 MCP를 reject |
 | Claude-SDK hooks | 미지원 | Claude-specific format |
 | Structured output | 미지원 | Pi backend마다 편차가 있어 v2에서 후속 처리 예정 |
@@ -326,12 +326,12 @@ nodes:
 
 ### 함께 보기
 
-- [Community Provider 추가](/contributing/adding-a-community-provider/) — HarneesLab/Archon provider 모델을 확장하기 위한 contributor-facing guide입니다.
+- [Community Provider 추가](/contributing/adding-a-community-provider/) — HarneesLab/HarneesLab provider 모델을 확장하기 위한 contributor-facing guide입니다.
 - [GitHub의 Pi](https://github.com/badlogic/pi-mono) — upstream project입니다.
 
 ## assistant 선택 방식
 
-- assistant type은 `.archon/config.yaml`의 `assistant` field 또는 `DEFAULT_AI_ASSISTANT` env var를 통해 codebase별로 설정됩니다.
+- assistant type은 `.harneeslab/config.yaml`의 `assistant` field 또는 `DEFAULT_AI_ASSISTANT` env var를 통해 codebase별로 설정됩니다.
 - conversation이 시작되면 해당 conversation의 assistant type은 고정됩니다.
 - `DEFAULT_AI_ASSISTANT`(선택)는 codebase context가 없는 새 conversation에만 사용됩니다.
 - workflow는 `provider`와 `model` field로 node별 assistant를 override할 수 있습니다.

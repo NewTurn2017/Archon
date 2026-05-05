@@ -38,7 +38,7 @@ mock.module('@harneeslab/core', () => ({
       this.name = 'ConversationNotFoundError';
     }
   },
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
   toSafeConfig: (config: unknown) => config,
   generateAndSetTitle: mock(async () => {}),
   createLogger: () => ({
@@ -72,11 +72,11 @@ mock.module('@harneeslab/paths', () => ({
     isLevelEnabled: mock(() => true),
     level: 'info',
   }),
-  getWorkflowFolderSearchPaths: mock(() => ['.archon/workflows']),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands']),
-  getDefaultCommandsPath: mock(() => '/tmp/.archon-test-nonexistent/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/tmp/.archon-test-nonexistent/workflows/defaults'),
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getWorkflowFolderSearchPaths: mock(() => ['.harneeslab/workflows']),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands']),
+  getDefaultCommandsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/workflows/defaults'),
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
   isDocker: mockIsDocker,
 }));
 
@@ -86,7 +86,7 @@ mock.module('@harneeslab/workflows/command-validation', makeCommandValidationMoc
 mock.module('@harneeslab/workflows/defaults', () => ({
   BUNDLED_WORKFLOWS: {},
   BUNDLED_COMMANDS: {
-    'archon-assist': '# archon-assist command',
+    'harneeslab-assist': '# harneeslab-assist command',
     plan: '# plan command',
     implement: '# implement command',
   },
@@ -438,15 +438,15 @@ describe('GET /api/commands', () => {
     expect(bundledCommands.length).toBeGreaterThan(0);
   });
 
-  test('includes archon-assist as bundled command', async () => {
+  test('includes harneeslab-assist as bundled command', async () => {
     const app = makeApp();
     const response = await app.request('/api/commands');
     expect(response.status).toBe(200);
 
     const body = (await response.json()) as { commands: Array<{ name: string; source: string }> };
-    const archonAssist = body.commands.find(c => c.name === 'archon-assist');
-    expect(archonAssist).toBeDefined();
-    expect(archonAssist?.source).toBe('bundled');
+    const harneeslabAssist = body.commands.find(c => c.name === 'harneeslab-assist');
+    expect(harneeslabAssist).toBeDefined();
+    expect(harneeslabAssist?.source).toBe('bundled');
   });
 
   test('includes plan and implement as bundled commands', async () => {

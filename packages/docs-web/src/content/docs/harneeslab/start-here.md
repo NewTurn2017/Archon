@@ -5,7 +5,7 @@ description: HarneesLab을 어디서부터 손대야 하는지 빠르게 정리�
 
 # 시작 안내
 
-HarneesLab은 Archon fork입니다. 원본 전체를 한 번에 번역하는 방식보다, **브랜드/랜딩/구조를 먼저 고정한 뒤 핵심 문서를 순차적으로 한글화**하는 방식이 안전합니다.
+HarneesLab은 HarneesLab fork입니다. 원본 전체를 한 번에 번역하는 방식보다, **브랜드/랜딩/구조를 먼저 고정한 뒤 핵심 문서를 순차적으로 한글화**하는 방식이 안전합니다.
 
 ## 권장 순서
 
@@ -32,7 +32,7 @@ HarneesLab은 Archon fork입니다. 원본 전체를 한 번에 번역하는 방
   실제 웹 앱 인터페이스
 - `packages/cli`, `packages/core`, `packages/workflows`
   제품 핵심 로직
-- `.archon/`
+- `.harneeslab/`
   워크플로와 명령 확장
 
 ## 다음 번 작업 후보

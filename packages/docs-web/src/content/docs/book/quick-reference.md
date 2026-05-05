@@ -121,7 +121,7 @@ hlab workflow run my-workflow "auth refresh-tokens"
 | Field | 필수 | Type | 설명 |
 |-------|----------|------|-------------|
 | `id` | 예 | string | 고유 node identifier. `depends_on`과 `$nodeId.output`에서 사용 |
-| `command` | 다음 중 하나 | string | `.archon/commands/`에 있는 command file 이름 |
+| `command` | 다음 중 하나 | string | `.harneeslab/commands/`에 있는 command file 이름 |
 | `prompt` | 다음 중 하나 | string | inline AI instructions |
 | `bash` | 다음 중 하나 | string | shell script(AI 없이 실행, stdout은 `$nodeId.output`으로 capture) |
 | `loop` | 다음 중 하나 | object | loop configuration(아래 Loop Options 참조) |
@@ -224,12 +224,12 @@ hooks:
 
 ## 디렉터리 구조
 
-### `~/.archon/` (user-level)
+### `~/.harneeslab/` (user-level)
 
 ```
-~/.archon/
+~/.harneeslab/
 ├── config.yaml                        # Global configuration (non-secrets)
-├── archon.db                          # SQLite database (default; no DATABASE_URL needed)
+├── harneeslab.db                          # SQLite database (default; no DATABASE_URL needed)
 └── workspaces/
     └── <owner>/
         └── <repo>/
@@ -239,10 +239,10 @@ hooks:
             └── logs/                  # Workflow execution logs (JSONL)
 ```
 
-### `.archon/` (repo-level)
+### `.harneeslab/` (repo-level)
 
 ```
-.archon/
+.harneeslab/
 ├── config.yaml                        # Repo-specific configuration
 ├── commands/                          # Custom command files (*.md)
 │   └── my-command.md
@@ -250,10 +250,10 @@ hooks:
     └── my-workflow.yaml
 ```
 
-**Bundled defaults** — 내장 command와 workflow는 Archon에 포함되어 자동으로 로드됩니다. 같은 이름의 repo-level file은 bundled version을 override합니다. 기본값을 완전히 비활성화하려면:
+**Bundled defaults** — 내장 command와 workflow는 HarneesLab에 포함되어 자동으로 로드됩니다. 같은 이름의 repo-level file은 bundled version을 override합니다. 기본값을 완전히 비활성화하려면:
 
 ```yaml
-# .archon/config.yaml
+# .harneeslab/config.yaml
 defaults:
   loadDefaultCommands: false
   loadDefaultWorkflows: false
@@ -267,18 +267,18 @@ defaults:
 
 | Error | 가능성 높은 원인 | 해결 |
 |-------|-------------|-----|
-| `Workflow "X" not found` | YAML file이 발견되지 않음 | 파일이 `.archon/workflows/`에 있고 `hlab workflow list`에 표시되는지 확인 |
-| `Command "X" not found` | Command file 없음 | `.archon/commands/X.md`가 있고 `hlab validate commands X`가 통과하는지 확인 |
-| `Routing unclear — falling back to archon-assist` | input과 match되는 workflow 없음 | 명시적 workflow 이름 사용: `hlab workflow run my-workflow "..."` |
+| `Workflow "X" not found` | YAML file이 발견되지 않음 | 파일이 `.harneeslab/workflows/`에 있고 `hlab workflow list`에 표시되는지 확인 |
+| `Command "X" not found` | Command file 없음 | `.harneeslab/commands/X.md`가 있고 `hlab validate commands X`가 통과하는지 확인 |
+| `Routing unclear — falling back to harneeslab-assist` | input과 match되는 workflow 없음 | 명시적 workflow 이름 사용: `hlab workflow run my-workflow "..."` |
 | `Worktree already exists for branch X` | 이전 run이 worktree를 남김 | `hlab complete X` 또는 `hlab isolation cleanup` 실행 |
 | `Not a git repository` | repo 밖에서 실행 중 | 먼저 git repo로 `cd`. workflow와 isolation command에는 git repo가 필요 |
 | `Model X is not valid for provider Y` | provider/model mismatch | 각 provider가 받는 model이 다릅니다. provider의 `isModelCompatible` rule을 확인하세요. Claude는 `sonnet`, `opus`, `haiku`, `claude-*`를 받고 Codex는 다른 model을 받습니다. |
-| `$BASE_BRANCH referenced but could not be detected` | base branch가 설정되지 않았고 auto-detection 실패 | `.archon/config.yaml`에 `worktree.baseBranch`를 설정하거나 `main`/`master`가 있는지 확인 |
+| `$BASE_BRANCH referenced but could not be detected` | base branch가 설정되지 않았고 auto-detection 실패 | `.harneeslab/config.yaml`에 `worktree.baseBranch`를 설정하거나 `main`/`master`가 있는지 확인 |
 | Workflow hangs with no output | node idle timeout 도달 | node의 `idle_timeout`을 늘림(milliseconds) |
 
 ### Debug technique
 
-**Archon이 찾은 항목 보기:**
+**HarneesLab이 찾은 항목 보기:**
 ```bash
 hlab workflow list          # Are your workflows loaded?
 hlab validate workflows     # Any YAML errors?
@@ -287,12 +287,12 @@ hlab isolation list         # Any stale worktrees?
 
 **verbose logging 활성화:**
 ```bash
-archon --verbose workflow run my-workflow "..."
+harneeslab --verbose workflow run my-workflow "..."
 ```
 
 **execution log 확인** — 각 run은 JSONL log를 씁니다.
 ```
-~/.archon/workspaces/<owner>/<repo>/logs/
+~/.harneeslab/workspaces/<owner>/<repo>/logs/
 ```
 
 **debugging 단순화를 위해 isolation 없이 실행:**
@@ -302,13 +302,13 @@ hlab workflow run my-workflow --no-worktree "..."
 
 **workflow에 넣기 전에 command 직접 테스트:**
 ```bash
-hlab workflow run archon-assist "/command-invoke my-command some-arg"
+hlab workflow run harneeslab-assist "/command-invoke my-command some-arg"
 ```
 
 ### 도움 받기
 
 - **YAML 검증**: `hlab validate workflows my-workflow`
-- **log 확인**: `~/.archon/workspaces/<owner>/<repo>/logs/`
+- **log 확인**: `~/.harneeslab/workspaces/<owner>/<repo>/logs/`
 - **issue 보고**: [github.com/anthropics/claude-code/issues](https://github.com/anthropics/claude-code/issues)
 
 ---

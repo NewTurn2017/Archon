@@ -13,25 +13,25 @@ HarneesLab은 합리적인 기본값, 선택적 YAML config file, 환경 변수 
 
 ## 디렉터리 구조
 
-### 사용자 레벨(~/.archon/)
+### 사용자 레벨(~/.harneeslab/)
 
-`~/.archon/`은 compatibility phase의 기본 local home입니다. 새 custom 위치가 필요하면 `HARNEESLAB_HOME`을 설정하고, 기존 `ARCHON_HOME`은 legacy fallback으로 계속 사용할 수 있습니다.
+`~/.harneeslab/`은 기본 local home입니다. custom 위치가 필요하면 `HARNEESLAB_HOME`을 설정합니다.
 
 ```
-~/.archon/
+~/.harneeslab/
 ├── workspaces/owner/repo/  # Project-centric layout
 │   ├── source/             # Clone or symlink -> local path
 │   ├── worktrees/          # Git worktrees for this project
 │   ├── artifacts/          # Workflow artifacts
 │   └── logs/               # Workflow execution logs
-├── archon.db               # SQLite database(DATABASE_URL이 없을 때)
+├── harneeslab.db               # SQLite database(DATABASE_URL이 없을 때)
 └── config.yaml             # Global configuration(optional)
 ```
 
-### Repository 레벨(.archon/)
+### Repository 레벨(.harneeslab/)
 
 ```
-.archon/
+.harneeslab/
 ├── commands/       # Custom commands
 │   └── plan.md
 ├── workflows/      # workflow definition(YAML file)
@@ -43,13 +43,13 @@ HarneesLab은 합리적인 기본값, 선택적 YAML config file, 환경 변수 
 설정은 다음 순서로 로드됩니다(뒤에 오는 항목이 앞 항목을 override).
 
 1. **Defaults** - 내장 기본값
-2. **Global Config** - `~/.archon/config.yaml`
-3. **Repo Config** - repository의 `.archon/config.yaml`
+2. **Global Config** - `~/.harneeslab/config.yaml`
+3. **Repo Config** - repository의 `.harneeslab/config.yaml`
 4. **Environment Variables** - 항상 가장 높은 우선순위
 
 ## Global 설정
 
-사용자 전체 preference를 위해 `~/.archon/config.yaml`을 만듭니다.
+사용자 전체 preference를 위해 `~/.harneeslab/config.yaml`을 만듭니다.
 
 ```yaml
 # 기본 AI assistant
@@ -84,8 +84,8 @@ streaming:
 
 # Custom paths (usually not needed)
 paths:
-  workspaces: ~/.archon/workspaces
-  worktrees: ~/.archon/worktrees
+  workspaces: ~/.harneeslab/workspaces
+  worktrees: ~/.harneeslab/worktrees
 
 # Concurrency limits
 concurrency:
@@ -95,7 +95,7 @@ concurrency:
 
 ## Repository 설정
 
-프로젝트별 설정을 위해 임의의 repository에 `.archon/config.yaml`을 만듭니다.
+프로젝트별 설정을 위해 임의의 repository에 `.harneeslab/config.yaml`을 만듭니다.
 
 ```yaml
 # AI assistant for this project (used as default provider for workflows)
@@ -113,7 +113,7 @@ assistants:
 
 # command 설정
 commands:
-  folder: .archon/commands
+  folder: .harneeslab/commands
   autoLoad: true
 
 # Worktree settings
@@ -164,7 +164,7 @@ assistants:
 
 `~/.claude/CLAUDE.md`에 coding style이나 identity preference를 관리하고 HarneesLab session이 이를 따르길 원할 때 유용합니다.
 
-**기본 동작:** `.archon/` directory는 항상 worktree에 자동 복사됩니다(artifact, plan, workflow 포함). `.env`나 `.vscode` 같은 추가 파일에만 `copyFiles`를 사용하세요.
+**기본 동작:** `.harneeslab/` directory는 항상 worktree에 자동 복사됩니다(artifact, plan, workflow 포함). `.env`나 `.vscode` 같은 추가 파일에만 `copyFiles`를 사용하세요.
 
 **Defaults 동작:** 앱의 bundled default command와 workflow는 runtime에 로드되고 repo-specific 항목과 병합됩니다. Repo command/workflow가 같은 이름의 app default를 override합니다. runtime loading을 끄려면 `defaults.loadDefaultCommands: false` 또는 `defaults.loadDefaultWorkflows: false`를 설정하세요.
 
@@ -185,14 +185,14 @@ assistants:
 
 | 변수 | 설명 | 기본값 |
 | --- | --- | --- |
-| `HARNEESLAB_HOME` | HarneesLab-managed file의 base directory. `ARCHON_HOME`은 legacy fallback | `~/.archon` |
+| `HARNEESLAB_HOME` | HarneesLab-managed file의 base directory. `HARNEESLAB_HOME` sets a custom location | `~/.harneeslab` |
 | `PORT` | HTTP server listen port | `3090`(worktree에서는 auto-allocated) |
 | `LOG_LEVEL` | Logging verbosity(`fatal`, `error`, `warn`, `info`, `debug`, `trace`) | `info` |
 | `BOT_DISPLAY_NAME` | batch-mode "starting" message에 표시할 bot name | `HarneesLab` |
 | `DEFAULT_AI_ASSISTANT` | 기본 AI assistant(registered provider와 일치해야 함) | `claude` |
 | `MAX_CONCURRENT_CONVERSATIONS` | 최대 동시 AI conversation 수 | `10` |
 | `SESSION_RETENTION_DAYS` | N일보다 오래된 inactive session 삭제 | `30` |
-| `ARCHON_SUPPRESS_NESTED_CLAUDE_WARNING` | `1`로 설정하면 Claude Code session 안에서 `hlab` 실행 시 stderr warning 숨김. env 이름은 legacy compatibility 때문에 유지됩니다. | -- |
+| `HARNEESLAB_SUPPRESS_NESTED_CLAUDE_WARNING` | `1`로 설정하면 Claude Code session 안에서 `hlab` 실행 시 stderr warning 숨김. env 이름은 legacy compatibility 때문에 유지됩니다. | -- |
 
 ### AI Providers -- Claude
 
@@ -202,7 +202,7 @@ assistants:
 | `CLAUDE_CODE_OAUTH_TOKEN` | 명시적 OAuth token(global auth 대안) | -- |
 | `CLAUDE_API_KEY` | 명시적 API key(global auth 대안) | -- |
 | `TITLE_GENERATION_MODEL` | conversation title 생성용 lightweight model | SDK default |
-| `ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS` | Claude subprocess가 hung으로 간주되기 전 timeout(ms, diagnostic log와 함께 throw) | `60000` |
+| `HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS` | Claude subprocess가 hung으로 간주되기 전 timeout(ms, diagnostic log와 함께 throw) | `60000` |
 
 `CLAUDE_USE_GLOBAL_AUTH`가 설정되지 않으면 HarneesLab은 자동 감지합니다. 명시적 token이 있으면 이를 사용하고, 없으면 global auth로 fallback합니다.
 
@@ -264,7 +264,7 @@ assistants:
 
 | 변수 | 설명 | 기본값 |
 | --- | --- | --- |
-| `DATABASE_URL` | PostgreSQL connection string(SQLite 사용 시 생략) | `~/.archon/archon.db`의 SQLite |
+| `DATABASE_URL` | PostgreSQL connection string(SQLite 사용 시 생략) | `~/.harneeslab/harneeslab.db`의 SQLite |
 
 ### Web UI
 
@@ -285,7 +285,7 @@ assistants:
 
 | 변수 | 설명 | 기본값 |
 | --- | --- | --- |
-| `HARNEESLAB_DATA` | HarneesLab data(workspaces, worktrees, artifacts)의 host path. `ARCHON_DATA`는 legacy fallback | Docker-managed volume(`archon_data` compatibility default) |
+| `HARNEESLAB_DATA` | HarneesLab data(workspaces, worktrees, artifacts)의 host path. `HARNEESLAB_DATA` sets a custom location | Docker-managed volume(`harneeslab_data`) |
 | `DOMAIN` | Caddy reverse proxy용 public domain(TLS auto-provisioned) | -- |
 | `CADDY_BASIC_AUTH` | Web UI와 API 보호용 Caddy basicauth directive | Disabled |
 | `AUTH_USERNAME` | form-based auth(Caddy forward_auth) username | -- |
@@ -300,18 +300,18 @@ Infrastructure configuration(database URL, platform token)은 `.env` file에 저
 
 | Component | 위치 | 목적 |
 |-----------|----------|---------|
-| **CLI** | `$HARNEESLAB_HOME/.env`, `$ARCHON_HOME/.env`, 또는 `~/.archon/.env` | Global infrastructure config; CWD .env key를 먼저 strip한 뒤 `override: true`로 로드(HarneesLab config가 shell-inherited var보다 우선) |
+| **CLI** | `$HARNEESLAB_HOME/.env` 또는 `~/.harneeslab/.env` | Global infrastructure config; CWD .env key를 먼저 strip한 뒤 `override: true`로 로드(HarneesLab config가 shell-inherited var보다 우선) |
 | **Server (dev)** | `<harneeslab-repo>/.env` + global `.env` | Repo `.env`는 platform token용; global `.env`는 `override: true`로 로드 |
 | **Server (binary)** | global `.env` | 단일 source of truth(compiled binary에서는 repo `.env` path 사용 불가) |
 
-**동작 방식**: 시작 시 CLI와 server는 현재 작업 디렉터리의 `.env`, `.env.local`, `.env.development`, `.env.production`에서 Bun이 자동 로드한 모든 key와 nested Claude Code session marker(auth var를 제외한 `CLAUDECODE`, `CLAUDE_CODE_*`)를 제거한 뒤 global `.env`를 로드합니다. global `.env` 위치는 `HARNEESLAB_HOME`, `ARCHON_HOME`, `~/.archon` 순서로 결정됩니다. 이렇게 하면 target repo key와 nested-session guard가 어떤 application code도 실행되기 전에 `process.env`에서 완전히 제거됩니다.
+**동작 방식**: 시작 시 CLI와 server는 현재 작업 디렉터리의 `.env`, `.env.local`, `.env.development`, `.env.production`에서 Bun이 자동 로드한 모든 key와 nested Claude Code session marker(auth var를 제외한 `CLAUDECODE`, `CLAUDE_CODE_*`)를 제거한 뒤 global `.env`를 로드합니다. global `.env` 위치는 `HARNEESLAB_HOME`, `~/.harneeslab` 순서로 결정됩니다. 이렇게 하면 target repo key와 nested-session guard가 어떤 application code도 실행되기 전에 `process.env`에서 완전히 제거됩니다.
 
-**Best practice**: 기본 compatibility 경로인 `~/.archon/.env`를 사용하거나, 새 custom 위치가 필요하면 `HARNEESLAB_HOME`을 설정하세요.
+**Best practice**: 기본 경로인 `~/.harneeslab/.env`를 사용하거나, 새 custom 위치가 필요하면 `HARNEESLAB_HOME`을 설정하세요.
 
 ```bash
 # Create global config
-mkdir -p ~/.archon
-cp .env.example ~/.archon/.env
+mkdir -p ~/.harneeslab
+cp .env.example ~/.harneeslab/.env
 # 실제 값으로 편집
 ```
 
@@ -326,7 +326,7 @@ Docker container에서는 path가 자동으로 설정됩니다.
 │   ├── worktrees/
 │   ├── artifacts/
 │   └── logs/
-└── archon.db
+└── harneeslab.db
 ```
 
 환경 변수는 그대로 동작하며 기본값을 override합니다.
@@ -335,13 +335,13 @@ Docker container에서는 path가 자동으로 설정됩니다.
 
 Repository를 clone하거나 전환할 때 HarneesLab은 다음 우선순위로 command를 찾습니다.
 
-1. `.archon/commands/` - 항상 먼저 검색
-2. `.archon/config.yaml`의 `commands.folder`에서 설정한 folder(지정된 경우)
+1. `.harneeslab/commands/` - 항상 먼저 검색
+2. `.harneeslab/config.yaml`의 `commands.folder`에서 설정한 folder(지정된 경우)
 
-`.archon/config.yaml` 예시:
+`.harneeslab/config.yaml` 예시:
 ```yaml
 commands:
-  folder: .claude/commands/archon  # 추가로 검색할 legacy-compatible command folder
+  folder: .claude/commands/harneeslab  # 추가로 검색할 command folder
   autoLoad: true
 ```
 
@@ -351,21 +351,21 @@ commands:
 
 설정이 필요 없습니다. HarneesLab은 기본적으로 다음으로 동작합니다.
 
-- 모든 managed file은 `~/.archon/` 사용
+- 모든 managed file은 `~/.harneeslab/` 사용
 - 기본 AI assistant는 Claude
 - 플랫폼에 맞는 streaming mode
 
 ### Custom AI preference
 
 ```yaml
-# ~/.archon/config.yaml
+# ~/.harneeslab/config.yaml
 defaultAssistant: codex
 ```
 
 ### Project-specific setting
 
 ```yaml
-# .archon/config.yaml in your repo
+# .harneeslab/config.yaml in your repo
 assistant: claude  # Workflows inherit this provider unless they specify their own
 commands:
   autoLoad: true
@@ -377,11 +377,11 @@ commands:
 docker run -v /my/data:/.harneeslab ghcr.io/newturn2017/harneeslab
 ```
 
-기존 `ARCHON_DOCKER`와 `/.archon` mount도 compatibility path로 유지됩니다.
+기존 `HARNEESLAB_DOCKER`와 `/.harneeslab` mount도 compatibility path로 유지됩니다.
 
 ## Streaming mode
 
-각 platform adapter는 환경 변수 또는 `~/.archon/config.yaml`로 설정하는 두 가지 streaming mode를 지원합니다.
+각 platform adapter는 환경 변수 또는 `~/.harneeslab/config.yaml`로 설정하는 두 가지 streaming mode를 지원합니다.
 
 ### Stream mode
 
@@ -500,7 +500,7 @@ curl http://localhost:3090/health/concurrency
 Config file에 잘못된 YAML syntax가 있으면 다음과 같은 error message가 표시됩니다.
 
 ```
-[Config] Failed to parse global config at ~/.archon/config.yaml: <error details>
+[Config] Failed to parse global config at ~/.harneeslab/config.yaml: <error details>
 [Config] Using default configuration. Please fix the YAML syntax in your config file.
 ```
 

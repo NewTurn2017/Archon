@@ -10,14 +10,14 @@ function command(name: string, source: CommandEntry['source'] = 'bundled'): Comm
 describe('categorizeCommands', () => {
   test('keeps English internal category keys for bundled commands', () => {
     const categories = categorizeCommands([
-      command('archon-investigate-issue'),
-      command('archon-create-plan'),
-      command('archon-implement'),
-      command('archon-code-review-agent'),
-      command('archon-create-pr'),
-      command('archon-synthesize-review'),
-      command('archon-validate'),
-      command('archon-assist'),
+      command('harneeslab-investigate-issue'),
+      command('harneeslab-create-plan'),
+      command('harneeslab-implement'),
+      command('harneeslab-code-review-agent'),
+      command('harneeslab-create-pr'),
+      command('harneeslab-synthesize-review'),
+      command('harneeslab-validate'),
+      command('harneeslab-assist'),
     ]);
 
     expect(categories.map(category => category.name)).toEqual([
@@ -34,9 +34,9 @@ describe('categorizeCommands', () => {
 
   test('puts project commands first without localizing internal category names', () => {
     const categories = categorizeCommands([
-      command('archon-implement'),
+      command('harneeslab-implement'),
       command('local-project-command', 'project'),
-      command('archon-validate'),
+      command('harneeslab-validate'),
     ]);
 
     expect(categories.map(category => category.name)).toEqual([

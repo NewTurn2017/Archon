@@ -9,7 +9,7 @@ sidebar:
   order: 5
 ---
 
-HarneesLab은 `archon-validate-pr` 같은 workflow의 end-to-end browser testing에 Vercel Labs의 [agent-browser](https://github.com/vercel-labs/agent-browser)를 사용합니다. 이는 **선택적** external dependency이며, 핵심 HarneesLab 기능은 agent-browser 없이도 동작합니다.
+HarneesLab은 `harneeslab-validate-pr` 같은 workflow의 end-to-end browser testing에 Vercel Labs의 [agent-browser](https://github.com/vercel-labs/agent-browser)를 사용합니다. 이는 **선택적** external dependency이며, 핵심 HarneesLab 기능은 agent-browser 없이도 동작합니다.
 
 ## 설치
 
@@ -38,11 +38,11 @@ agent-browser close
 
 | Resource | Type | 용도 |
 |----------|------|---------|
-| `archon-validate-pr` | Workflow | PR validation의 E2E testing phase |
+| `harneeslab-validate-pr` | Workflow | PR validation의 E2E testing phase |
 | `validate-ui` | Skill | 종합 UI testing |
 | `replicate-issue` | Skill | browser를 통한 issue reproduction |
-| `archon-validate-pr-e2e-main.md` | Command | main branch 대상 E2E test |
-| `archon-validate-pr-e2e-feature.md` | Command | feature branch 대상 E2E test |
+| `harneeslab-validate-pr-e2e-main.md` | Command | main branch 대상 E2E test |
+| `harneeslab-validate-pr-e2e-feature.md` | Command | feature branch 대상 E2E test |
 
 ## 플랫폼별 참고사항
 

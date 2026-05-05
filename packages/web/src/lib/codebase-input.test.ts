@@ -3,26 +3,26 @@ import { getCodebaseInput } from '@/lib/codebase-input';
 
 describe('getCodebaseInput', () => {
   test('treats GitHub repository inputs as urls', () => {
-    expect(getCodebaseInput('https://github.com/coleam00/Archon')).toEqual({
-      url: 'https://github.com/coleam00/Archon',
+    expect(getCodebaseInput('https://github.com/coleam00/HarneesLab')).toEqual({
+      url: 'https://github.com/coleam00/HarneesLab',
     });
   });
 
   test('treats SSH git@ shorthand as urls', () => {
-    expect(getCodebaseInput('git@github.com:coleam00/Archon.git')).toEqual({
-      url: 'git@github.com:coleam00/Archon.git',
+    expect(getCodebaseInput('git@github.com:coleam00/HarneesLab.git')).toEqual({
+      url: 'git@github.com:coleam00/HarneesLab.git',
     });
   });
 
   test('treats ssh:// URLs as urls', () => {
-    expect(getCodebaseInput('ssh://git@github.com/coleam00/Archon.git')).toEqual({
-      url: 'ssh://git@github.com/coleam00/Archon.git',
+    expect(getCodebaseInput('ssh://git@github.com/coleam00/HarneesLab.git')).toEqual({
+      url: 'ssh://git@github.com/coleam00/HarneesLab.git',
     });
   });
 
   test('treats git:// URLs as urls', () => {
-    expect(getCodebaseInput('git://github.com/coleam00/Archon.git')).toEqual({
-      url: 'git://github.com/coleam00/Archon.git',
+    expect(getCodebaseInput('git://github.com/coleam00/HarneesLab.git')).toEqual({
+      url: 'git://github.com/coleam00/HarneesLab.git',
     });
   });
 
@@ -45,20 +45,20 @@ describe('getCodebaseInput', () => {
   });
 
   test('treats home-relative paths as paths', () => {
-    expect(getCodebaseInput('~/src/archon')).toEqual({
-      path: '~/src/archon',
+    expect(getCodebaseInput('~/src/harneeslab')).toEqual({
+      path: '~/src/harneeslab',
     });
   });
 
   test('treats windows local paths as paths', () => {
-    expect(getCodebaseInput('C:\\repo\\archon')).toEqual({
-      path: 'C:\\repo\\archon',
+    expect(getCodebaseInput('C:\\repo\\harneeslab')).toEqual({
+      path: 'C:\\repo\\harneeslab',
     });
   });
 
   test('treats windows UNC paths as paths', () => {
-    expect(getCodebaseInput('\\\\server\\share\\archon')).toEqual({
-      path: '\\\\server\\share\\archon',
+    expect(getCodebaseInput('\\\\server\\share\\harneeslab')).toEqual({
+      path: '\\\\server\\share\\harneeslab',
     });
   });
 });

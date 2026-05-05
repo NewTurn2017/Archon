@@ -1,6 +1,6 @@
-# Investigation: One-command web UI install via `archon serve`
+# Investigation: One-command web UI install via `harneeslab serve`
 
-**Issue**: #978 (https://github.com/coleam00/Archon/issues/978)
+**Issue**: #978 (https://github.com/coleam00/HarneesLab/issues/978)
 **Type**: ENHANCEMENT
 **Investigated**: 2026-04-09T12:00:00Z
 
@@ -16,7 +16,7 @@
 
 ## Problem Statement
 
-The compiled Archon CLI binary includes only `packages/cli/src/cli.ts` — no server, no web UI, no `archon serve` command. Users who want the web UI must clone the entire monorepo, install Bun, run `bun install` (2274 packages), and `bun dev`. There is no one-command path to get a working web UI from the binary install.
+The compiled HarneesLab CLI binary includes only `packages/cli/src/cli.ts` — no server, no web UI, no `harneeslab serve` command. Users who want the web UI must clone the entire monorepo, install Bun, run `bun install` (2274 packages), and `bun dev`. There is no one-command path to get a working web UI from the binary install.
 
 ---
 
@@ -24,13 +24,13 @@ The compiled Archon CLI binary includes only `packages/cli/src/cli.ts` — no se
 
 ### Change Rationale
 
-The web UI is the most discoverable part of the product, but it's behind the highest friction install path. The proposed approach — lazy-fetching a pre-built web UI tarball from GitHub releases on first `archon serve` — keeps the CLI binary small for CLI-only users while giving web UI users a one-command experience: `brew install coleam00/archon/archon && archon serve`.
+The web UI is the most discoverable part of the product, but it's behind the highest friction install path. The proposed approach — lazy-fetching a pre-built web UI tarball from GitHub releases on first `harneeslab serve` — keeps the CLI binary small for CLI-only users while giving web UI users a one-command experience: `brew install coleam00/harneeslab/harneeslab && harneeslab serve`.
 
 ### Key Design Decision: Server as Library vs Embedded Mini-Server
 
 The current server (`packages/server/src/index.ts`) is a 721-line script with a monolithic `main()` function (line 129-718). It has no `startServer()` export and cannot be imported as a library. Two approaches:
 
-**Option A: Full server refactor** — Extract `main()` into an exported `startServer(opts)` function, make `@archon/server` a dependency of `@archon/cli`, compile the full server into the binary. Binary grows from ~50MB to ~65MB. All platform adapters (Slack, Telegram, GitHub, Discord) would be compiled in.
+**Option A: Full server refactor** — Extract `main()` into an exported `startServer(opts)` function, make `@harneeslab/server` a dependency of `@harneeslab/cli`, compile the full server into the binary. Binary grows from ~50MB to ~65MB. All platform adapters (Slack, Telegram, GitHub, Discord) would be compiled in.
 
 **Option B: Minimal embedded server** — Create a lightweight Hono server in `packages/cli/src/commands/serve.ts` that only registers API routes + static serving. No platform adapters. Binary stays closer to current size. Uses `registerApiRoutes()` (already exported from `packages/server/src/routes/api.ts:837`) as the core building block.
 
@@ -44,14 +44,14 @@ The current server (`packages/server/src/index.ts`) is a 721-line script with a 
 
 | File | Lines | Action | Description |
 |------|-------|--------|-------------|
-| `packages/cli/src/commands/serve.ts` | NEW | CREATE | `archon serve` command: download web-dist, start server |
+| `packages/cli/src/commands/serve.ts` | NEW | CREATE | `harneeslab serve` command: download web-dist, start server |
 | `packages/cli/src/cli.ts` | 57-82, 231, 266+ | UPDATE | Add `'serve'` to `noGitCommands`, add `case 'serve'` |
-| `packages/cli/package.json` | deps | UPDATE | Add `@archon/server` and `@archon/adapters` as dependencies |
+| `packages/cli/package.json` | deps | UPDATE | Add `@harneeslab/server` and `@harneeslab/adapters` as dependencies |
 | `packages/server/src/index.ts` | 129-718 | UPDATE | Extract `main()` into exported `startServer(opts)` |
 | `packages/server/src/index.ts` | 579-593 | UPDATE | Accept `webDistPath` parameter instead of computing from `import.meta.dir` |
 | `.github/workflows/release.yml` | 140-173 | UPDATE | Add web UI build + tarball upload step |
 | `scripts/build-binaries.sh` | — | NONE | No change needed — `bun build --compile` follows imports automatically |
-| `packages/paths/src/archon-paths.ts` | — | UPDATE | Add `getWebDistPath(version)` helper |
+| `packages/paths/src/harneeslab-paths.ts` | — | UPDATE | Add `getWebDistPath(version)` helper |
 | Tests | NEW | CREATE | Cover download, checksum, extraction, server startup from CLI |
 
 ### Integration Points
@@ -59,7 +59,7 @@ The current server (`packages/server/src/index.ts`) is a 721-line script with a 
 - `packages/cli/src/cli.ts:57-82` imports all commands after dotenv setup
 - `packages/server/src/routes/api.ts:837` exports `registerApiRoutes(app, webAdapter, lockManager)` — the only reusable server building block
 - `packages/paths/src/bundled-build.ts` provides `BUNDLED_VERSION` for constructing release URLs
-- `packages/paths/src/archon-paths.ts:56-74` provides `getArchonHome()` for cache location
+- `packages/paths/src/harneeslab-paths.ts:56-74` provides `getHarneesLabHome()` for cache location
 - `packages/server/src/index.ts:581-593` resolves `webDistPath` from `import.meta.dir` — needs parameterization
 - `.github/workflows/release.yml:163-173` publishes release assets via `softprops/action-gh-release@v2`
 
@@ -123,37 +123,37 @@ if (import.meta.main) {
 
 ### Step 2: Add `getWebDistDir()` path helper
 
-**File**: `packages/paths/src/archon-paths.ts`
+**File**: `packages/paths/src/harneeslab-paths.ts`
 **Action**: UPDATE
 
 **Add function:**
 ```typescript
 /**
  * Returns the path to the cached web UI distribution for a given version.
- * Example: ~/.archon/web-dist/v0.3.2/
+ * Example: ~/.harneeslab/web-dist/v0.3.2/
  */
 export function getWebDistDir(version: string): string {
-  return join(getArchonHome(), 'web-dist', version);
+  return join(getHarneesLabHome(), 'web-dist', version);
 }
 ```
 
-**Why**: Centralizes the cache location logic, consistent with existing `getArchonHome()` patterns.
+**Why**: Centralizes the cache location logic, consistent with existing `getHarneesLabHome()` patterns.
 
 ---
 
-### Step 3: Create `archon serve` command
+### Step 3: Create `harneeslab serve` command
 
 **File**: `packages/cli/src/commands/serve.ts`
 **Action**: CREATE
 
 ```typescript
 import { existsSync } from 'fs';
-import { createLogger, getWebDistDir } from '@archon/paths';
-import { BUNDLED_IS_BINARY, BUNDLED_VERSION } from '@archon/paths/bundled-build';
+import { createLogger, getWebDistDir } from '@harneeslab/paths';
+import { BUNDLED_IS_BINARY, BUNDLED_VERSION } from '@harneeslab/paths/bundled-build';
 
 const log = createLogger('cli.serve');
 
-const GITHUB_REPO = 'coleam00/Archon';
+const GITHUB_REPO = 'coleam00/HarneesLab';
 
 interface ServeOptions {
   port?: number;
@@ -164,7 +164,7 @@ export async function serveCommand(opts: ServeOptions): Promise<number> {
   const version = BUNDLED_IS_BINARY ? BUNDLED_VERSION : 'dev';
   
   if (version === 'dev') {
-    console.error('Error: `archon serve` is for compiled binaries only.');
+    console.error('Error: `harneeslab serve` is for compiled binaries only.');
     console.error('For development, use: bun run dev');
     return 1;
   }
@@ -182,7 +182,7 @@ export async function serveCommand(opts: ServeOptions): Promise<number> {
   }
 
   // Import server and start
-  const { startServer } = await import('@archon/server');
+  const { startServer } = await import('@harneeslab/server');
   await startServer({
     webDistPath: webDistDir,
     port: opts.port,
@@ -194,7 +194,7 @@ export async function serveCommand(opts: ServeOptions): Promise<number> {
 }
 
 async function downloadWebDist(version: string, targetDir: string): Promise<void> {
-  const tarballUrl = `https://github.com/${GITHUB_REPO}/releases/download/v${version}/archon-web.tar.gz`;
+  const tarballUrl = `https://github.com/${GITHUB_REPO}/releases/download/v${version}/harneeslab-web.tar.gz`;
   const checksumsUrl = `https://github.com/${GITHUB_REPO}/releases/download/v${version}/checksums.txt`;
 
   console.log(`Web UI not found locally — downloading from release v${version}...`);
@@ -205,7 +205,7 @@ async function downloadWebDist(version: string, targetDir: string): Promise<void
     throw new Error(`Failed to download checksums: ${checksumsRes.status} ${checksumsRes.statusText}`);
   }
   const checksumsText = await checksumsRes.text();
-  const expectedHash = parseChecksum(checksumsText, 'archon-web.tar.gz');
+  const expectedHash = parseChecksum(checksumsText, 'harneeslab-web.tar.gz');
 
   // Download tarball
   console.log(`Downloading ${tarballUrl}...`);
@@ -305,18 +305,18 @@ port: { type: 'string' },
 
 ---
 
-### Step 5: Add `@archon/server` dependency to CLI package
+### Step 5: Add `@harneeslab/server` dependency to CLI package
 
 **File**: `packages/cli/package.json`
 **Action**: UPDATE
 
 Add to `dependencies`:
 ```json
-"@archon/server": "workspace:*",
-"@archon/adapters": "workspace:*"
+"@harneeslab/server": "workspace:*",
+"@harneeslab/adapters": "workspace:*"
 ```
 
-**Why**: The CLI needs to import `startServer` from `@archon/server`. `@archon/adapters` is a transitive dependency of `@archon/server` and should be explicit.
+**Why**: The CLI needs to import `startServer` from `@harneeslab/server`. `@harneeslab/adapters` is a transitive dependency of `@harneeslab/server` and should be explicit.
 
 ---
 
@@ -335,24 +335,24 @@ Add to `dependencies`:
         run: bun install --frozen-lockfile
 
       - name: Build web UI
-        run: bun --filter @archon/web run build
+        run: bun --filter @harneeslab/web run build
 
       - name: Package web dist
         run: |
-          tar czf dist/archon-web.tar.gz -C packages/web/dist .
+          tar czf dist/harneeslab-web.tar.gz -C packages/web/dist .
 
       - name: Generate checksums
         run: |
           cd dist
-          sha256sum archon-* archon-web.tar.gz > checksums.txt
+          sha256sum harneeslab-* harneeslab-web.tar.gz > checksums.txt
           cat checksums.txt
 ```
 
 **Update** the `files:` block in the release step:
 ```yaml
           files: |
-            dist/archon-*
-            dist/archon-web.tar.gz
+            dist/harneeslab-*
+            dist/harneeslab-web.tar.gz
             dist/checksums.txt
 ```
 
@@ -431,15 +431,15 @@ if (BUNDLED_IS_BINARY) {
 ```
 
 ```typescript
-// SOURCE: packages/paths/src/archon-paths.ts:56-74
-// Pattern for path resolution with ARCHON_HOME override
-export function getArchonHome(): string {
+// SOURCE: packages/paths/src/harneeslab-paths.ts:56-74
+// Pattern for path resolution with HARNEESLAB_HOME override
+export function getHarneesLabHome(): string {
   if (isDocker()) {
-    return '/.archon';
+    return '/.harneeslab';
   }
-  const envHome = process.env.ARCHON_HOME;
+  const envHome = process.env.HARNEESLAB_HOME;
   if (envHome) { /* ... */ return expandTilde(envHome); }
-  return join(homedir(), '.archon');
+  return join(homedir(), '.harneeslab');
 }
 ```
 
@@ -466,8 +466,8 @@ if (process.env.NODE_ENV === 'production' || !process.env.WEB_UI_DEV) {
 | Air-gapped environments | `--download-only` allows pre-caching; future `--web-dist <path>` for offline |
 | Version mismatch (binary v0.3.2 but no release exists yet) | Fail with "release not found" — only happens if someone builds from source with wrong version |
 | `tar` not available on system | Available on all macOS/Linux; for Windows, use Bun's built-in tar or `decompress` |
-| Concurrent `archon serve` calls during first download | Atomic rename prevents corruption; second process sees complete dir or retries |
-| `@archon/server` import increases CLI startup time | Use dynamic `await import()` in serve command only — other commands unaffected |
+| Concurrent `harneeslab serve` calls during first download | Atomic rename prevents corruption; second process sees complete dir or retries |
+| `@harneeslab/server` import increases CLI startup time | Use dynamic `await import()` in serve command only — other commands unaffected |
 
 ---
 
@@ -486,11 +486,11 @@ bun run validate  # Full pre-PR validation
 
 1. Run `bun run dev` — verify server still starts normally (script mode preserved)
 2. Build binary: `VERSION=test scripts/build-binaries.sh` — verify it compiles
-3. Run binary with `archon serve` — verify download + extraction + server start
-4. Run binary with `archon serve --download-only` — verify download without server
-5. Run binary with `archon serve` a second time — verify cached (no download)
-6. Run `archon workflow list` — verify no startup time regression from server dep
-7. Verify `archon serve --port 4000` — verify port override works
+3. Run binary with `harneeslab serve` — verify download + extraction + server start
+4. Run binary with `harneeslab serve --download-only` — verify download without server
+5. Run binary with `harneeslab serve` a second time — verify cached (no download)
+6. Run `harneeslab workflow list` — verify no startup time regression from server dep
+7. Verify `harneeslab serve --port 4000` — verify port override works
 
 ---
 
@@ -498,9 +498,9 @@ bun run validate  # Full pre-PR validation
 
 **IN SCOPE:**
 - Server library refactor (extract `startServer()`)
-- `archon serve` CLI command with download + checksum + extract
+- `harneeslab serve` CLI command with download + checksum + extract
 - `--port` and `--download-only` flags
-- Release CI changes to build and publish `archon-web.tar.gz`
+- Release CI changes to build and publish `harneeslab-web.tar.gz`
 - Path helper for web-dist cache location
 - Tests for download/extract/checksum logic
 
@@ -508,8 +508,8 @@ bun run validate  # Full pre-PR validation
 - `bun dev` workflow — stays as-is for contributors
 - Docker image — orthogonal, not affected
 - CDN mirroring — GitHub releases sufficient for now
-- `archon serve --web-version=latest` — defer to future issue
-- `archon serve --offline --web-dist=./path` — defer (can add later)
+- `harneeslab serve --web-version=latest` — defer to future issue
+- `harneeslab serve --offline --web-dist=./path` — defer (can add later)
 - Homebrew formula changes — just update docs, no formula change needed
 - Auto-update of cached web-dist — version-keyed dirs handle this naturally
 - Deprecating clone-and-bun-dev — keep for contributors

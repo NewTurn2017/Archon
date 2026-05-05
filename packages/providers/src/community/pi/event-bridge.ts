@@ -98,7 +98,7 @@ export function serializeToolResult(result: unknown): string {
 }
 
 /**
- * Extract Archon TokenUsage from Pi's Usage struct.
+ * Extract HarneesLab TokenUsage from Pi's Usage struct.
  * Pi reports input/output/cacheRead/cacheWrite + cost breakdown.
  */
 export function usageToTokens(usage: Usage): TokenUsage {
@@ -152,7 +152,7 @@ export function buildResultChunk(messages: readonly unknown[]): MessageChunk {
 }
 
 /**
- * Pure mapper from Pi's `AgentSessionEvent` → zero-or-more Archon `MessageChunk`s.
+ * Pure mapper from Pi's `AgentSessionEvent` → zero-or-more HarneesLab `MessageChunk`s.
  *
  * Most Pi events map 1:1 or are skipped. Tool execution is split across
  * `tool_execution_start` / `tool_execution_end`; the start yields `tool` with
@@ -161,7 +161,7 @@ export function buildResultChunk(messages: readonly unknown[]): MessageChunk {
  * Events deliberately skipped in v1:
  *  - turn_start / turn_end, message_start / message_end (redundant with deltas)
  *  - text_start / text_end / thinking_start / thinking_end (boundaries only)
- *  - compaction_start / compaction_end (auto-compaction opaque to Archon)
+ *  - compaction_start / compaction_end (auto-compaction opaque to HarneesLab)
  *  - queue_update (single-prompt sessions only)
  *  - auto_retry_end (retry_start communicates the retry sufficiently)
  */
@@ -220,7 +220,7 @@ export function mapPiEvent(event: AgentSessionEvent): MessageChunk[] {
 }
 
 /**
- * Bridge a Pi `AgentSession` into Archon's `AsyncGenerator<MessageChunk>` contract.
+ * Bridge a Pi `AgentSession` into HarneesLab's `AsyncGenerator<MessageChunk>` contract.
  *
  * Behavior:
  *  - subscribe before calling prompt, unsubscribe in finally
@@ -286,7 +286,7 @@ export async function* bridgeSession(
     for await (const item of queue) {
       if (item.kind === 'done') return;
       if (item.kind === 'error') throw item.error;
-      // Annotate the terminal result chunk with Pi's session UUID so Archon's
+      // Annotate the terminal result chunk with Pi's session UUID so HarneesLab's
       // orchestrator can pass it back as `resumeSessionId` on the next call.
       // Pi's session.sessionId is always a UUID (even for in-memory); we emit
       // it unconditionally and let the caller decide whether resume is

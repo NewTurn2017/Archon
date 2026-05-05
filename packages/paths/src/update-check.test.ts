@@ -72,20 +72,20 @@ describe('parseLatestRelease', () => {
 // ─── checkForUpdate (with mocked fetch) ──────────────────────────────
 
 describe('checkForUpdate', () => {
-  const testDir = join(tmpdir(), `archon-update-check-test-${Date.now()}`);
-  let originalArchonHome: string | undefined;
+  const testDir = join(tmpdir(), `harneeslab-update-check-test-${Date.now()}`);
+  let originalHarneesLabHome: string | undefined;
 
   beforeEach(() => {
-    originalArchonHome = process.env.ARCHON_HOME;
-    process.env.ARCHON_HOME = testDir;
+    originalHarneesLabHome = process.env.HARNEESLAB_HOME;
+    process.env.HARNEESLAB_HOME = testDir;
     mkdirSync(testDir, { recursive: true });
   });
 
   afterEach(() => {
-    if (originalArchonHome !== undefined) {
-      process.env.ARCHON_HOME = originalArchonHome;
+    if (originalHarneesLabHome !== undefined) {
+      process.env.HARNEESLAB_HOME = originalHarneesLabHome;
     } else {
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_HOME;
     }
     try {
       rmSync(testDir, { recursive: true, force: true });
@@ -209,20 +209,20 @@ describe('checkForUpdate', () => {
 // ─── getCachedUpdateCheck ────────────────────────────────────────────
 
 describe('getCachedUpdateCheck', () => {
-  const testDir = join(tmpdir(), `archon-cached-check-test-${Date.now()}`);
-  let originalArchonHome: string | undefined;
+  const testDir = join(tmpdir(), `harneeslab-cached-check-test-${Date.now()}`);
+  let originalHarneesLabHome: string | undefined;
 
   beforeEach(() => {
-    originalArchonHome = process.env.ARCHON_HOME;
-    process.env.ARCHON_HOME = testDir;
+    originalHarneesLabHome = process.env.HARNEESLAB_HOME;
+    process.env.HARNEESLAB_HOME = testDir;
     mkdirSync(testDir, { recursive: true });
   });
 
   afterEach(() => {
-    if (originalArchonHome !== undefined) {
-      process.env.ARCHON_HOME = originalArchonHome;
+    if (originalHarneesLabHome !== undefined) {
+      process.env.HARNEESLAB_HOME = originalHarneesLabHome;
     } else {
-      delete process.env.ARCHON_HOME;
+      delete process.env.HARNEESLAB_HOME;
     }
     try {
       rmSync(testDir, { recursive: true, force: true });

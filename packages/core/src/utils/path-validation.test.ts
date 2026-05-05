@@ -13,31 +13,27 @@ import { homedir } from 'os';
 async function importFresh() {
   // Clear the module from cache by deleting it from Loader registry
   const modulePath = require.resolve('./path-validation');
-  const archonPathsModulePath = require.resolve('@harneeslab/paths');
+  const harneeslabPathsModulePath = require.resolve('@harneeslab/paths');
   delete require.cache[modulePath];
-  delete require.cache[archonPathsModulePath];
+  delete require.cache[harneeslabPathsModulePath];
   return import('./path-validation');
 }
 
-// Default archon workspaces path
+// Default harneeslab workspaces path
 function getDefaultWorkspacesPath(): string {
-  return join(homedir(), '.archon', 'workspaces');
+  return join(homedir(), '.harneeslab', 'workspaces');
 }
 
 describe('path-validation', () => {
   const originalWorkspacePath = process.env.WORKSPACE_PATH;
   const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
   const originalHarneesLabDocker = process.env.HARNEESLAB_DOCKER;
-  const originalArchonHome = process.env.ARCHON_HOME;
-  const originalArchonDocker = process.env.ARCHON_DOCKER;
 
   beforeEach(() => {
     // Reset to default for consistent test behavior (clear Docker detection too)
     delete process.env.WORKSPACE_PATH;
     delete process.env.HARNEESLAB_HOME;
     delete process.env.HARNEESLAB_DOCKER;
-    delete process.env.ARCHON_HOME;
-    delete process.env.ARCHON_DOCKER;
   });
 
   afterAll(() => {
@@ -47,20 +43,10 @@ describe('path-validation', () => {
     } else {
       delete process.env.WORKSPACE_PATH;
     }
-    if (originalArchonHome !== undefined) {
-      process.env.ARCHON_HOME = originalArchonHome;
-    } else {
-      delete process.env.ARCHON_HOME;
-    }
     if (originalHarneesLabHome !== undefined) {
       process.env.HARNEESLAB_HOME = originalHarneesLabHome;
     } else {
       delete process.env.HARNEESLAB_HOME;
-    }
-    if (originalArchonDocker !== undefined) {
-      process.env.ARCHON_DOCKER = originalArchonDocker;
-    } else {
-      delete process.env.ARCHON_DOCKER;
     }
     if (originalHarneesLabDocker !== undefined) {
       process.env.HARNEESLAB_DOCKER = originalHarneesLabDocker;
@@ -70,7 +56,7 @@ describe('path-validation', () => {
   });
 
   describe('isPathWithinWorkspace', () => {
-    test('should allow paths within default archon workspaces', async () => {
+    test('should allow paths within default harneeslab workspaces', async () => {
       const { isPathWithinWorkspace } = await importFresh();
       const defaultPath = getDefaultWorkspacesPath();
       expect(isPathWithinWorkspace(`${defaultPath}/repo`)).toBe(true);
@@ -108,20 +94,19 @@ describe('path-validation', () => {
       expect(isPathWithinWorkspace(`${defaultPath}-other`)).toBe(false);
     });
 
-    test('should use ARCHON_HOME env var when set', async () => {
-      process.env.ARCHON_HOME = '/custom/archon';
+    test('should use HARNEESLAB_HOME env var when set', async () => {
+      process.env.HARNEESLAB_HOME = '/custom/harneeslab';
       const { isPathWithinWorkspace } = await importFresh();
-      expect(isPathWithinWorkspace('/custom/archon/workspaces/repo')).toBe(true);
+      expect(isPathWithinWorkspace('/custom/harneeslab/workspaces/repo')).toBe(true);
       const defaultPath = getDefaultWorkspacesPath();
       expect(isPathWithinWorkspace(`${defaultPath}/repo`)).toBe(false); // Default path now rejected
     });
 
-    test('should prefer HARNEESLAB_HOME over ARCHON_HOME when both are set', async () => {
+    test('should reject default workspace when HARNEESLAB_HOME is set', async () => {
       process.env.HARNEESLAB_HOME = '/custom/harneeslab';
-      process.env.ARCHON_HOME = '/custom/archon';
       const { isPathWithinWorkspace } = await importFresh();
       expect(isPathWithinWorkspace('/custom/harneeslab/workspaces/repo')).toBe(true);
-      expect(isPathWithinWorkspace('/custom/archon/workspaces/repo')).toBe(false);
+      expect(isPathWithinWorkspace(`${getDefaultWorkspacesPath()}/repo`)).toBe(false);
     });
   });
 
@@ -158,13 +143,13 @@ describe('path-validation', () => {
       );
     });
 
-    test('should use custom ARCHON_HOME for validation and error message', async () => {
-      process.env.ARCHON_HOME = '/my/custom/archon';
+    test('should use custom HARNEESLAB_HOME for validation and error message', async () => {
+      process.env.HARNEESLAB_HOME = '/my/custom/harneeslab';
       const { validateAndResolvePath } = await importFresh();
-      const customWorkspace = resolve('/my/custom/archon/workspaces');
+      const customWorkspace = resolve('/my/custom/harneeslab/workspaces');
       // Valid path under custom workspace
-      expect(validateAndResolvePath('/my/custom/archon/workspaces/repo')).toBe(
-        resolve('/my/custom/archon/workspaces/repo')
+      expect(validateAndResolvePath('/my/custom/harneeslab/workspaces/repo')).toBe(
+        resolve('/my/custom/harneeslab/workspaces/repo')
       );
       // Path under default workspace should now throw with custom workspace in message
       const defaultPath = getDefaultWorkspacesPath();

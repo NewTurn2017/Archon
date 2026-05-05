@@ -1,6 +1,6 @@
 ---
-title: Archon은 실제로 어떻게 동작하나
-description: Archon이 다단계 workflow를 실행할 때 내부에서 무슨 일이 일어나는지 추적합니다.
+title: HarneesLab은 실제로 어떻게 동작하나
+description: HarneesLab이 다단계 workflow를 실행할 때 내부에서 무슨 일이 일어나는지 추적합니다.
 category: book
 part: orientation
 audience: [user]
@@ -8,53 +8,53 @@ sidebar:
   order: 3
 ---
 
-`archon-fix-github-issue`를 실행했을 때 정확히 무슨 일이 일어났는지 추적해 봅시다. 하나의 명령처럼 보였지만 실제로는 DAG에서 실행되는 여러 AI node, 공유 workspace, 그리고 단계에서 단계로 맥락을 넘기는 파일 체인의 조합이었습니다.
+`harneeslab-fix-github-issue`를 실행했을 때 정확히 무슨 일이 일어났는지 추적해 봅시다. 하나의 명령처럼 보였지만 실제로는 DAG에서 실행되는 여러 AI node, 공유 workspace, 그리고 단계에서 단계로 맥락을 넘기는 파일 체인의 조합이었습니다.
 
 ---
 
 ## Workflow 정의
 
-실행한 YAML은 다음과 같습니다. Archon의 내장 기본값에 포함되어 있습니다.
+실행한 YAML은 다음과 같습니다. HarneesLab의 내장 기본값에 포함되어 있습니다.
 
 ```yaml
-name: archon-fix-github-issue
+name: harneeslab-fix-github-issue
 
 nodes:
   # PHASE 1: CLASSIFY
   - id: classify
-    command: archon-investigate-issue
+    command: harneeslab-investigate-issue
     # Classifies issue type (bug/feature/etc), produces classification artifact
 
   # PHASE 2: INVESTIGATE or PLAN
   - id: investigate
-    command: archon-investigate-issue
+    command: harneeslab-investigate-issue
     depends_on: [classify]
     context: fresh
     # For bugs: analyzes root cause, creates investigation.md artifact
 
   # PHASE 3: IMPLEMENT
   - id: implement
-    command: archon-fix-issue
+    command: harneeslab-fix-issue
     depends_on: [investigate]
     context: fresh
     # Implements fix from investigation, commits (no PR)
 
   # PHASE 4: CREATE PR
   - id: create-pr
-    command: archon-create-pr
+    command: harneeslab-create-pr
     depends_on: [implement]
     context: fresh
     # Pushes branch, creates draft PR linked to issue
 
   # PHASE 5: REVIEW
   - id: code-review
-    command: archon-code-review-agent
+    command: harneeslab-code-review-agent
     depends_on: [create-pr]
     context: fresh
 
   # PHASE 6: SELF-FIX
   - id: self-fix
-    command: archon-self-fix-all
+    command: harneeslab-self-fix-all
     depends_on: [code-review]
     context: fresh
     # Reads all review artifacts, fixes findings, pushes fix report
@@ -68,13 +68,13 @@ nodes:
 
 | 단계 | Command | AI가 한 일 | 생성된 artifact |
 |-------|---------|-----------------|-------------------|
-| 조사 | `archon-investigate-issue` | GitHub issue를 읽고 관련 코드 파일을 탐색한 뒤 root cause와 수정 계획을 문서화 | `investigation.md` |
-| 수정 | `archon-fix-issue` | `investigation.md`를 읽고 코드를 변경하고 테스트를 실행한 뒤 변경을 커밋 | `implementation.md` |
-| PR 생성 | `archon-create-pr` | 브랜치를 push하고 자세한 설명이 포함된 issue 연결 pull request 생성 | GitHub의 PR |
-| 리뷰 범위 | `archon-pr-review-scope` | PR 메타데이터와 변경 파일 수집 | `.pr-number`, `scope.md` |
-| 코드 리뷰 | `archon-code-review-agent` | 전체 코드베이스 맥락으로 diff를 읽고 구조화된 finding 생성 | `review-findings.md` |
-| 리뷰 게시 | `archon-post-review-to-pr` | `review-findings.md`를 읽고 PR comment로 게시 | GitHub PR comment |
-| 자동 수정 | `archon-auto-fix-review` | 모든 리뷰 artifact를 읽고 드러난 문제를 수정한 뒤 PR 브랜치에 push하고 수정 보고서 게시 | GitHub PR comment |
+| 조사 | `harneeslab-investigate-issue` | GitHub issue를 읽고 관련 코드 파일을 탐색한 뒤 root cause와 수정 계획을 문서화 | `investigation.md` |
+| 수정 | `harneeslab-fix-issue` | `investigation.md`를 읽고 코드를 변경하고 테스트를 실행한 뒤 변경을 커밋 | `implementation.md` |
+| PR 생성 | `harneeslab-create-pr` | 브랜치를 push하고 자세한 설명이 포함된 issue 연결 pull request 생성 | GitHub의 PR |
+| 리뷰 범위 | `harneeslab-pr-review-scope` | PR 메타데이터와 변경 파일 수집 | `.pr-number`, `scope.md` |
+| 코드 리뷰 | `harneeslab-code-review-agent` | 전체 코드베이스 맥락으로 diff를 읽고 구조화된 finding 생성 | `review-findings.md` |
+| 리뷰 게시 | `harneeslab-post-review-to-pr` | `review-findings.md`를 읽고 PR comment로 게시 | GitHub PR comment |
+| 자동 수정 | `harneeslab-auto-fix-review` | 모든 리뷰 artifact를 읽고 드러난 문제를 수정한 뒤 PR 브랜치에 push하고 수정 보고서 게시 | GitHub PR comment |
 
 각 단계는 독립적이고 초점이 분명합니다. 조사 단계는 PR 생성을 알 필요가 없고 파일만 씁니다. 수정 단계는 코드 리뷰를 알 필요가 없고 `investigation.md`를 읽어 변경을 만듭니다. workflow가 이 단계들을 이어 붙입니다.
 
@@ -94,30 +94,30 @@ workflow는 **분자**입니다. 명확한 목적을 가진 graph로 command를 
 
 ## 파일과 데이터의 위치
 
-Archon은 두 개의 디렉터리 트리를 사용합니다.
+HarneesLab은 두 개의 디렉터리 트리를 사용합니다.
 
 ```
-~/.archon/                                  <- User-level data
+~/.harneeslab/                                  <- User-level data
 ├── workspaces/
 │   └── owner/repo/
 │       ├── source/                         <- Your cloned repo (or symlink)
 │       ├── worktrees/                      <- Isolated workspaces per run
 │       └── artifacts/                      <- Workflow outputs (never in git)
-├── archon.db                               <- SQLite database (conversations, runs)
+├── harneeslab.db                               <- SQLite database (conversations, runs)
 └── config.yaml                             <- Your global settings
 ```
 
 ```
-your-repo/.archon/                          <- Repo-level config (checked into git)
+your-repo/.harneeslab/                          <- Repo-level config (checked into git)
 ├── commands/                               <- Your custom commands
 ├── workflows/                              <- Your custom workflows
 └── config.yaml                             <- Repo-specific settings
 ```
 
-`archon-fix-github-issue --branch fix/my-first-run`을 실행하면 Archon은 다음을 수행했습니다.
+`harneeslab-fix-github-issue --branch fix/my-first-run`을 실행하면 HarneesLab은 다음을 수행했습니다.
 
-1. `~/.archon/workspaces/owner/repo/worktrees/fix/my-first-run`에 **worktree**를 만들었습니다.
-2. `~/.archon/workspaces/owner/repo/artifacts/` 안에 이 실행을 위한 **artifacts directory**를 만들었습니다.
+1. `~/.harneeslab/workspaces/owner/repo/worktrees/fix/my-first-run`에 **worktree**를 만들었습니다.
+2. `~/.harneeslab/workspaces/owner/repo/artifacts/` 안에 이 실행을 위한 **artifacts directory**를 만들었습니다.
 3. 모든 node를 worktree 안에서 실행했고, `$ARTIFACTS_DIR`은 해당 artifacts directory를 가리켰습니다.
 
 메인 repository는 전혀 건드리지 않았습니다.
@@ -138,4 +138,4 @@ your-repo/.archon/                          <- Repo-level config (checked into g
 
 ---
 
-이제 시스템의 구조를 이해했습니다. [4장: 핵심 워크플로 →](/book/essential-workflows/)에서는 Archon의 내장 workflow를 모두 살펴보며 언제 어떤 workflow를 선택해야 하는지 정리합니다.
+이제 시스템의 구조를 이해했습니다. [4장: 핵심 워크플로 →](/book/essential-workflows/)에서는 HarneesLab의 내장 workflow를 모두 살펴보며 언제 어떤 workflow를 선택해야 하는지 정리합니다.

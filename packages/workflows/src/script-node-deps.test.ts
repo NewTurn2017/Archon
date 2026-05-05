@@ -37,7 +37,7 @@ const mockLogger = {
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
   getCommandFolderSearchPaths: (folder?: string) => {
-    const paths = ['.archon/commands'];
+    const paths = ['.harneeslab/commands'];
     if (folder) paths.unshift(folder);
     return paths;
   },
@@ -355,7 +355,7 @@ describe('script node deps field — command construction', () => {
 
   it('uv named script with deps uses uv run --with flags', async () => {
     // Create a named Python script
-    const scriptsDir = join(testDir, '.archon', 'scripts');
+    const scriptsDir = join(testDir, '.harneeslab', 'scripts');
     await mkdir(scriptsDir, { recursive: true });
     const { writeFile } = await import('fs/promises');
     await writeFile(join(scriptsDir, 'analyze.py'), 'import httpx\nprint("ok")');
@@ -401,7 +401,7 @@ describe('script node deps field — command construction', () => {
 
   it('uv named script without deps uses uv run <path> (no --with flags)', async () => {
     // Create a named Python script
-    const scriptsDir = join(testDir, '.archon', 'scripts');
+    const scriptsDir = join(testDir, '.harneeslab', 'scripts');
     await mkdir(scriptsDir, { recursive: true });
     const { writeFile } = await import('fs/promises');
     await writeFile(join(scriptsDir, 'simple.py'), 'print("simple")');

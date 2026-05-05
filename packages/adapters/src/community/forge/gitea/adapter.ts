@@ -18,7 +18,7 @@ import {
   ConversationLockManager,
 } from '@harneeslab/core';
 import {
-  getArchonWorkspacesPath,
+  getHarneesLabWorkspacesPath,
   getCommandFolderSearchPaths,
   createLogger,
 } from '@harneeslab/paths';
@@ -46,7 +46,7 @@ function getLog(): ReturnType<typeof createLogger> {
 const MAX_LENGTH = 65000; // Gitea comment limit (similar to GitHub)
 
 /** Hidden marker added to bot comments to prevent self-triggering loops */
-const BOT_RESPONSE_MARKER = '<!-- archon-bot-response -->';
+const BOT_RESPONSE_MARKER = '<!-- harneeslab-bot-response -->';
 
 export class GiteaAdapter implements IPlatformAdapter {
   private baseUrl: string;
@@ -553,7 +553,7 @@ export class GiteaAdapter implements IPlatformAdapter {
   }
 
   /**
-   * Auto-detect and load commands from .archon/commands/ (or configured folder)
+   * Auto-detect and load commands from .harneeslab/commands/ (or configured folder)
    */
   private async autoDetectAndLoadCommands(repoPath: string, codebaseId: string): Promise<void> {
     const commandFolders = getCommandFolderSearchPaths();
@@ -612,7 +612,7 @@ export class GiteaAdapter implements IPlatformAdapter {
     existing ??= await codebaseDb.findCodebaseByRepoUrl(repoUrlWithGit);
 
     // Canonical path includes owner to prevent collisions between repos with same name
-    const canonicalPath = join(getArchonWorkspacesPath(), owner, repo);
+    const canonicalPath = join(getHarneesLabWorkspacesPath(), owner, repo);
 
     if (existing) {
       // Check if existing codebase points to a worktree path - fix it if so

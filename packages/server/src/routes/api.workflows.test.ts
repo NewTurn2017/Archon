@@ -16,7 +16,7 @@ function createTestApp(): OpenAPIHono {
 const mockDiscoverWorkflows = mock(async (_cwd: string) => ({
   workflows: [makeTestWorkflowWithSource({ name: 'deploy', description: 'Deploy app' }, 'bundled')],
   errors: [
-    { filename: '/tmp/.archon/workflows/bad.md', error: 'invalid', errorType: 'parse_error' },
+    { filename: '/tmp/.harneeslab/workflows/bad.md', error: 'invalid', errorType: 'parse_error' },
   ],
 }));
 
@@ -30,15 +30,18 @@ mock.module('@harneeslab/core', () => ({
   handleMessage: mock(async () => {}),
   getDatabaseType: () => 'sqlite',
   loadConfig: mock(async () => ({})),
-  getWorkflowFolderSearchPaths: mock(() => ['.archon/workflows']),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands', '.archon/commands/defaults']),
-  getDefaultCommandsPath: mock(() => '/tmp/.archon-test-nonexistent/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/tmp/.archon-test-nonexistent/workflows/defaults'),
+  getWorkflowFolderSearchPaths: mock(() => ['.harneeslab/workflows']),
+  getCommandFolderSearchPaths: mock(() => [
+    '.harneeslab/commands',
+    '.harneeslab/commands/defaults',
+  ]),
+  getDefaultCommandsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/tmp/.harneeslab-test-nonexistent/workflows/defaults'),
   cloneRepository: mock(async () => {}),
   registerRepository: mock(async () => ({ success: true })),
   removeWorktree: mock(async () => ({ success: true })),
   ConversationNotFoundError: class extends Error {},
-  getArchonWorkspacesPath: () => '/tmp/.archon/workspaces',
+  getHarneesLabWorkspacesPath: () => '/tmp/.harneeslab/workspaces',
   createLogger: () => ({
     fatal: mock(() => undefined),
     error: mock(() => undefined),
@@ -73,10 +76,10 @@ mock.module('@harneeslab/workflows/command-validation', () => ({
 }));
 mock.module('@harneeslab/workflows/defaults', () => ({
   BUNDLED_WORKFLOWS: {
-    'archon-assist': 'name: archon-assist\ndescription: Archon Assist\nnodes: []',
+    'harneeslab-assist': 'name: harneeslab-assist\ndescription: HarneesLab Assist\nnodes: []',
   },
   BUNDLED_COMMANDS: {
-    'archon-assist': '# archon-assist command',
+    'harneeslab-assist': '# harneeslab-assist command',
   },
   isBinaryBuild: mock(() => false),
 }));
@@ -213,20 +216,20 @@ describe('GET /api/workflows/:name', () => {
     const app = createTestApp();
     registerApiRoutes(app, {} as WebAdapter, {} as ConversationLockManager);
 
-    // No cwd → no readFile attempt → checks BUNDLED_WORKFLOWS → archon-assist found
+    // No cwd → no readFile attempt → checks BUNDLED_WORKFLOWS → harneeslab-assist found
     mockListCodebases.mockImplementationOnce(async () => []);
 
-    const response = await app.request('/api/workflows/archon-assist');
+    const response = await app.request('/api/workflows/harneeslab-assist');
     expect(response.status).toBe(200);
     const body = (await response.json()) as { source: string; filename: string; workflow: unknown };
     expect(body.source).toBe('bundled');
-    expect(body.filename).toBe('archon-assist.yaml');
+    expect(body.filename).toBe('harneeslab-assist.yaml');
     expect(body.workflow).toBeDefined();
   });
 
   test('returns project workflow with source:project when file exists on disk', async () => {
     const testDir = join(tmpdir(), `wf-get-test-${Date.now()}`);
-    const workflowDir = join(testDir, '.archon', 'workflows');
+    const workflowDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(workflowDir, { recursive: true });
     await writeFile(
       join(workflowDir, 'custom.yaml'),
@@ -259,7 +262,7 @@ describe('GET /api/workflows/:name', () => {
 
     mockListCodebases.mockImplementationOnce(async () => []);
 
-    const response = await app.request('/api/workflows/archon-assist');
+    const response = await app.request('/api/workflows/harneeslab-assist');
     expect(response.status).toBe(200);
     const body = (await response.json()) as {
       workflow: Record<string, unknown>;
@@ -278,7 +281,7 @@ describe('GET /api/workflows/:name - cwd validation', () => {
     registerApiRoutes(app, {} as WebAdapter, {} as ConversationLockManager);
 
     // default mock returns /tmp/project; /etc/secrets is not registered
-    const response = await app.request('/api/workflows/archon-assist?cwd=/etc/secrets');
+    const response = await app.request('/api/workflows/harneeslab-assist?cwd=/etc/secrets');
     expect(response.status).toBe(400);
     const body = (await response.json()) as { error: string };
     expect(body.error).toContain('Invalid cwd');
@@ -314,9 +317,9 @@ describe('PUT /api/workflows/:name', () => {
     expect(body.error).toContain('definition');
   });
 
-  test('falls back to getArchonHome() when no cwd and no codebases registered', async () => {
-    const testArchonHome = join(tmpdir(), `archon-home-test-${Date.now()}`);
-    process.env.ARCHON_HOME = testArchonHome;
+  test('falls back to getHarneesLabHome() when no cwd and no codebases registered', async () => {
+    const testHarneesLabHome = join(tmpdir(), `harneeslab-home-test-${Date.now()}`);
+    process.env.HARNEESLAB_HOME = testHarneesLabHome;
 
     try {
       const app = createTestApp();
@@ -343,8 +346,8 @@ describe('PUT /api/workflows/:name', () => {
       const body = (await response.json()) as { workflow: object; source: string };
       expect(body.source).toBe('project');
     } finally {
-      delete process.env.ARCHON_HOME;
-      await rm(testArchonHome, { recursive: true, force: true });
+      delete process.env.HARNEESLAB_HOME;
+      await rm(testHarneesLabHome, { recursive: true, force: true });
     }
   });
 
@@ -412,11 +415,11 @@ describe('DELETE /api/workflows/:name', () => {
     const app = createTestApp();
     registerApiRoutes(app, {} as WebAdapter, {} as ConversationLockManager);
 
-    // archon-assist is in the real BUNDLED_WORKFLOWS
-    const response = await app.request('/api/workflows/archon-assist', { method: 'DELETE' });
+    // harneeslab-assist is in the real BUNDLED_WORKFLOWS
+    const response = await app.request('/api/workflows/harneeslab-assist', { method: 'DELETE' });
     expect(response.status).toBe(400);
     const body = (await response.json()) as { error: string };
-    expect(body.error).toContain('archon-assist');
+    expect(body.error).toContain('harneeslab-assist');
   });
 
   test('returns 404 when workflow file not found', async () => {
@@ -432,7 +435,7 @@ describe('DELETE /api/workflows/:name', () => {
     expect(body.error).toContain('test-nonexistent-workflow-xyz');
   });
 
-  test('falls back to getArchonHome() when no cwd and no codebases, returns 404 for missing file', async () => {
+  test('falls back to getHarneesLabHome() when no cwd and no codebases, returns 404 for missing file', async () => {
     const app = createTestApp();
     registerApiRoutes(app, {} as WebAdapter, {} as ConversationLockManager);
 
@@ -448,7 +451,7 @@ describe('DELETE /api/workflows/:name', () => {
 
   test('removes existing workflow file and returns deleted:true', async () => {
     const testDir = join(tmpdir(), `wf-del-test-${Date.now()}`);
-    const workflowDir = join(testDir, '.archon', 'workflows');
+    const workflowDir = join(testDir, '.harneeslab', 'workflows');
     await mkdir(workflowDir, { recursive: true });
     await writeFile(
       join(workflowDir, 'to-delete.yaml'),
@@ -555,9 +558,9 @@ describe('GET /api/commands', () => {
     const response = await app.request('/api/commands');
     expect(response.status).toBe(200);
     const body = (await response.json()) as { commands: Array<{ name: string; source: string }> };
-    // archon-assist is in the real BUNDLED_COMMANDS
-    const archonAssist = body.commands.find(c => c.name === 'archon-assist');
-    expect(archonAssist).toBeDefined();
-    expect(archonAssist?.source).toBe('bundled');
+    // harneeslab-assist is in the real BUNDLED_COMMANDS
+    const harneeslabAssist = body.commands.find(c => c.name === 'harneeslab-assist');
+    expect(harneeslabAssist).toBeDefined();
+    expect(harneeslabAssist?.source).toBe('bundled');
   });
 });

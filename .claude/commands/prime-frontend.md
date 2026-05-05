@@ -1,5 +1,5 @@
 ---
-description: Prime agent with Archon frontend (React/Web UI) context
+description: Prime agent with HarneesLab frontend (React/Web UI) context
 ---
 
 # Prime Frontend: Web UI Orientation

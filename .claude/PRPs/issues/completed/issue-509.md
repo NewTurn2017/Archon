@@ -32,17 +32,17 @@ All 23 failures share one anti-pattern: **process-global mocks without cleanup**
 ### Evidence Chain
 
 WHY: 19 git tests fail with mock return values instead of real fs results
-↓ BECAUSE: `worktreeExists`, `getCanonicalRepoPath`, `findWorktreeByBranch` are spied on the `@archon/git` namespace
+↓ BECAUSE: `worktreeExists`, `getCanonicalRepoPath`, `findWorktreeByBranch` are spied on the `@harneeslab/git` namespace
 Evidence: `packages/isolation/src/resolver.test.ts:89-95` — three `spyOn()` calls in `beforeEach`
 
 ↓ BECAUSE: No `afterEach` exists to call `.mockRestore()` on these spies
 Evidence: `packages/isolation/src/resolver.test.ts` — zero occurrences of `afterEach`, `mockRestore`, or `restore`
 
-↓ ROOT CAUSE: `resolver.test.ts` mutates the shared `@archon/git` module object via `spyOn` and never restores it.
+↓ ROOT CAUSE: `resolver.test.ts` mutates the shared `@harneeslab/git` module object via `spyOn` and never restores it.
 
 WHY: 3 `ensureRepoReady` tests fail in adapter.test.ts
-↓ BECAUSE: `mock.module('@archon/git', ...)` at file scope replaces the entire module permanently
-Evidence: `packages/adapters/src/forge/github/adapter.test.ts:82-90` — `mock.module('@archon/git', () => ({...}))` with only 7 of 20+ real exports
+↓ BECAUSE: `mock.module('@harneeslab/git', ...)` at file scope replaces the entire module permanently
+Evidence: `packages/adapters/src/forge/github/adapter.test.ts:82-90` — `mock.module('@harneeslab/git', () => ({...}))` with only 7 of 20+ real exports
 
 ↓ ROOT CAUSE: No `afterAll(() => mock.restore())` to reset module-level mocks.
 
@@ -62,15 +62,15 @@ Evidence: `packages/core/src/orchestrator/orchestrator.test.ts:170-174` — `moc
 
 ### Integration Points
 
-- `packages/git/src/git.test.ts` — victim: 19 tests rely on real `@archon/git` functions
+- `packages/git/src/git.test.ts` — victim: 19 tests rely on real `@harneeslab/git` functions
 - `packages/cli/src/commands/setup.test.ts` — victim: 1 test relies on real `fs.existsSync`
 - `packages/adapters/src/forge/github/adapter.test.ts` — both polluter (mock.module) and victim (ensureRepoReady tests)
 
 ### Git History
 
-- **Group 1 introduced**: `a9ed888` (Feb 25) — extract @archon/isolation (#492)
-- **Group 2 introduced**: `3b52102` (Feb 25) — extract @archon/adapters (#499)
-- **Group 3 introduced**: `4204e1f` (Feb 18) — Archon orchestrator (#452)
+- **Group 1 introduced**: `a9ed888` (Feb 25) — extract @harneeslab/isolation (#492)
+- **Group 2 introduced**: `3b52102` (Feb 25) — extract @harneeslab/adapters (#499)
+- **Group 3 introduced**: `4204e1f` (Feb 18) — HarneesLab orchestrator (#452)
 - **Implication**: Latent bugs — the missing cleanup existed before extraction, but file ordering changes made them visible
 
 ---
@@ -114,7 +114,7 @@ afterEach(() => {
 });
 ```
 
-**Why**: Restores the three spied functions on the `@archon/git` namespace object after each test, preventing pollution of `packages/git/src/git.test.ts`.
+**Why**: Restores the three spied functions on the `@harneeslab/git` namespace object after each test, preventing pollution of `packages/git/src/git.test.ts`.
 
 **Pattern**: Mirrors `packages/git/src/git.test.ts:357-366` which uses the same `spyOn`/`afterEach`/`mockRestore` pattern.
 
@@ -139,7 +139,7 @@ afterAll(() => {
 });
 ```
 
-**Why**: `mock.module` is permanent in Bun — only `mock.restore()` (the global form) resets all module-level mocks. This prevents `@archon/git`, `child_process`, `@archon/paths`, and `@archon/core/db/*` mocks from leaking.
+**Why**: `mock.module` is permanent in Bun — only `mock.restore()` (the global form) resets all module-level mocks. This prevents `@harneeslab/git`, `child_process`, `@harneeslab/paths`, and `@harneeslab/core/db/*` mocks from leaking.
 
 **Pattern**: Mirrors `packages/workflows/src/executor.test.ts:205-209` which uses the same `afterAll(() => mock.restore())` pattern with an explicit comment about preventing cross-file leaks.
 
@@ -175,7 +175,7 @@ afterAll(() => {
 **File**: `packages/isolation/src/resolver.test.ts`
 **Action**: UPDATE
 
-**Required change:** In addition to the `afterEach` from Step 1, add `afterAll` to clean up the `mock.module('@archon/paths')` call at line 5:
+**Required change:** In addition to the `afterEach` from Step 1, add `afterAll` to clean up the `mock.module('@harneeslab/paths')` call at line 5:
 
 1. Update the import to include `afterAll`:
 ```typescript
@@ -189,7 +189,7 @@ afterAll(() => {
 });
 ```
 
-**Why**: The `mock.module('@archon/paths')` at line 5 is also a permanent replacement. While the `afterEach` from Step 1 handles the `spyOn` pollution, `mock.restore()` in `afterAll` ensures the module-level mock is also cleaned up.
+**Why**: The `mock.module('@harneeslab/paths')` at line 5 is also a permanent replacement. While the `afterEach` from Step 1 handles the `spyOn` pollution, `mock.restore()` in `afterAll` ensures the module-level mock is also cleaned up.
 
 ---
 

@@ -79,7 +79,7 @@ function normalizeClaudeUsage(usage?: {
  *
  * process.env is already clean at this point:
  * - stripCwdEnv() at entry point removed CWD .env keys + CLAUDECODE markers
- * - ~/.archon/.env loaded with override:true as the trusted source
+ * - ~/.harneeslab/.env loaded with override:true as the trusted source
  */
 function buildSubprocessEnv(): NodeJS.ProcessEnv {
   const hasExplicitTokens = Boolean(
@@ -120,7 +120,7 @@ function classifySubprocessError(
 }
 
 function getFirstEventTimeoutMs(): number {
-  const raw = process.env.ARCHON_CLAUDE_FIRST_EVENT_TIMEOUT_MS;
+  const raw = process.env.HARNEESLAB_CLAUDE_FIRST_EVENT_TIMEOUT_MS;
   if (raw) {
     const parsed = Number(raw);
     if (Number.isFinite(parsed) && parsed > 0) return parsed;
@@ -178,7 +178,7 @@ export async function* withFirstMessageTimeout<T>(
           timeoutMs +
           'ms. ' +
           'See logs for claude.first_event_timeout diagnostic dump. ' +
-          'Details: https://github.com/coleam00/Archon/issues/1067'
+          'Details: https://github.com/coleam00/HarneesLab/issues/1067'
       );
     }
     throw err;
@@ -699,7 +699,7 @@ function buildToolCaptureHooks(toolResultQueue: ToolResultEntry[]): Options['hoo
 // ─── Stream Normalizer ───────────────────────────────────────────────────
 
 /**
- * Normalize raw Claude SDK events into Archon MessageChunks.
+ * Normalize raw Claude SDK events into HarneesLab MessageChunks.
  * Drains the tool result queue between events (populated by SDK hooks).
  */
 async function* streamClaudeMessages(

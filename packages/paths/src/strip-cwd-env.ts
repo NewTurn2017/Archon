@@ -6,16 +6,16 @@
  *
  * 1. CWD .env leak: Bun unconditionally loads .env / .env.local /
  *    .env.development / .env.production from CWD before any user code runs.
- *    When `archon` is invoked from inside a target repo, that repo's env vars
- *    leak into the Archon process. `override: true` in dotenv only fixes keys
+ *    When `hlab` is invoked from inside a target repo, that repo's env vars
+ *    leak into the HarneesLab process. `override: true` in dotenv only fixes keys
  *    that exist in both files — keys that only appear in the target repo's .env
  *    survive unaffected. We strip them.
  *
- * 2. Nested Claude Code session markers: When archon is launched from inside a
+ * 2. Nested Claude Code session markers: When hlab is launched from inside a
  *    Claude Code terminal, the parent shell exports CLAUDECODE=1 and several
  *    CLAUDE_CODE_* markers. The Claude Agent SDK leaks process.env into the
  *    spawned child regardless of the explicit `env` option
- *    (see coleam00/Archon#1097), so the only way to prevent the nested-session
+ *    (see coleam00/HarneesLab#1097), so the only way to prevent the nested-session
  *    deadlock is to delete the markers from process.env at the entry point.
  *    Auth vars (CLAUDE_CODE_OAUTH_TOKEN, CLAUDE_CODE_USE_BEDROCK,
  *    CLAUDE_CODE_USE_VERTEX) are kept.
@@ -35,7 +35,7 @@ const CLAUDE_CODE_AUTH_VARS = new Set([
 
 /**
  * Strip CWD .env keys and nested Claude Code session markers from process.env.
- * Keys in ~/.archon/.env (loaded afterward by each entry point) are unaffected.
+ * Keys in ~/.harneeslab/.env (loaded afterward by each entry point) are unaffected.
  * Safe to call even when no CWD .env files exist.
  */
 export function stripCwdEnv(cwd: string = process.cwd()): void {
@@ -51,7 +51,7 @@ export function stripCwdEnv(cwd: string = process.cwd()): void {
       const code = (result.error as NodeJS.ErrnoException).code;
       if (code !== 'ENOENT') {
         process.stderr.write(
-          `[archon] Warning: could not parse ${filepath} for CWD env stripping: ${result.error.message}\n`
+          `[hlab] Warning: could not parse ${filepath} for CWD env stripping: ${result.error.message}\n`
         );
       }
     } else if (result.parsed) {
@@ -69,13 +69,13 @@ export function stripCwdEnv(cwd: string = process.cwd()): void {
   // Pattern-matched (not hardcoded) so new CLAUDE_CODE_* markers added by
   // future Claude Code versions are automatically handled.
   // Emit warning BEFORE deleting — downstream code won't see CLAUDECODE=1.
-  if (process.env.CLAUDECODE === '1' && !process.env.ARCHON_SUPPRESS_NESTED_CLAUDE_WARNING) {
+  if (process.env.CLAUDECODE === '1' && !process.env.HARNEESLAB_SUPPRESS_NESTED_CLAUDE_WARNING) {
     process.stderr.write(
       '\u26a0  Detected CLAUDECODE=1 \u2014 running inside a Claude Code session.\n' +
         '   If workflows hang silently, this is a known class of issue.\n' +
-        '   Workaround: run `archon serve` from a regular shell.\n' +
-        '   Suppress: set ARCHON_SUPPRESS_NESTED_CLAUDE_WARNING=1\n' +
-        '   Details: https://github.com/coleam00/Archon/issues/1067\n'
+        '   Workaround: run `hlab serve` from a regular shell.\n' +
+        '   Suppress: set HARNEESLAB_SUPPRESS_NESTED_CLAUDE_WARNING=1\n' +
+        '   Details: https://github.com/coleam00/HarneesLab/issues/1067\n'
     );
   }
   if (process.env.CLAUDECODE) {

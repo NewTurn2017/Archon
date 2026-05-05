@@ -18,7 +18,7 @@ const mockCreateCodebase = mock(() =>
     id: 'codebase-uuid-1',
     name: 'owner/repo',
     repository_url: 'https://github.com/owner/repo',
-    default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+    default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
     ai_assistant_type: 'claude',
     commands: {},
     created_at: new Date(),
@@ -48,10 +48,10 @@ const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
   expandTilde: mock((p: string) => p.replace(/^~/, '/home/test')),
-  getCommandFolderSearchPaths: mock(() => ['.archon/commands']),
+  getCommandFolderSearchPaths: mock(() => ['.harneeslab/commands']),
   ensureProjectStructure: mock(() => Promise.resolve()),
   getProjectSourcePath: mock(
-    (owner: string, repo: string) => `/home/test/.archon/workspaces/${owner}/${repo}/source`
+    (owner: string, repo: string) => `/home/test/.harneeslab/workspaces/${owner}/${repo}/source`
   ),
   createProjectSourceSymlink: mock(() => Promise.resolve()),
   parseOwnerRepo: mock((name: string) => {
@@ -138,7 +138,7 @@ function makeCodebase(
     id: 'codebase-uuid-1',
     name: 'owner/repo',
     repository_url: 'https://github.com/owner/repo',
-    default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+    default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
     ai_assistant_type: 'claude',
     commands: {},
     created_at: new Date(),
@@ -313,7 +313,7 @@ describe('cloneRepository', () => {
         id: 'existing-id',
         name: 'owner/repo',
         repository_url: 'https://github.com/owner/repo',
-        default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+        default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
       });
       mockFindCodebaseByRepoUrl.mockResolvedValueOnce(existingCodebase);
 
@@ -448,7 +448,7 @@ describe('cloneRepository', () => {
 
   // ── Command auto-loading ───────────────────────────────────────────────
   describe('command auto-loading', () => {
-    test('loads commands when .archon/commands directory exists with markdown files', async () => {
+    test('loads commands when .harneeslab/commands directory exists with markdown files', async () => {
       // access(): .git → ENOENT (proceed to clone), everything else → success (assistant + commands)
       spyFsAccess.mockImplementation((path: string) => {
         if (typeof path === 'string' && path.endsWith('.git')) {
@@ -707,7 +707,7 @@ describe('registerRepository', () => {
   });
 
   // ── Command auto-loading ───────────────────────────────────────────────
-  test('auto-loads markdown commands found in .archon/commands', async () => {
+  test('auto-loads markdown commands found in .harneeslab/commands', async () => {
     spyExecFileAsync.mockImplementation((cmd: string, args: string[]) => {
       if (args.includes('rev-parse')) return Promise.resolve({ stdout: '.git', stderr: '' });
       if (args.includes('get-url'))
@@ -717,7 +717,7 @@ describe('registerRepository', () => {
     // access(): only the command folder path succeeds; .codex/.claude → ENOENT
     spyFsAccess.mockImplementation((path: string) => {
       const normalized = typeof path === 'string' ? path.replace(/\\/g, '/') : '';
-      if (normalized.includes('.archon/commands')) {
+      if (normalized.includes('.harneeslab/commands')) {
         return Promise.resolve(undefined);
       }
       return Promise.reject(Object.assign(new Error('ENOENT'), { code: 'ENOENT' }));
@@ -756,22 +756,22 @@ describe('normalizeRepoUrl (via cloneRepository)', () => {
 
   test('HTTPS URL produces expected project source path', async () => {
     const targetPath = await expectCloneTargetPath('https://github.com/myorg/myproject');
-    expect(targetPath).toBe('/home/test/.archon/workspaces/myorg/myproject/source');
+    expect(targetPath).toBe('/home/test/.harneeslab/workspaces/myorg/myproject/source');
   });
 
   test('SSH URL produces same project source path as HTTPS equivalent', async () => {
     const targetPath = await expectCloneTargetPath('git@github.com:myorg/myproject.git');
-    expect(targetPath).toBe('/home/test/.archon/workspaces/myorg/myproject/source');
+    expect(targetPath).toBe('/home/test/.harneeslab/workspaces/myorg/myproject/source');
   });
 
   test('URL with trailing slash produces correct path', async () => {
     const targetPath = await expectCloneTargetPath('https://github.com/myorg/myproject/');
-    expect(targetPath).toBe('/home/test/.archon/workspaces/myorg/myproject/source');
+    expect(targetPath).toBe('/home/test/.harneeslab/workspaces/myorg/myproject/source');
   });
 
   test('URL with .git suffix produces correct path without duplication', async () => {
     const targetPath = await expectCloneTargetPath('https://github.com/myorg/myproject.git');
-    expect(targetPath).toBe('/home/test/.archon/workspaces/myorg/myproject/source');
+    expect(targetPath).toBe('/home/test/.harneeslab/workspaces/myorg/myproject/source');
   });
 });
 
@@ -790,7 +790,7 @@ describe('name-based deduplication', () => {
       id: 'existing-id',
       name: 'owner/repo',
       repository_url: 'https://github.com/owner/repo',
-      default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+      default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
     });
     // registerRepository: rev-parse succeeds, path not in DB, remote URL returns owner/repo
     spyExecFileAsync.mockImplementation((cmd: string, args: string[]) => {
@@ -816,7 +816,7 @@ describe('name-based deduplication', () => {
       id: 'existing-id',
       name: 'owner/repo',
       repository_url: 'https://github.com/owner/repo',
-      default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+      default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
     });
     spyExecFileAsync.mockImplementation((cmd: string, args: string[]) => {
       if (args.includes('rev-parse')) return Promise.resolve({ stdout: '.git', stderr: '' });
@@ -905,7 +905,7 @@ describe('RegisterResult shape', () => {
         id: 'abc-123',
         name: 'owner/repo',
         repository_url: 'https://github.com/owner/repo',
-        default_cwd: '/home/test/.archon/workspaces/owner/repo/source',
+        default_cwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
       }) as ReturnType<typeof makeCodebase>
     );
 
@@ -915,7 +915,7 @@ describe('RegisterResult shape', () => {
       codebaseId: 'abc-123',
       name: 'owner/repo',
       repositoryUrl: 'https://github.com/owner/repo',
-      defaultCwd: '/home/test/.archon/workspaces/owner/repo/source',
+      defaultCwd: '/home/test/.harneeslab/workspaces/owner/repo/source',
       commandCount: 0,
       alreadyExisted: false,
     });

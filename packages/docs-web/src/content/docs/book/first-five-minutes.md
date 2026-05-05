@@ -33,16 +33,16 @@ git clone https://github.com/NewTurn2017/HarneesLab.git
 cd HarneesLab
 bun install
 
-# Register the archon command globally
+# Register the harneeslab command globally
 cd packages/cli && bun link && cd ../..
 
 # Verify it worked
 hlab version
 ```
 
-`archon v0.2.12` 같은 출력이 보이면 됩니다. 이것으로 HarneesLab 설치가 끝났습니다.
+`harneeslab v0.2.12` 같은 출력이 보이면 됩니다. 이것으로 HarneesLab 설치가 끝났습니다.
 
-> **`bun link` 후에도 `archon`을 찾지 못한다면:** shell을 다시 로드해야 할 수 있습니다. `source ~/.zshrc` 또는 `~/.bashrc`를 실행한 뒤 다시 시도하세요. 또는 이번 세션에서는 `HarneesLab` 디렉터리 안에서 `bun run cli`를 사용할 수 있습니다.
+> **`bun link` 후에도 `harneeslab`을 찾지 못한다면:** shell을 다시 로드해야 할 수 있습니다. `source ~/.zshrc` 또는 `~/.bashrc`를 실행한 뒤 다시 시도하세요. 또는 이번 세션에서는 `HarneesLab` 디렉터리 안에서 `bun run cli`를 사용할 수 있습니다.
 
 ---
 
@@ -53,14 +53,14 @@ hlab version
 ```bash
 cd /path/to/your/project
 
-hlab workflow run archon-assist "What's the entry point for this application?"
+hlab workflow run harneeslab-assist "What's the entry point for this application?"
 ```
 
 HarneesLab은 코드베이스를 분석하고 전체 맥락을 바탕으로 질문에 답합니다. 터미널에는 파일을 살펴보며 생각하는 과정이 실시간으로 스트리밍됩니다.
 
 **방금 첫 HarneesLab workflow를 실행했습니다.** 단일 단계 workflow입니다. 하나의 command, 하나의 AI 호출, 하나의 답변. 단순하지만 유용합니다.
 
-> **팁:** `archon-assist`는 어떤 질문에도 사용할 수 있습니다. "How does auth work?", "Where is the database configured?", "What does this function do?"처럼 물어보세요. 언제든 부를 수 있는 코드베이스 전문가입니다.
+> **팁:** `harneeslab-assist`는 어떤 질문에도 사용할 수 있습니다. "How does auth work?", "Where is the database configured?", "What does this function do?"처럼 물어보세요. 언제든 부를 수 있는 코드베이스 전문가입니다.
 
 ---
 
@@ -69,7 +69,7 @@ HarneesLab은 코드베이스를 분석하고 전체 맥락을 바탕으로 질�
 repository에 열린 GitHub issue가 있다면 다음을 시도해 보세요.
 
 ```bash
-hlab workflow run archon-fix-github-issue --branch fix/my-first-run "Fix #<issue-number>"
+hlab workflow run harneeslab-fix-github-issue --branch fix/my-first-run "Fix #<issue-number>"
 ```
 
 `<issue-number>`를 실제 issue 번호로 바꿉니다. 그리고 어떤 일이 일어나는지 보세요.
@@ -81,7 +81,7 @@ hlab workflow run archon-fix-github-issue --branch fix/my-first-run "Fix #<issue
 
 **방금 네 단계 자동화 workflow를 실행했습니다.** 각 단계는 별도 command로 실행되고, artifact를 다음 단계로 넘깁니다. PR은 이제 여러분의 리뷰를 기다립니다.
 
-> **마땅한 GitHub issue가 없나요?** 아무 웹 프로젝트에서 `hlab workflow run archon-feature-development --branch feat/test "Add a simple hello world endpoint"`를 실행해 보세요. 기능을 구현하고 PR을 만듭니다.
+> **마땅한 GitHub issue가 없나요?** 아무 웹 프로젝트에서 `hlab workflow run harneeslab-feature-development --branch feat/test "Add a simple hello world endpoint"`를 실행해 보세요. 기능을 구현하고 PR을 만듭니다.
 
 ---
 

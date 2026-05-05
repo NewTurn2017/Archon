@@ -10,7 +10,7 @@ import {
   generateEnvContent,
   generateWebhookSecret,
   spawnTerminalWithSetup,
-  copyArchonSkill,
+  copyHarneesLabSkill,
   detectClaudeExecutablePath,
 } from './setup';
 import * as setupModule from './setup';
@@ -18,17 +18,11 @@ import * as setupModule from './setup';
 // Test directory for file operations
 const TEST_DIR = join(tmpdir(), 'hlab-setup-test-' + Date.now());
 
-function restoreHomeEnv(harneeslabHome: string | undefined, archonHome: string | undefined): void {
+function restoreHomeEnv(harneeslabHome: string | undefined): void {
   if (harneeslabHome === undefined) {
     delete process.env.HARNEESLAB_HOME;
   } else {
     process.env.HARNEESLAB_HOME = harneeslabHome;
-  }
-
-  if (archonHome === undefined) {
-    delete process.env.ARCHON_HOME;
-  } else {
-    process.env.ARCHON_HOME = archonHome;
   }
 }
 
@@ -65,22 +59,20 @@ describe('setup command', () => {
 
   describe('checkExistingConfig', () => {
     it('should return null when no .env file exists', () => {
-      // Mock ARCHON_HOME to point to non-existent directory
+      // Mock HARNEESLAB_HOME to point to non-existent directory
       const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
-      const originalHome = process.env.ARCHON_HOME;
-      delete process.env.HARNEESLAB_HOME;
-      process.env.ARCHON_HOME = join(TEST_DIR, 'nonexistent');
+      process.env.HARNEESLAB_HOME = join(TEST_DIR, 'nonexistent');
 
       try {
         const result = checkExistingConfig();
         expect(result).toBeNull();
       } finally {
-        restoreHomeEnv(originalHarneesLabHome, originalHome);
+        restoreHomeEnv(originalHarneesLabHome);
       }
     });
 
     it('should detect existing configuration values', () => {
-      const envDir = join(TEST_DIR, '.archon');
+      const envDir = join(TEST_DIR, '.harneeslab');
       mkdirSync(envDir, { recursive: true });
       const envPath = join(envDir, '.env');
 
@@ -98,9 +90,7 @@ CODEX_ACCOUNT_ID=account1
       );
 
       const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
-      const originalHome = process.env.ARCHON_HOME;
-      delete process.env.HARNEESLAB_HOME;
-      process.env.ARCHON_HOME = envDir;
+      process.env.HARNEESLAB_HOME = envDir;
 
       try {
         const result = checkExistingConfig();
@@ -114,21 +104,19 @@ CODEX_ACCOUNT_ID=account1
         expect(result?.platforms.discord).toBe(false);
         expect(result?.hasDatabase).toBe(false);
       } finally {
-        restoreHomeEnv(originalHarneesLabHome, originalHome);
+        restoreHomeEnv(originalHarneesLabHome);
       }
     });
 
     it('should detect PostgreSQL database configuration', () => {
-      const envDir = join(TEST_DIR, '.archon2');
+      const envDir = join(TEST_DIR, '.harneeslab2');
       mkdirSync(envDir, { recursive: true });
       const envPath = join(envDir, '.env');
 
       writeFileSync(envPath, 'DATABASE_URL=postgresql://localhost:5432/test');
 
       const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
-      const originalHome = process.env.ARCHON_HOME;
-      delete process.env.HARNEESLAB_HOME;
-      process.env.ARCHON_HOME = envDir;
+      process.env.HARNEESLAB_HOME = envDir;
 
       try {
         const result = checkExistingConfig();
@@ -136,25 +124,20 @@ CODEX_ACCOUNT_ID=account1
         expect(result).not.toBeNull();
         expect(result?.hasDatabase).toBe(true);
       } finally {
-        restoreHomeEnv(originalHarneesLabHome, originalHome);
+        restoreHomeEnv(originalHarneesLabHome);
       }
     });
 
-    it('should prefer HARNEESLAB_HOME over ARCHON_HOME', () => {
+    it('should read configuration from HARNEESLAB_HOME', () => {
       const harneeslabEnvDir = join(TEST_DIR, '.harneeslab');
-      const archonEnvDir = join(TEST_DIR, '.archon');
       mkdirSync(harneeslabEnvDir, { recursive: true });
-      mkdirSync(archonEnvDir, { recursive: true });
       writeFileSync(
         join(harneeslabEnvDir, '.env'),
         'SLACK_BOT_TOKEN=xoxb-token\nSLACK_APP_TOKEN=xapp-token'
       );
-      writeFileSync(join(archonEnvDir, '.env'), 'TELEGRAM_BOT_TOKEN=123:ABC');
 
       const originalHarneesLabHome = process.env.HARNEESLAB_HOME;
-      const originalHome = process.env.ARCHON_HOME;
       process.env.HARNEESLAB_HOME = harneeslabEnvDir;
-      process.env.ARCHON_HOME = archonEnvDir;
 
       try {
         const result = checkExistingConfig();
@@ -162,7 +145,7 @@ CODEX_ACCOUNT_ID=account1
         expect(result?.platforms.slack).toBe(true);
         expect(result?.platforms.telegram).toBe(false);
       } finally {
-        restoreHomeEnv(originalHarneesLabHome, originalHome);
+        restoreHomeEnv(originalHarneesLabHome);
       }
     });
   });
@@ -441,12 +424,12 @@ CODEX_ACCOUNT_ID=account1
     });
   });
 
-  describe('copyArchonSkill', () => {
+  describe('copyHarneesLabSkill', () => {
     it('should create skill files in target directory', () => {
       const target = join(TEST_DIR, 'skill-target');
       mkdirSync(target, { recursive: true });
 
-      copyArchonSkill(target);
+      copyHarneesLabSkill(target);
 
       expect(existsSync(join(target, '.claude', 'skills', 'hlab', 'SKILL.md'))).toBe(true);
       expect(existsSync(join(target, '.claude', 'skills', 'hlab', 'guides', 'setup.md'))).toBe(
@@ -464,7 +447,7 @@ CODEX_ACCOUNT_ID=account1
       const target = join(TEST_DIR, 'skill-target-content');
       mkdirSync(target, { recursive: true });
 
-      copyArchonSkill(target);
+      copyHarneesLabSkill(target);
 
       const content = readFileSync(join(target, '.claude', 'skills', 'hlab', 'SKILL.md'), 'utf-8');
       expect(content.length).toBeGreaterThan(0);
@@ -477,7 +460,7 @@ CODEX_ACCOUNT_ID=account1
       mkdirSync(skillDir, { recursive: true });
       writeFileSync(join(skillDir, 'SKILL.md'), 'old content');
 
-      copyArchonSkill(target);
+      copyHarneesLabSkill(target);
 
       const content = readFileSync(join(skillDir, 'SKILL.md'), 'utf-8');
       expect(content).not.toBe('old content');
@@ -485,9 +468,9 @@ CODEX_ACCOUNT_ID=account1
 
     it('should create skill files even when target directory does not exist', () => {
       const target = join(TEST_DIR, 'non-existent-parent', 'skill-target-new');
-      // Do NOT pre-create target — copyArchonSkill must handle it
+      // Do NOT pre-create target — copyHarneesLabSkill must handle it
 
-      copyArchonSkill(target);
+      copyHarneesLabSkill(target);
 
       expect(existsSync(join(target, '.claude', 'skills', 'hlab', 'SKILL.md'))).toBe(true);
     });

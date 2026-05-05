@@ -96,7 +96,7 @@ external database를 사용할 때 app container는 profile 없이 실행됩니�
 
 ```bash
 # 1. Get the deployment files
-mkdir archon && cd archon
+mkdir harneeslab && cd harneeslab
 curl -fsSL https://raw.githubusercontent.com/NewTurn2017/HarneesLab/dev/deploy/docker-compose.yml -o docker-compose.yml
 curl -fsSL https://raw.githubusercontent.com/NewTurn2017/HarneesLab/dev/deploy/.env.example -o .env
 
@@ -193,7 +193,7 @@ Caddy를 통한 자동 HTTPS와 함께 VPS(DigitalOcean, Linode, AWS EC2 등)에
 | **Remote PostgreSQL** | hosted DB로 `DATABASE_URL` 설정 | cloud 배포, shared access |
 | **Local PostgreSQL** | Docker `--profile with-db` | self-hosted, Docker 기반 setup |
 
-SQLite는 데이터를 `~/.archon/archon.db`(Docker에서는 `/.archon/archon.db`)에 저장합니다. 첫 실행 시 자동으로 초기화됩니다.
+SQLite는 데이터를 `~/.harneeslab/harneeslab.db`(Docker에서는 `/.harneeslab/harneeslab.db`)에 저장합니다. 첫 실행 시 자동으로 초기화됩니다.
 
 ---
 

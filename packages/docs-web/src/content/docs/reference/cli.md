@@ -92,7 +92,7 @@ hlab workflow list --cwd /path/to/repo
 hlab workflow list --cwd /path/to/repo --json
 ```
 
-CLI는 `.archon/workflows/`(recursive), `~/.archon/.archon/workflows/`(global), bundled default 순서로 workflow를 찾습니다. 자세한 전역 workflow 동작은 [Global Workflows](/guides/global-workflows/)를 참고하세요.
+CLI는 `.harneeslab/workflows/`(recursive), `~/.harneeslab/.harneeslab/workflows/`(global), bundled default 순서로 workflow를 찾습니다. 자세한 전역 workflow 동작은 [Global Workflows](/guides/global-workflows/)를 참고하세요.
 
 **옵션**
 
@@ -131,12 +131,12 @@ hlab workflow run plan --cwd /path/to/repo --branch feature-x "caching을 추가
 
 **기본값(no flags):**
 
-- auto-generated branch(`archon/task-<workflow>-<timestamp>`)로 worktree 생성
+- auto-generated branch(`harneeslab/task-<workflow>-<timestamp>`)로 worktree 생성
 - git repository 안이면 codebase auto-register
 
 **`--branch` 사용 시:**
 
-- `~/.archon/workspaces/<owner>/<repo>/worktrees/<branch>/`에 worktree 생성/재사용
+- `~/.harneeslab/workspaces/<owner>/<repo>/worktrees/<branch>/`에 worktree 생성/재사용
 - 정상 상태의 기존 worktree가 있으면 재사용
 
 **`--no-worktree` 사용 시:**
@@ -148,16 +148,16 @@ hlab workflow run plan --cwd /path/to/repo --branch feature-x "caching을 추가
 
 Workflow name은 4단계 fallback hierarchy로 해석됩니다. 이 규칙은 CLI와 모든 chat platform(Slack, Telegram, Web, GitHub, Discord)에 동일하게 적용됩니다.
 
-1. **Exact match** - `archon-assist`가 `archon-assist`와 일치
-2. **Case-insensitive** - `ARCHON-ASSIST`가 `archon-assist`와 일치
-3. **Suffix match** - `assist`가 `archon-assist`와 일치(`-assist` suffix 검색)
-4. **Substring match** - `smart`가 `archon-smart-pr-review`와 일치
+1. **Exact match** - `harneeslab-assist`가 `harneeslab-assist`와 일치
+2. **Case-insensitive** - `HARNEESLAB-ASSIST`가 `harneeslab-assist`와 일치
+3. **Suffix match** - `assist`가 `harneeslab-assist`와 일치(`-assist` suffix 검색)
+4. **Substring match** - `smart`가 `harneeslab-smart-pr-review`와 일치
 
 같은 단계에서 여러 workflow가 match되면 후보를 나열하는 오류가 발생합니다.
 
 ```
 Ambiguous workflow 'review'. Did you mean:
-  - archon-review
+  - harneeslab-review
   - custom-review
 ```
 
@@ -280,7 +280,7 @@ hlab validate workflows my-workflow --json   # machine-readable JSON output
 
 ### `validate commands [name]`
 
-`.archon/commands/`의 command file(.md)을 검증합니다.
+`.harneeslab/commands/`의 command file(.md)을 검증합니다.
 
 ```bash
 hlab validate commands                  # 모든 command 검증
@@ -332,7 +332,7 @@ hlab serve --download-only
 | `--port <port>` | server port override(default: 3090, range: 1-65535) |
 | `--download-only` | Web UI를 download/cache한 뒤 server 시작 없이 종료 |
 
-Cache된 Web UI는 `~/.archon/web-dist/<version>/`에 저장됩니다. Version별로 독립적으로 cache되므로 binary upgrade 시 matching Web UI가 자동으로 download됩니다.
+Cache된 Web UI는 `~/.harneeslab/web-dist/<version>/`에 저장됩니다. Version별로 독립적으로 cache되므로 binary upgrade 시 matching Web UI가 자동으로 download됩니다.
 
 ### `version`
 
@@ -363,21 +363,21 @@ Subdirectory(예: `/repo/packages/cli`)에서 실행하면 git repository root(�
 
 `--branch`를 사용하면 workflow는 worktree directory 안에서 실행됩니다.
 
-> **Command와 workflow는 runtime에 working directory에서 로드됩니다.** CLI는 disk에서 직접 읽으므로 uncommitted change도 즉시 반영합니다. 이는 server(Telegram/Slack/GitHub)와 다릅니다. Server는 `~/.archon/workspaces/`의 workspace clone에서 읽으며, 이 clone은 worktree creation 전 remote에서만 sync하므로 변경사항을 적용하려면 push가 필요합니다.
+> **Command와 workflow는 runtime에 working directory에서 로드됩니다.** CLI는 disk에서 직접 읽으므로 uncommitted change도 즉시 반영합니다. 이는 server(Telegram/Slack/GitHub)와 다릅니다. Server는 `~/.harneeslab/workspaces/`의 workspace clone에서 읽으며, 이 clone은 worktree creation 전 remote에서만 sync하므로 변경사항을 적용하려면 push가 필요합니다.
 
 ## 환경
 
-시작 시 CLI는 Bun이 자동 로드한 CWD `.env` key와 nested Claude Code session marker를 `process.env`에서 제거한 뒤 global `.env`를 로드합니다. global `.env` 위치는 `HARNEESLAB_HOME`, `ARCHON_HOME`, `~/.archon` 순서로 결정됩니다. 해당 `.env`에 설정한 모든 key는 AI subprocess로 전달됩니다. allowlist filtering은 없습니다.
+시작 시 CLI는 Bun이 자동 로드한 CWD `.env` key와 nested Claude Code session marker를 `process.env`에서 제거한 뒤 global `.env`를 로드합니다. global `.env` 위치는 `HARNEESLAB_HOME`, `~/.harneeslab` 순서로 결정됩니다. 해당 `.env`에 설정한 모든 key는 AI subprocess로 전달됩니다. allowlist filtering은 없습니다.
 
 시작 시 CLI는 다음을 수행합니다.
 
 1. CWD `.env` key + `CLAUDECODE` marker를 `process.env`에서 제거(`stripCwdEnv`)
-2. `$HARNEESLAB_HOME/.env`, `$ARCHON_HOME/.env`, `~/.archon/.env` 순서로 global `.env` 로드(모든 key trusted)
+2. `$HARNEESLAB_HOME/.env` 또는 `~/.harneeslab/.env`에서 global `.env` 로드(모든 key trusted)
 3. 명시적 token이 없으면 global Claude auth 자동 활성화
 
 ## 데이터베이스
 
-- **`DATABASE_URL` 없음(기본값):** `~/.archon/archon.db`의 SQLite 사용 -- 설정 불필요, 첫 실행 시 자동 초기화
+- **`DATABASE_URL` 없음(기본값):** `~/.harneeslab/harneeslab.db`의 SQLite 사용 -- 설정 불필요, 첫 실행 시 자동 초기화
 - **`DATABASE_URL` 있음:** PostgreSQL 사용(선택 사항, cloud/advanced deployment용)
 
 둘 다 투명하게 동작합니다. 대부분의 사용자는 database를 설정할 필요가 없습니다.
@@ -391,7 +391,7 @@ hlab chat "이 codebase의 error handling이 어떻게 동작하는지 설명해
 # interactive setup wizard
 hlab setup
 
-# 빠른 질문(archon/task-assist-<timestamp> 형태의 branch로 자동 isolation)
+# 빠른 질문(harneeslab/task-assist-<timestamp> 형태의 branch로 자동 isolation)
 hlab workflow run assist --cwd ~/projects/my-app "여기서 error handling이 어떻게 동작하는지 설명해줘"
 
 # isolation 없이 빠른 질문

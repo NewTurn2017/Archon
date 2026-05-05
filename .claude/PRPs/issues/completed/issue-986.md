@@ -1,6 +1,6 @@
 # Investigation: Release workflow bypasses scripts/build-binaries.sh — v0.2.13 and v0.3.0 binaries are broken
 
-**Issue**: #986 (https://github.com/coleam00/Archon/issues/986)
+**Issue**: #986 (https://github.com/coleam00/HarneesLab/issues/986)
 **Type**: BUG
 **Investigated**: 2026-04-08
 
@@ -8,7 +8,7 @@
 
 | Metric     | Value    | Reasoning                                                                                                                                      |
 | ---------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Severity   | CRITICAL | Two consecutive releases (v0.2.13, v0.3.0) ship binaries that crash on `archon version`; no user can run the released CLI, no workaround.      |
+| Severity   | CRITICAL | Two consecutive releases (v0.2.13, v0.3.0) ship binaries that crash on `harneeslab version`; no user can run the released CLI, no workaround.      |
 | Complexity | MEDIUM   | Touches 3 files (`scripts/build-binaries.sh`, `.github/workflows/release.yml`, `test-release` skill) with moderate bash/YAML refactoring risk. |
 | Confidence | HIGH     | Root cause is verified: `release.yml:51-59` calls `bun build --compile` inline and never rewrites `packages/paths/src/bundled-build.ts`.       |
 
@@ -16,7 +16,7 @@
 
 ## Problem Statement
 
-The release workflow builds binaries by calling `bun build --compile` inline, bypassing `scripts/build-binaries.sh` which is the only place that rewrites `packages/paths/src/bundled-build.ts` with `BUNDLED_IS_BINARY=true`. As a result, released binaries bake in the dev defaults (`BUNDLED_IS_BINARY=false`, `BUNDLED_VERSION='dev'`), `isBinaryBuild()` returns false at runtime, and `archon version` falls into `getDevVersion()` which tries to read `package.json` from Bun's `/$bunfs/` virtual filesystem and crashes with "Failed to read version: package.json not found (bad installation?)".
+The release workflow builds binaries by calling `bun build --compile` inline, bypassing `scripts/build-binaries.sh` which is the only place that rewrites `packages/paths/src/bundled-build.ts` with `BUNDLED_IS_BINARY=true`. As a result, released binaries bake in the dev defaults (`BUNDLED_IS_BINARY=false`, `BUNDLED_VERSION='dev'`), `isBinaryBuild()` returns false at runtime, and `harneeslab version` falls into `getDevVersion()` which tries to read `package.json` from Bun's `/$bunfs/` virtual filesystem and crashes with "Failed to read version: package.json not found (bad installation?)".
 
 ---
 
@@ -28,7 +28,7 @@ PR #982 replaced runtime binary detection with build-time constants, centralizin
 
 ### Evidence Chain
 
-WHY: `archon version` fails with "Failed to read version: package.json not found"
+WHY: `harneeslab version` fails with "Failed to read version: package.json not found"
 ↓ BECAUSE: `isBinaryBuild()` returns `false` in the released binary, so version lookup falls into the dev-mode `package.json` read path
 Evidence: `packages/paths/src/bundled-build.ts:16` — committed dev default is `export const BUNDLED_IS_BINARY = false;`
 
@@ -44,7 +44,7 @@ Evidence: `scripts/build-binaries.sh:15-31` — the file-rewrite + EXIT-trap-res
 | ---------------------------------------- | ------ | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | `scripts/build-binaries.sh`              | 1-86   | UPDATE | Add single-target mode via `TARGET`/`OUTFILE` env vars; add `--minify` by default; skip `--bytecode` for Windows targets.                 |
 | `.github/workflows/release.yml`          | 51-59  | UPDATE | Replace inline `bun build --compile` with `bash scripts/build-binaries.sh` invocation; pass `VERSION`/`GIT_COMMIT`/`TARGET`/`OUTFILE`.    |
-| `.github/workflows/release.yml`          | ~60    | CREATE | New step: post-build smoke test on `bun-linux-x64` target that runs `archon version` and asserts "Build: binary" + correct tag version. |
+| `.github/workflows/release.yml`          | ~60    | CREATE | New step: post-build smoke test on `bun-linux-x64` target that runs `harneeslab version` and asserts "Build: binary" + correct tag version. |
 | `.claude/skills/test-release/SKILL.md`   | —      | UPDATE | Add "Local build for pre-release QA" section documenting the env vars for reproducing CI builds locally.                                 |
 
 ### Integration Points
@@ -226,7 +226,7 @@ bun run validate
 1. Trigger the release workflow via `workflow_dispatch` with a test tag (e.g. `v0.3.1-rc1`).
 2. Confirm the new smoke-test step executes and passes for `bun-linux-x64`.
 3. `gh release view v0.3.1-rc1` shows all 5 binaries + `checksums.txt`.
-4. Download `archon-darwin-arm64` and run `./archon-darwin-arm64 version` — must report the tag version + `Build: binary`.
+4. Download `harneeslab-darwin-arm64` and run `./harneeslab-darwin-arm64 version` — must report the tag version + `Build: binary`.
 
 ### Post-release Verification
 
@@ -246,7 +246,7 @@ bun run validate
 
 **OUT OF SCOPE (do not touch):**
 
-- Homebrew tap sync gap (separate issue — `coleam00/homebrew-archon` formula still at v0.2.0)
+- Homebrew tap sync gap (separate issue — `coleam00/homebrew-harneeslab` formula still at v0.2.0)
 - Telemetry / `BUNDLED_POSTHOG_KEY` (#980) — separate feature, will benefit from this refactor automatically
 - Windows / macOS smoke tests (can't run on Linux runner; one target catches the class of bug)
 - Runtime detection fallback (deliberately removed in #982; don't re-introduce)

@@ -20,7 +20,7 @@ api_sessions/
 workspace/
 .omx/
 .codex/
-.archon-data/
+.harneeslab-data/
 
 # Lock files (auto-generated)
 package-lock.json
@@ -31,7 +31,7 @@ package-lock.json
 # Agent commands and documentation (user-managed)
 .agents/
 .claude/
-.archon/
+.harneeslab/
 
 # Website (Astro/Starlight - uses own formatting)
 packages/docs-web/

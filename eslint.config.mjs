@@ -13,7 +13,7 @@ export default tseslint.config(
       'coverage/**',
       '.agents/**',
       '.omx/**',
-      '.archon-data/**',
+      '.harneeslab-data/**',
       'packages/docs-web/**',
       'workspace/**',
       'worktrees/**',

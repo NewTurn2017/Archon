@@ -69,7 +69,7 @@ export CLAUDE_BIN_PATH="$HOME/.local/bin/claude"
 export CLAUDE_BIN_PATH="$(npm root -g)/@anthropic-ai/claude-code/cli.js"
 ```
 
-또는 `~/.archon/config.yaml`에 지속 설정으로 저장할 수 있습니다. HarneesLab은 compatibility를 위해 이 기본 경로를 유지합니다.
+또는 `~/.harneeslab/config.yaml`에 지속 설정으로 저장할 수 있습니다. HarneesLab은 compatibility를 위해 이 기본 경로를 유지합니다.
 
 ```yaml
 assistants:

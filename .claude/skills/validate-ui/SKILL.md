@@ -1,12 +1,12 @@
 ---
 name: validate-ui
 description: |
-  Comprehensive end-to-end validation of the Archon Web UI using browser automation and codebase review.
-  Use when: User wants to validate, test, or audit the Archon web interface, find UI/UX bugs,
+  Comprehensive end-to-end validation of the HarneesLab Web UI using browser automation and codebase review.
+  Use when: User wants to validate, test, or audit the HarneesLab web interface, find UI/UX bugs,
   test workflow management, verify parallel agent orchestration, or run comprehensive browser-based E2E tests.
-  Triggers: "validate ui", "test the ui", "e2e test", "browser test", "validate archon",
-            "test archon ui", "ui audit", "ux review", "comprehensive test", "validate everything".
-  Capability: Starts Archon, runs exhaustive browser automation tests via agent-browser CLI,
+  Triggers: "validate ui", "test the ui", "e2e test", "browser test", "validate harneeslab",
+            "test harneeslab ui", "ui audit", "ux review", "comprehensive test", "validate everything".
+  Capability: Starts HarneesLab, runs exhaustive browser automation tests via agent-browser CLI,
   performs codebase review, and produces a detailed bug/UX report.
   NOT for: Unit tests (use `bun test`), CLI-only validation (use /validation:validate-simple).
 argument-hint: "[focus-area]"
@@ -14,10 +14,10 @@ disable-model-invocation: true
 allowed-tools: Bash, Read, Grep, Glob, Edit, Write, Task
 ---
 
-# Archon Web UI — Comprehensive E2E Validation
+# HarneesLab Web UI — Comprehensive E2E Validation
 
-Run exhaustive end-to-end browser automation tests and codebase review of the Archon Web UI.
-The goal: determine whether Archon is doing the best it possibly can to solve the problem of
+Run exhaustive end-to-end browser automation tests and codebase review of the HarneesLab Web UI.
+The goal: determine whether HarneesLab is doing the best it possibly can to solve the problem of
 managing parallel agents, executing custom workflows, and providing full visibility into agent work.
 
 Optional focus argument: `$ARGUMENTS` (e.g., "workflows", "chat", "projects"). If empty, run ALL sections.
@@ -26,10 +26,10 @@ Optional focus argument: `$ARGUMENTS` (e.g., "workflows", "chat", "projects"). I
 
 ## Phase 0: Environment Setup
 
-### 0.1 Kill Old Archon Processes
+### 0.1 Kill Old HarneesLab Processes
 
 ```bash
-# Kill any running Archon dev servers (backend + frontend)
+# Kill any running HarneesLab dev servers (backend + frontend)
 pkill -f "bun.*dev:server" 2>/dev/null || true
 pkill -f "bun.*dev:web" 2>/dev/null || true
 pkill -f "bun.*packages/server" 2>/dev/null || true
@@ -62,22 +62,22 @@ which agent-browser 2>/dev/null || npx agent-browser --version 2>/dev/null
 # Use npx or global npm install.
 ```
 
-### 0.3 Start Archon Backend + Frontend
+### 0.3 Start HarneesLab Backend + Frontend
 
 Start both services. Backend must be up before frontend SSE connections work.
 
 ```bash
-# From the repo root: /path/to/archon
+# From the repo root: /path/to/harneeslab
 
 # Start backend (port 3090)
-cd /path/to/archon && bun run dev:server &
+cd /path/to/harneeslab && bun run dev:server &
 sleep 5  # Wait for server initialization + DB
 
 # Verify backend is healthy
 curl -s http://localhost:3090/api/health | head -c 200
 
 # Start frontend (port 5173)
-cd /path/to/archon && bun run dev:web &
+cd /path/to/harneeslab && bun run dev:web &
 sleep 5  # Wait for Vite dev server
 
 # Verify frontend is serving
@@ -100,7 +100,7 @@ curl -s http://localhost:3090/api/codebases | python3 -m json.tool 2>/dev/null |
 # Register the current repo as a codebase (if none exist)
 curl -s -X POST http://localhost:3090/api/codebases \
   -H "Content-Type: application/json" \
-  -d '{"path": "/path/to/archon"}'
+  -d '{"path": "/path/to/harneeslab"}'
 
 # Create a test conversation
 curl -s -X POST http://localhost:3090/api/conversations \
@@ -118,7 +118,7 @@ Use the `agent-browser` CLI for all browser interactions. Follow the snapshot-re
 3. Interact using refs (click, fill, etc.)
 4. Re-snapshot after navigation or DOM changes
 
-Take screenshots at each major test point: `agent-browser screenshot /tmp/archon-test-{name}.png`
+Take screenshots at each major test point: `agent-browser screenshot /tmp/harneeslab-test-{name}.png`
 
 ### Test Suite 1: Dashboard (Route: `/`)
 
@@ -154,7 +154,7 @@ Take screenshots at each major test point: `agent-browser screenshot /tmp/archon
 
 **2.2 Add Project (Local Path)**
 - Click `+` again
-- Fill in a local path (e.g., `/path/to/archon`)
+- Fill in a local path (e.g., `/path/to/harneeslab`)
 - Submit and verify the project appears
 - Verify deduplication: if the path was already registered, it should not create a duplicate
 
@@ -290,7 +290,7 @@ Take screenshots at each major test point: `agent-browser screenshot /tmp/archon
 - Verify: running workflows show a pulsing dot on the "Recent Runs" tab label
 
 **5.2 Invoke Workflow from Workflows Page**
-- Click on a workflow card (e.g., `archon-assist`)
+- Click on a workflow card (e.g., `harneeslab-assist`)
 - Verify: inline run panel expands with project selector and message input
 - Select a project from the dropdown
 - Type a message and click "Run"
@@ -307,7 +307,7 @@ Take screenshots at each major test point: `agent-browser screenshot /tmp/archon
 **5.4 Workflow Router (Agent Orchestrator)**
 - In a project chat, send a natural language message (e.g., "Help me understand the authentication flow")
 - Verify: the router detects the intent and routes to the appropriate workflow
-- Verify: workflow dispatch status message appears (e.g., "Dispatching workflow: archon-assist (background)")
+- Verify: workflow dispatch status message appears (e.g., "Dispatching workflow: harneeslab-assist (background)")
 - Verify: `WorkflowDispatchInline` badge appears with spinner
 - Verify: clicking the dispatch badge navigates to the workflow run or worker conversation
 
@@ -327,14 +327,14 @@ Take screenshots at each major test point: `agent-browser screenshot /tmp/archon
 - For dispatched workflows: verify `WorkflowLogs` renders the worker conversation messages
 
 **5.7 Parallel Agent Steps**
-- Run a workflow with parallel agents (e.g., `archon-comprehensive-pr-review` has 5 parallel agents)
+- Run a workflow with parallel agents (e.g., `harneeslab-comprehensive-pr-review` has 5 parallel agents)
 - Verify: `ParallelBlockView` renders showing parent step and nested agent list
 - Verify: each agent shows its own status (pending/running/completed/failed)
 - Verify: overall block status derives correctly (any failed = failed, any running = running, all complete = complete)
 - Verify: progress counter shows `(completed/total agents)`
 
 **5.8 Loop Iterations**
-- Run a loop workflow (e.g., `archon-test-loop` or `archon-ralph-fresh`)
+- Run a loop workflow (e.g., `harneeslab-test-loop` or `harneeslab-ralph-fresh`)
 - Verify: `LoopIterationView` renders with iteration counter
 - Verify: progress bar fills proportionally (current/max)
 - Verify: each iteration shows status
@@ -581,12 +581,12 @@ After completing all tests and reviews, produce a structured report:
 ### Report Format
 
 ```markdown
-# Archon Web UI Validation Report
+# HarneesLab Web UI Validation Report
 
 **Date**: {date}
 **Tester**: Claude Code (agent-browser + codebase review)
-**Archon Version**: {git commit hash}
-**Screenshots**: /tmp/archon-test-*.png
+**HarneesLab Version**: {git commit hash}
+**Screenshots**: /tmp/harneeslab-test-*.png
 
 ## Executive Summary
 {2-3 sentences: overall quality assessment, critical issues count, UX rating}
@@ -635,7 +635,7 @@ After completing all tests and reviews, produce a structured report:
 
 ### Key Question to Answer
 
-> **Is Archon currently doing the best it possibly can to solve the problem of managing a lot of agents in parallel and executing custom workflows with full visibility?**
+> **Is HarneesLab currently doing the best it possibly can to solve the problem of managing a lot of agents in parallel and executing custom workflows with full visibility?**
 
 Specifically evaluate:
 - Can users easily see what all their agents are doing at a glance?
@@ -653,7 +653,7 @@ Specifically evaluate:
 - Run all `agent-browser` commands via the Bash tool
 - Use `npx agent-browser` if not installed globally
 - After each navigation, re-snapshot (`agent-browser snapshot -i`) to get fresh refs
-- Take screenshots liberally — save to `/tmp/archon-test-{section}-{name}.png`
+- Take screenshots liberally — save to `/tmp/harneeslab-test-{section}-{name}.png`
 - If a test fails, document it immediately and continue to the next test
 - Use `agent-browser wait --load networkidle` after actions that trigger API calls
 - For SSE testing, use `agent-browser eval` to check EventSource state

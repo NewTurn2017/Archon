@@ -7,12 +7,12 @@ import type { WorkflowEventRow } from './workflow-events';
 const mockLogger = createMockLogger();
 mock.module('@harneeslab/paths', () => ({
   createLogger: mock(() => mockLogger),
-  getArchonHome: mock(() => '/home/test/.archon'),
-  getArchonConfigPath: mock(() => '/home/test/.archon/config.yaml'),
-  getArchonWorkspacesPath: mock(() => '/home/test/.archon/workspaces'),
-  getArchonWorktreesPath: mock(() => '/home/test/.archon/worktrees'),
-  getDefaultCommandsPath: mock(() => '/app/.archon/commands/defaults'),
-  getDefaultWorkflowsPath: mock(() => '/app/.archon/workflows/defaults'),
+  getHarneesLabHome: mock(() => '/home/test/.harneeslab'),
+  getHarneesLabConfigPath: mock(() => '/home/test/.harneeslab/config.yaml'),
+  getHarneesLabWorkspacesPath: mock(() => '/home/test/.harneeslab/workspaces'),
+  getHarneesLabWorktreesPath: mock(() => '/home/test/.harneeslab/worktrees'),
+  getDefaultCommandsPath: mock(() => '/app/.harneeslab/commands/defaults'),
+  getDefaultWorkflowsPath: mock(() => '/app/.harneeslab/workflows/defaults'),
 }));
 
 const mockQuery = mock(() => Promise.resolve(createQueryResult([])));

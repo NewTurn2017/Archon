@@ -1,6 +1,6 @@
 ---
 title: Windows 설정
-description: Windows에서 Bun으로 native 실행하거나 WSL2 호환 모드로 Archon을 실행합니다.
+description: Windows에서 Bun으로 native 실행하거나 WSL2 호환 모드로 HarneesLab을 실행합니다.
 category: deployment
 area: infra
 audience: [operator]
@@ -9,7 +9,7 @@ sidebar:
   order: 4
 ---
 
-Archon은 Windows에서 두 가지 방식으로 실행할 수 있습니다.
+HarneesLab은 Windows에서 두 가지 방식으로 실행할 수 있습니다.
 
 - **Bun을 사용한 native Windows**: 기본 사용(server, Web UI, 단순 workflow)에 동작합니다. WSL2는 필요하지 않습니다. [Bun for Windows](https://bun.sh)를 설치하고 repo를 clone한 뒤 `bun install && bun run dev`를 실행합니다.
 - **WSL2(권장)**: 전체 호환성에 필요합니다. 특히 git worktree isolation, shell 기반 workflow step, Unix tool에 의존하는 CLI 기능에 필요합니다.
@@ -117,4 +117,4 @@ taskkill /F /IM node.exe
 
 - **VS Code Integration**: VS Code에서 WSL2 file을 편집하려면 "Remote - WSL" extension을 설치합니다.
 - **Terminal**: Windows Terminal은 WSL2 지원이 좋습니다.
-- **Git**: Archon과 일관된 동작을 위해 WSL2 안에서 Git을 사용합니다.
+- **Git**: HarneesLab과 일관된 동작을 위해 WSL2 안에서 Git을 사용합니다.

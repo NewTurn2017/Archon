@@ -214,7 +214,7 @@ describe('PiProvider', () => {
       })
     );
     expect(error?.message).toContain("no credentials for provider 'unknownprovider'");
-    expect(error?.message).toContain("not in the Archon adapter's env-var table");
+    expect(error?.message).toContain("not in the HarneesLab adapter's env-var table");
   });
 
   test('throws when env var missing AND auth.json has no entry', async () => {
@@ -541,7 +541,7 @@ describe('PiProvider', () => {
     expect(systemChunks.some(c => c.content.includes('Could not resume'))).toBe(false);
   });
 
-  test('result chunk carries Pi sessionId (for Archon to store and reuse)', async () => {
+  test('result chunk carries Pi sessionId (for HarneesLab to store and reuse)', async () => {
     process.env.GEMINI_API_KEY = 'sk-test';
     resetScript(scriptedAgentEnd());
 

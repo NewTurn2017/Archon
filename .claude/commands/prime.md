@@ -1,12 +1,12 @@
 ---
-description: Prime agent with full Archon codebase understanding
+description: Prime agent with full HarneesLab codebase understanding
 ---
 
-# Prime: Load Archon Project Context
+# Prime: Load HarneesLab Project Context
 
 ## Objective
 
-Build comprehensive understanding of the Archon monorepo before beginning any work. This orients
+Build comprehensive understanding of the HarneesLab monorepo before beginning any work. This orients
 you on structure, active state, and key architectural conventions.
 
 ## Process
@@ -35,12 +35,12 @@ Read these files to understand the primary message and execution flow:
 
 ### 4. Understand Package Dependency Layers
 
-Read the dependency chain (no @archon/* deps → most isolated):
+Read the dependency chain (no @harneeslab/* deps → most isolated):
 
 - `packages/paths/src/index.ts` — path resolution + Pino logger (zero deps)
-- `packages/git/src/index.ts` — git ops (depends only on @archon/paths)
-- `packages/isolation/src/index.ts` — worktree isolation (depends on @archon/git + @archon/paths)
-- `packages/workflows/src/index.ts` — workflow engine (depends on @archon/git + @archon/paths)
+- `packages/git/src/index.ts` — git ops (depends only on @harneeslab/paths)
+- `packages/isolation/src/index.ts` — worktree isolation (depends on @harneeslab/git + @harneeslab/paths)
+- `packages/workflows/src/index.ts` — workflow engine (depends on @harneeslab/git + @harneeslab/paths)
 
 ### 5. Understand Current State
 
@@ -58,7 +58,7 @@ List any active worktrees:
 Provide a concise summary (under 300 words) covering:
 
 ### Project Overview
-- Archon: Remote agentic coding platform (Slack, Telegram, GitHub, Discord, Web)
+- HarneesLab: Remote agentic coding platform (Slack, Telegram, GitHub, Discord, Web)
 - Bun + TypeScript monorepo with 8 packages: paths, git, isolation, workflows, core, adapters, server, web
 - SQLite (default, zero-setup) or PostgreSQL (optional via DATABASE_URL)
 
