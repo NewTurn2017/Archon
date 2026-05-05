@@ -11,7 +11,7 @@
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
   <a href="https://github.com/NewTurn2017/HarneesLab/actions/workflows/test.yml"><img src="https://github.com/NewTurn2017/HarneesLab/actions/workflows/test.yml/badge.svg" alt="CI" /></a>
-  <a href="https://harneeslab.codewithgenie.com"><img src="https://img.shields.io/badge/docs-harneeslab.codewithgenie.com-blue" alt="Docs" /></a>
+  <a href="https://harnesslab.codewithgenie.com"><img src="https://img.shields.io/badge/docs-harnesslab.codewithgenie.com-blue" alt="Docs" /></a>
 </p>
 
 ---
@@ -178,13 +178,13 @@ Claude Code가 이미 준비되어 있다면 standalone CLI binary를 설치하�
 **macOS / Linux**
 
 ```bash
-curl -fsSL https://harneeslab.codewithgenie.com/install | bash
+curl -fsSL https://harnesslab.codewithgenie.com/install | bash
 ```
 
 **Windows (PowerShell)**
 
 ```powershell
-irm https://harneeslab.codewithgenie.com/install.ps1 | iex
+irm https://harnesslab.codewithgenie.com/install.ps1 | iex
 ```
 
 **Homebrew**
@@ -205,7 +205,7 @@ brew install <tap>/hlab
 > $env:CLAUDE_BIN_PATH = "$env:USERPROFILE\.local\bin\claude.exe"
 > ```
 >
-> 또는 `~/.harneeslab/config.yaml`에 `assistants.claude.claudeBinaryPath`를 설정합니다. Docker image에는 Claude Code가 사전 설치되어 있습니다. 자세한 내용은 [AI Assistants: Binary path configuration](https://harneeslab.codewithgenie.com/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only)을 참고하세요.
+> 또는 `~/.harneeslab/config.yaml`에 `assistants.claude.claudeBinaryPath`를 설정합니다. Docker image에는 Claude Code가 사전 설치되어 있습니다. 자세한 내용은 [AI Assistants: Binary path configuration](https://harnesslab.codewithgenie.com/getting-started/ai-assistants/#binary-path-configuration-compiled-binaries-only)을 참고하세요.
 
 ### 사용 시작
 
@@ -248,7 +248,7 @@ chat sidebar의 "Project" 옆 **+** 버튼으로 GitHub URL 또는 local path를
 
 sidebar에는 Web UI뿐 아니라 CLI, Slack, Telegram, GitHub issue interaction에서 시작된 conversation도 함께 표시됩니다.
 
-자세한 내용은 [Web UI Guide](https://harneeslab.codewithgenie.com/adapters/web/)를 참고하세요.
+자세한 내용은 [Web UI Guide](https://harnesslab.codewithgenie.com/adapters/web/)를 참고하세요.
 
 ## 자동화할 수 있는 작업
 
@@ -278,7 +278,7 @@ default workflow 목록은 `hlab workflow list`로 확인할 수 있습니다. �
 
 직접 workflow를 정의할 수도 있습니다. default workflow를 `.harneeslab/workflows/defaults/`에서 복사해 수정하거나, repo의 `.harneeslab/workflows/`에 YAML 파일을 추가하세요. command는 `.harneeslab/commands/`에 markdown file로 둘 수 있습니다. 같은 이름의 repo-local file은 bundled default를 override합니다.
 
-자세한 내용은 [Authoring Workflows](https://harneeslab.codewithgenie.com/guides/authoring-workflows/)와 [Authoring Commands](https://harneeslab.codewithgenie.com/guides/authoring-commands/)를 참고하세요.
+자세한 내용은 [Authoring Workflows](https://harnesslab.codewithgenie.com/guides/authoring-workflows/)와 [Authoring Commands](https://harnesslab.codewithgenie.com/guides/authoring-commands/)를 참고하세요.
 
 ## 플랫폼 추가
 
@@ -286,10 +286,10 @@ Web UI와 CLI는 바로 사용할 수 있습니다. 원격 접근이 필요하�
 
 | 플랫폼 | 예상 설정 시간 | 가이드 |
 | --- | --- | --- |
-| **Telegram** | 5분 | [Telegram 가이드](https://harneeslab.codewithgenie.com/adapters/telegram/) |
-| **Slack** | 15분 | [Slack 가이드](https://harneeslab.codewithgenie.com/adapters/slack/) |
-| **GitHub Webhooks** | 15분 | [GitHub 가이드](https://harneeslab.codewithgenie.com/adapters/github/) |
-| **Discord** | 5분 | [Discord 가이드](https://harneeslab.codewithgenie.com/adapters/community/discord/) |
+| **Telegram** | 5분 | [Telegram 가이드](https://harnesslab.codewithgenie.com/adapters/telegram/) |
+| **Slack** | 15분 | [Slack 가이드](https://harnesslab.codewithgenie.com/adapters/slack/) |
+| **GitHub Webhooks** | 15분 | [GitHub 가이드](https://harnesslab.codewithgenie.com/adapters/github/) |
+| **Discord** | 5분 | [Discord 가이드](https://harnesslab.codewithgenie.com/adapters/community/discord/) |
 
 ## 아키텍처
 
@@ -327,20 +327,20 @@ Web UI와 CLI는 바로 사용할 수 있습니다. 원격 접근이 필요하�
 
 ## Documentation
 
-전체 문서는 [harneeslab.codewithgenie.com](https://harneeslab.codewithgenie.com)에서 볼 수 있습니다.
+전체 문서는 [harnesslab.codewithgenie.com](https://harnesslab.codewithgenie.com)에서 볼 수 있습니다.
 
 | Topic | Description |
 | --- | --- |
-| [Getting Started](https://harneeslab.codewithgenie.com/getting-started/overview/) | Web UI 또는 CLI 설정 가이드 |
-| [The Book of HarneesLab](https://harneeslab.codewithgenie.com/book/) | 10장 구성의 narrative tutorial |
-| [CLI Reference](https://harneeslab.codewithgenie.com/reference/cli/) | 전체 CLI reference |
-| [Authoring Workflows](https://harneeslab.codewithgenie.com/guides/authoring-workflows/) | custom YAML workflow 작성 |
-| [Authoring Commands](https://harneeslab.codewithgenie.com/guides/authoring-commands/) | reusable AI command 작성 |
-| [설정](https://harneeslab.codewithgenie.com/reference/configuration/) | config option, env var, YAML setting |
-| [AI Assistants](https://harneeslab.codewithgenie.com/getting-started/ai-assistants/) | Claude와 Codex 설정 |
-| [배포](https://harneeslab.codewithgenie.com/deployment/) | Docker, VPS, production setup |
-| [아키텍처](https://harneeslab.codewithgenie.com/reference/architecture/) | system design과 internals |
-| [문제 해결](https://harneeslab.codewithgenie.com/reference/troubleshooting/) | common issue와 해결 방법 |
+| [Getting Started](https://harnesslab.codewithgenie.com/getting-started/overview/) | Web UI 또는 CLI 설정 가이드 |
+| [The Book of HarneesLab](https://harnesslab.codewithgenie.com/book/) | 10장 구성의 narrative tutorial |
+| [CLI Reference](https://harnesslab.codewithgenie.com/reference/cli/) | 전체 CLI reference |
+| [Authoring Workflows](https://harnesslab.codewithgenie.com/guides/authoring-workflows/) | custom YAML workflow 작성 |
+| [Authoring Commands](https://harnesslab.codewithgenie.com/guides/authoring-commands/) | reusable AI command 작성 |
+| [설정](https://harnesslab.codewithgenie.com/reference/configuration/) | config option, env var, YAML setting |
+| [AI Assistants](https://harnesslab.codewithgenie.com/getting-started/ai-assistants/) | Claude와 Codex 설정 |
+| [배포](https://harnesslab.codewithgenie.com/deployment/) | Docker, VPS, production setup |
+| [아키텍처](https://harnesslab.codewithgenie.com/reference/architecture/) | system design과 internals |
+| [문제 해결](https://harnesslab.codewithgenie.com/reference/troubleshooting/) | common issue와 해결 방법 |
 
 ## Telemetry
 
