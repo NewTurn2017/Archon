@@ -12,13 +12,13 @@ sidebar:
 ### macOS / Linux
 
 ```bash
-curl -fsSL https://harneeslab.codewithgenie.com/install | bash
+curl -fsSL https://harnesslab.codewithgenie.com/install | bash
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-irm https://harneeslab.codewithgenie.com/install.ps1 | iex
+irm https://harnesslab.codewithgenie.com/install.ps1 | iex
 ```
 
 ### Homebrew (macOS / Linux)
